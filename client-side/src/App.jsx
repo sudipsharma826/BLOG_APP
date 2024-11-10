@@ -1,9 +1,15 @@
-import React from 'react'
+import React from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import Home from './pages/Home';
 
-const app = () => {
+const App = () => {
   return (
-    <h1 className='text-center mt-5'>Hello, Sudip!</h1>
-  )
-}
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Home />} />
+      </Routes>
+    </BrowserRouter>
+  );
+};
 
-export default app
+export default App;
