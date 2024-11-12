@@ -1,10 +1,11 @@
 import React from 'react'
-import NavBar from '../components/NavBar'
+
+import SampleForm from '../components/SampleForm'
 
 const Home = () => {
   return (
     <>
-    
+    <SampleForm />
     </>
   )
 }
