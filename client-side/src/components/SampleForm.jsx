@@ -20,7 +20,7 @@ const SampleForm = () => {
 
     try {
       // Make a POST request to the backend to save the user data
-      const response = await axios.post('http://localhost:3000/test', userData);
+      const response = await axios.post('http://localhost:3000/signup', userData);
       
       // If successful, show a success message
       if(response.status === 201){

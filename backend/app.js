@@ -2,18 +2,17 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
-import User from './models/userModel.js';
 
 // Load environment variables from .env file
 dotenv.config();
 
 // Server Setup
 const app = express();
-app.use(cors()); // Middleware to enable CORS
+app.use(cors()); 
 
 
-// Middleware to parse incoming form data
-app.use(express.json()); // For parsing JSON data (for POST requests)
+
+app.use(express.json()); 
 
 // MongoDB Connection
 mongoose.connect(process.env.MONGODB_URI)
@@ -24,31 +23,13 @@ mongoose.connect(process.env.MONGODB_URI)
     console.error('DB Connection Error:', error);
   });
 
-// Routes
-app.get("/", (req, res) => {
-  res.send("Hello Sudip");
-});
+//Importing Routes
+import authRoutes from './routes/authRoutes.js';
 
-// POST route to add user data
-app.post("/test", async (req, res) => {
-  const { name, email, password } = req.body;
 
-  // Create a new user object
-  const newUser = new User({
-    name: name,
-    email: email,
-    password: password,
-  });
+//Use Routes
+app.use('', authRoutes);
 
-  try {
-    // Save the new user to the database
-    await newUser.save();
-    res.status(201).send("User added successfully!");
-  } catch (err) {
-    console.error('Error:', err);  // Log the error to the console
-    res.status(400).send("Error adding user: " + err.message);
-  }
-});
 
 // Listen to port 3000
 app.listen(3000, () => {

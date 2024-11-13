@@ -4,9 +4,8 @@ import SampleForm from '../components/SampleForm'
 
 const Home = () => {
   return (
-    <>
     <SampleForm />
-    </>
+    
   )
 }
 
