@@ -31,6 +31,15 @@ import authRoutes from './routes/authRoutes.js';
 app.use('', authRoutes);
 
 
+// Global error-handling middleware
+app.use((err, req, res, next) => {
+  const statusCode = err.statusCode || 500;
+  res.status(statusCode).json({
+    message: err.message
+  });
+});
+
+
 // Listen to port 3000
 app.listen(3000, () => {
   console.log('Server is running on port 3000');
