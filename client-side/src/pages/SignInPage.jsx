@@ -1,53 +1,48 @@
 import { Alert, Button, Label, Spinner, TextInput } from 'flowbite-react';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
-import { signInStart, signInSuccess, signInFailure } from '../redux/user/authSlice'; // Import actions
+import { signInStart, signInSuccess, signInFailure } from '../redux/user/authSlice';
 
 const SignInPage = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
-  // Access Redux state
-  const { loading, error } = useSelector((state) => state.user);
-
-  // Local state for form data
+  const { loading, error: errorMessage } = useSelector((state) => state.user);
   const [formData, setFormData] = useState({ email: '', password: '' });
 
-  // Handle input changes
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.id]: e.target.value });
+    setFormData({ ...formData, [e.target.id]: e.target.value.trim() });
   };
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Check for empty fields
-    if (!formData.email.trim() || !formData.password.trim()) {
+    if (!formData.email || !formData.password) {
       return dispatch(signInFailure('Please fill all the fields'));
     }
 
     try {
-      dispatch(signInStart()); // Dispatch loading state
-
-      // Make the API request
-      const response = await axios.post(
+      dispatch(signInStart());
+      
+      const { data } = await axios.post(
         `${import.meta.env.VITE_REACT_APP_BASE_URL}/auth/signin`,
         formData,
+        {
+          headers: { 'Content-Type': 'application/json' }
+        }
       );
 
-      if (response.status === 200) {
-        dispatch(signInSuccess(response.data.rest)); // Unwrap the rest object
-        navigate('/');
+      if (data.success === false) {
+        dispatch(signInFailure(data.message));
+        return;
       }
+
+      dispatch(signInSuccess(data)); 
+      navigate('/');
+      
     } catch (error) {
-      dispatch(
-        signInFailure(
-           error.message 
-        )
-      );
+      dispatch(signInFailure(error?.response?.data?.message || error.message));
     }
   };
 
@@ -110,9 +105,9 @@ const SignInPage = () => {
             </Link>
           </div>
 
-          {error && (
+          {errorMessage && (
             <Alert className="mt-5" color="failure">
-              {error}
+              {errorMessage}
             </Alert>
           )}
         </div>
