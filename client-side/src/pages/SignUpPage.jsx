@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux'; // Importing useDispatch and useSelector
 import { signUpStart, signUpSuccess, signUpFailure } from '../redux/user/authSlice'; // Import the actions
+import { GoogleOuth } from '../components/GoogleOuth';
 
 const SignUpPage = () => {
   const navigate = useNavigate();
@@ -112,6 +113,7 @@ const SignUpPage = () => {
                 </>
               ) : 'Sign Up'}
             </Button>
+            <GoogleOuth />
           </form>
 
           <div className="flex gap-2 text-sm mt-5">
