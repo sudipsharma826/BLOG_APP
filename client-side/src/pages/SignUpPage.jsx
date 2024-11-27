@@ -43,7 +43,7 @@ const SignUpPage = () => {
       dispatch(signUpStart()); // Dispatch signUpStart to indicate loading
 
       const response = await axios.post(
-        `${import.meta.env.VITE_REACT_APP_BASE_URL}/auth/signup`,
+        `${import.meta.env.VITE_BACKEND_APP_BASE_URL}/auth/signup`,
         formData
       );
       

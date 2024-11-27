@@ -99,3 +99,40 @@ export const signin = async (req, res, next) => {
     next(errorHandler(500, 'Internal Server Error'));
   }
 };
+
+//Google Outh
+export const googleouth = async (req, res, next) => {
+  const { email, displayName, photoURL } = req.body;
+  try {
+    const user = await User.findOne({email});
+    if(user){
+      const token = jwt.sign({id:user._id, email:user.email}, process.env.JWT_SECRET, {expiresIn: process.env.JWT_EXPIRES_IN});
+      const {password, ...rest} = user._doc;
+      res.status(200)
+        .cookie("accessToken", token, {
+          httpOnly: true
+        })
+        .json(rest);
+    } else {
+      const generatedPassword = Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8);
+      const hashedPassword = await bcrypt.hash(generatedPassword, 10);
+      const newUser = new User({
+        username: displayName.toLowerCase().split(' ').join('') + Math.random().toString(9).slice(-4),
+        email,
+        password: hashedPassword,
+        photoURL,
+      });
+      await newUser.save();
+      const token = jwt.sign({id:newUser._id, email:newUser.email}, process.env.JWT_SECRET, {expiresIn: process.env.JWT_EXPIRES_IN});
+      const {password, ...rest} = newUser._doc;
+      res.status(200)
+        .cookie("accessToken", token, {
+          httpOnly: true
+        })
+        .json(rest);
+    }
+  } catch(error) {
+    console.log("Error in googleouth", error);
+    next(errorHandler(500, 'Internal Server Error'));
+  }
+};

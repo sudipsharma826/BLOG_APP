@@ -27,7 +27,7 @@ const SignInPage = () => {
       dispatch(signInStart());
       
       const { data } = await axios.post(
-        `${import.meta.env.VITE_REACT_APP_BASE_URL}/auth/signin`,
+        `${import.meta.env.VITE_BACKEND_APP_BASE_URL}/auth/signin`,
         formData,
         {
           headers: { 'Content-Type': 'application/json' }
