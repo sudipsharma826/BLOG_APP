@@ -19,6 +19,7 @@ export const GoogleOuth = () => {
         })
         try{
             const resultFromGoogle = await signInWithPopup(auth, provider);
+            console.log(resultFromGoogle);
             //Sendable Data to Backend
             const { displayName, email, photoURL } = resultFromGoogle.user;
 
