@@ -10,6 +10,7 @@ const SignInPage = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { loading, error: errorMessage } = useSelector((state) => state.user);
+  const { theme } = useSelector((state) => state.theme);
   const [formData, setFormData] = useState({ email: '', password: '' });
 
   const handleChange = (e) => {
@@ -58,10 +59,17 @@ const SignInPage = () => {
             </span>
             Blog
           </Link>
-          <p className="text-sm mt-5 font-semibold text-gray-800">
-            We're excited to have you here! Please sign in to continue exploring our latest posts,
-            join discussions, and share your thoughts with the community.
-          </p>
+          {theme === 'dark' ? (
+            <p className="text-sm mt-5 font-semibold text-white">
+              We're excited to have you here! Please sign in to continue exploring our latest posts,
+              join discussions, and share your thoughts with the community.
+            </p>
+          ) : (
+            <p className="text-sm mt-5 font-semibold text-gray-700">
+              We're excited to have you here! Please sign in to continue exploring our latest posts,
+              join discussions, and share your thoughts with the community.
+            </p>
+          )}
         </div>
 
         {/* Right */}

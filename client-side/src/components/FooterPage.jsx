@@ -1,7 +1,9 @@
 import { Footer } from 'flowbite-react';
 import { Link } from 'react-router-dom';
 import { BsFacebook, BsInstagram, BsTwitter, BsGithub, BsDribbble, BsLinkedin, BsPersonBadge } from 'react-icons/bs';
+import {useSelector} from 'react-redux';
 export default function FooterPage() {
+  const {theme} = useSelector(state => state.theme);  
   return (
     <Footer container className='border border-t-8 border-teal-500'>
       <div className='w-full max-w-7xl mx-auto'>
@@ -16,9 +18,16 @@ export default function FooterPage() {
               </span>
               Blog
              </Link>
-             <p className="mt-4 font-semibold text-gray-500 ">
+             { theme ==='dark' ? (
+
+             <p className="mt-4 font-semibold text-white ">
           Join a growing community of readers and writers! 🔥
         </p> 
+             ) : (
+              <p className="mt-4 font-semibold text-gray-400 ">
+              Join a growing community of readers and writers! 🔥
+            </p> 
+             )}
           </div>
           <div className='grid grid-cols-2 gap-8 mt-4 sm:grid-cols-3 sm:gap-6'>
             <div>

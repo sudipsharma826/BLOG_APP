@@ -1,4 +1,4 @@
-import { Alert, Button, Label, Spinner, TextInput } from 'flowbite-react';
+import { Alert, Button, Label, Spinner, TextInput, theme } from 'flowbite-react';
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -11,7 +11,7 @@ const SignUpPage = () => {
   const dispatch = useDispatch(); // Dispatch action to Redux
 
   const { loading, error } = useSelector((state) => state.user); // Access loading and error from Redux
-
+  const { theme } = useSelector((state) => state.theme);
   const [formData, setFormData] = useState({});
 
   // Check the password in the frontend part using regular expression
@@ -67,9 +67,16 @@ const SignUpPage = () => {
             </span> 
             Blog
           </Link>
-          <p className="text-sm mt-5 font-semibold text-gray-800">
+          {theme === "dark" ?(
+
+          <p className="text-sm mt-5 font-semibold text-white">
             We're excited to have you here! Please sign up to continue exploring our latest posts, join discussions, and share your thoughts with the community. If you're new, feel free to sign up and start your blogging journey today!
           </p>
+          ) : (
+            <p className="text-sm mt-5 font-semibold text-gray-400">
+            We're excited to have you here! Please sign up to continue exploring our latest posts, join discussions, and share your thoughts with the community. If you're new, feel free to sign up and start your blogging journey today!
+          </p>
+          )}
         </div>
 
         {/* Right */}
