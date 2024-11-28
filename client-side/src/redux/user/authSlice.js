@@ -1,4 +1,4 @@
-import { createSlice, current, nanoid } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
     currentUser: null,
@@ -21,24 +21,39 @@ const userSlice = createSlice({
         },
         signInFailure: (state, action) => {
             state.loading = false;
-            state.error = action.payload; 
+            state.error = action.payload;
+            state.currentUser = null;
         },
         signUpStart: (state) => {
             state.loading = true;
             state.error = null;
-          },
-          signUpSuccess: (state, action) => {
+        },
+        signUpSuccess: (state, action) => {
             state.loading = false;
-            state.currentUser = { ...state.currentUser, ...action.payload };
+            state.currentUser = action.payload;
             state.error = null;
-          },
-          signUpFailure: (state, action) => {
+        },
+        signUpFailure: (state, action) => {
             state.loading = false;
             state.error = action.payload;
-          },
-        
+            state.currentUser = null;
+        },
+        signOut: (state) => {
+            state.currentUser = null;
+            state.loading = false;
+            state.error = null;
+        }
     },
 });
 
-export const { signInStart, signInSuccess, signInFailure ,signUpFailure, signUpStart, signUpSuccess} = userSlice.actions;
+export const { 
+    signInStart, 
+    signInSuccess, 
+    signInFailure, 
+    signUpFailure, 
+    signUpStart, 
+    signUpSuccess,
+    signOut
+} = userSlice.actions;
+
 export default userSlice.reducer;

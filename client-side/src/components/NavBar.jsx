@@ -48,13 +48,13 @@ export default function Header() {
                         label={
                             <img 
                                 src={currentUser.photoURL} 
-                                alt={currentUser.username}
+                                alt={currentUser.displayName}
                                 className='w-10 h-10 rounded-full'
                             />
                         }
                     >
                         <Dropdown.Header>
-                            <span className='block text-sm'>{currentUser.username}</span>
+                            <span className='block text-sm'>{currentUser.displayName}</span>
                             <span className='block text-sm font-medium truncate'>{currentUser.email}</span>
                         </Dropdown.Header>
                         <Dropdown.Divider />

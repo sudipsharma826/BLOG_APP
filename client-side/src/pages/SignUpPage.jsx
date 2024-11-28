@@ -61,12 +61,17 @@ const SignUpPage = () => {
       <div className="flex p-3 max-w-3xl mx-auto flex-col md:flex-row md:items-center gap-5">
         {/* Left */}
         <div className="flex-1">
-          <Link to="/" className="font-bold text-4xl dark:text-white">
-            <span className="md:px-2 py-1 bg-gradient-to-r from-green-300 via-blue-500 to-red-500 rounded-lg text-white">
-              Sudip's
-            </span> 
-            Blog
-          </Link>
+        <Link
+        to='/'
+        className='font-bold dark:text-white text-4xl'
+      >
+        <span className='px-2 py-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-lg text-white'>
+          Sudip's
+        </span>
+        Blog
+       
+        
+      </Link> 
           {theme === "dark" ?(
 
           <p className="text-sm mt-5 font-semibold text-white">
