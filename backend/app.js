@@ -12,13 +12,16 @@ const app = express();
 app.use(cors({
   origin: process.env.CLIENT_URL,
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization']
 }));
+
 
 // Middleware
 app.use(cookieParser()); // To set the cookies
 app.use(express.json());//Processing JSON data
+
+
+//Static Files
+app.use(express.static('public/uploads'));
 
 // MongoDB Connection
 mongoose.connect(process.env.MONGODB_URI)

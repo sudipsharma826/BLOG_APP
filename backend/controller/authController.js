@@ -107,7 +107,8 @@ export const googleouth = async (req, res, next) => {
     const user = await User.findOne({email});
     if(user){
       const token = jwt.sign({id:user._id, email:user.email}, process.env.JWT_SECRET, {expiresIn: process.env.JWT_EXPIRES_IN});
-      const {password, ...rest} = user._doc;
+      const updatedUser = await User.findOne({email});
+      const {password, ...rest} = updatedUser._doc;
       res.status(200)
         .cookie("accessToken", token, {
           httpOnly: true

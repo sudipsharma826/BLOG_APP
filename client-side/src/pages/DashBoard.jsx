@@ -1,21 +1,30 @@
-import React from 'react'
-import { useSelector } from 'react-redux';
+import { useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
+import DashSidebar from '../components/DashSidebar';
+import DashProfile from '../components/DashProfile';
 
-const DashBoard = () => {
-  const { currentUser } = useSelector((state) => state.user);
+export default function Dashboard() {
+  const location = useLocation();
+  const [tab, setTab] = useState('');
+
+  useEffect(() => {
+    const urlParams = new URLSearchParams(location.search);
+    const tabFromUrl = urlParams.get('tab');
+    if (tabFromUrl) {
+      setTab(tabFromUrl);
+    }
+  }, [location.search]);
 
   return (
-    <div className='p-3 max-w-lg mx-auto'>
-      <h1 className='text-3xl font-semibold text-center my-7'>Dashboard</h1>
-      {currentUser && (
-        <div className='flex flex-col gap-4'>
-          <img src={currentUser.photoURL} alt='profile' className='w-24 h-24 rounded-full object-cover cursor-pointer self-center mt-2'/>
-          <h2 className='text-center font-bold text-xl'>{currentUser.username}</h2>
-          <p className='text-center'>{currentUser.email}</p>
-        </div>
-      )}
+    <div className="min-h-screen flex flex-col md:flex-row">
+      <div className="md:w-56">
+        {/* Sidebar */}
+        <DashSidebar />
+      </div>
+      <div className="w-full">
+        {/* profile... */}
+        {tab === 'profile' && <DashProfile />}
+      </div>
     </div>
-  )
+  );
 }
-
-export default DashBoard

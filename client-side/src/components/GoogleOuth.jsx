@@ -20,10 +20,9 @@ export const GoogleOuth = () => {
         });
 
         try {
-     
-            
             const resultFromGoogle = await signInWithPopup(auth, provider);
             const { displayName, email, photoURL } = resultFromGoogle.user;
+            console.log('Google user data:', { displayName, email, photoURL });
 
             const response = await axios.post(`${import.meta.env.VITE_BACKEND_APP_BASE_URL}/auth/googleouth`, {
                 displayName,
@@ -31,8 +30,9 @@ export const GoogleOuth = () => {
                 photoURL
             });
 
+            console.log('Backend response:', response.data);
+
             if (response.status === 200 && response.data) {
-                // Ensure we have valid user data before dispatching
                 if (response.data.email === email) {
                     dispatch(signInSuccess(response.data));
                     navigate('/');
@@ -42,15 +42,12 @@ export const GoogleOuth = () => {
             }
         } catch (error) {
             console.error('Google authentication error:', error);
-            // Cleanup on error
-            auth.signOut();
-            localStorage.removeItem('persist:root');
         }
     }
 
     return (
         <Button type='button' gradientDuoTone='pinkToOrange' outline onClick={handleGoogleLogin}>
-            <AiFillGoogleCircle className='w-6 h-6 mr-2'/>
+            <AiFillGoogleCircle className='w-6 h-6 mr-2' />
             Continue with Google
         </Button>
     )

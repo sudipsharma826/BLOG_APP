@@ -1,0 +1,8 @@
+VITE_BACKEND_APP_BASE_URL=your_backend_url
+VITE_FIREBASE_apiKey= your_firebase_code
+VITE_FIREBASE_authDomain= your_firebase_code
+VITE_FIREBASE_projectId= your_firebase_code
+VITE_FIREBASE_storageBucket= your_firebase_code
+VITE_FIREBASE_messagingSenderId= your_firebase_code
+VITE_FIREBASE_appId=your_firebase_code
+VITE_FIREBASE_measurementId= your_firebase_code

@@ -48,8 +48,9 @@ export default function Header() {
                         label={
                             <img 
                                 src={currentUser.photoURL} 
-                                alt={currentUser.displayName}
-                                className='w-10 h-10 rounded-full'
+                                alt={currentUser.username || 'profile'}
+                                className="w-10 h-10 rounded-full object-cover"
+                                crossOrigin="anonymous"
                             />
                         }
                     >
