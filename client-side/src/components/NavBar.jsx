@@ -1,4 +1,4 @@
-import { Button, Dropdown, Navbar, TextInput } from 'flowbite-react';
+import { Button, Dropdown, Navbar, TextInput ,Avatar} from 'flowbite-react';
 import { Link, useLocation } from 'react-router-dom';
 import { AiOutlineSearch } from 'react-icons/ai';
 import { FaMoon, FaSun } from 'react-icons/fa';
@@ -46,12 +46,7 @@ export default function Header() {
                         arrowIcon={false}
                         inline
                         label={
-                            <img 
-                                src={currentUser.photoURL} 
-                                alt={currentUser.username || 'profile'}
-                                className="w-10 h-10 rounded-full object-cover"
-                                crossOrigin="anonymous"
-                            />
+                          <Avatar alt={currentUser.username} img={currentUser.photoURL} rounded />
                         }
                     >
                         <Dropdown.Header>

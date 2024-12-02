@@ -22,15 +22,12 @@ export const GoogleOuth = () => {
         try {
             const resultFromGoogle = await signInWithPopup(auth, provider);
             const { displayName, email, photoURL } = resultFromGoogle.user;
-            console.log('Google user data:', { displayName, email, photoURL });
 
             const response = await axios.post(`${import.meta.env.VITE_BACKEND_APP_BASE_URL}/auth/googleouth`, {
                 displayName,
                 email,
                 photoURL
             });
-
-            console.log('Backend response:', response.data);
 
             if (response.status === 200 && response.data) {
                 if (response.data.email === email) {
