@@ -106,6 +106,10 @@ export const googleouth = async (req, res, next) => {
   try {
     const user = await User.findOne({email});
     if(user){
+      // Update the user's photoURL if it has changed
+      if (photoURL && user.photoURL !== photoURL) {
+        await User.findOneAndUpdate({ email }, { photoURL });
+      }
       const token = jwt.sign({id:user._id, email:user.email}, process.env.JWT_SECRET, {expiresIn: process.env.JWT_EXPIRES_IN});
       const updatedUser = await User.findOne({email});
       const {password, ...rest} = updatedUser._doc;
@@ -121,7 +125,7 @@ export const googleouth = async (req, res, next) => {
         username: displayName.toLowerCase().split(' ').join('') + Math.random().toString(9).slice(-4),
         email,
         password: hashedPassword,
-        photoURL,
+        photoURL: photoURL || 'https://th.bing.com/th/id/OIP.AM9J9nDVFAf_ssjpdxsKKQHaHa?w=186&h=186&c=7&r=0&o=5&pid=1.7',
       });
       await newUser.save();
       const token = jwt.sign({id:newUser._id, email:newUser.email}, process.env.JWT_SECRET, {expiresIn: process.env.JWT_EXPIRES_IN});

@@ -17,7 +17,7 @@ const userSchema = new mongoose.Schema({
   },
   photoURL: {
     type: String,
-    default: 'images/defaultProfileImage.png'
+    default: 'https://th.bing.com/th/id/OIP.AM9J9nDVFAf_ssjpdxsKKQHaHa?w=186&h=186&c=7&r=0&o=5&pid=1.7'
   }
 });
 

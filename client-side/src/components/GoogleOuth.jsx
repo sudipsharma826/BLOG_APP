@@ -27,15 +27,19 @@ export const GoogleOuth = () => {
                 displayName,
                 email,
                 photoURL
+            }, {
+                withCredentials: true
             });
 
             if (response.status === 200 && response.data) {
-                if (response.data.email === email) {
-                    dispatch(signInSuccess(response.data));
-                    navigate('/');
-                } else {
-                    console.error('Received user data does not match authenticated user');
-                }
+                const userData = {
+                    ...response.data,
+                    photoURL: photoURL || response.data.photoURL
+                };
+                dispatch(signInSuccess(userData));
+                navigate('/');
+            } else {
+                console.error('Received user data does not match authenticated user');
             }
         } catch (error) {
             console.error('Google authentication error:', error);
