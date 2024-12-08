@@ -1,94 +1,196 @@
-import React, { useEffect, useState } from 'react';
+
+import { Alert, Button, TextInput } from 'flowbite-react';
+import { useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { TextInput, Button } from 'flowbite-react';
+import axios from 'axios';
+
 
 export default function DashProfile() {
+  const ImageFileRef = useRef(null);
   const { currentUser } = useSelector((state) => state.user);
+
+  // States
   const [imageFile, setImageFile] = useState(null);
-  const [imageFileUrl, setImageFileUrl] = useState(null);
-  const [formData, setFormData] = useState({});
-  const ImageUrl=currentUser.photoURL;
+  const [imageFileUrl, setImageFileUrl] = useState(currentUser.photoURL || null);
+  const [imageError, setImageError] = useState(null);
+  const [imageUploadReady, setImageUploadReady] = useState(false);
+  const [updateError, setUpdateError] = useState(null);
 
-  useEffect(() => {
-    if (imageFile) {
-      const url = URL.createObjectURL(imageFile);
-      setImageFileUrl(url);
-      return () => {
-        URL.revokeObjectURL(url);
-      };
-    }
-  }, [imageFile]);
+  // Initialize form data
+  const [formData, setFormData] = useState({
+    username: currentUser.username || '',
+    email: currentUser.email || '',
+    password: '', // Initially empty for security
+  });
 
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setImageFile(file);
-    }
+  // Message Timer
+  const handleErrorTimeout = (setter, message) => {
+    setter(message); // Set the message
+    setTimeout(() => setter(null), 6000); // Clear message after 10 seconds
   };
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.id]: e.target.value });
+  // Validate file type and size
+  const validateFile = (file) => {
+    const validTypes = ['image/jpeg', 'image/png'];
+    const maxSize = 2 * 1024 * 1024; // 2 MB in bytes
+
+    if (!validTypes.includes(file.type)) {
+      handleErrorTimeout(setImageError, "Invalid file type. Only JPEG and PNG images are allowed.");
+      setImageUploadReady(false);
+      return false;
+    }
+
+    if (file.size > maxSize) {
+      handleErrorTimeout(setImageError, 'File size exceeds the maximum limit of 2 MB.');
+      setImageUploadReady(false);
+      return false;
+    }
+
+    setImageError(null);
+    setImageUploadReady(true);
+    return true;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Reset previous errors
+    setUpdateError(null);
+
+    const file = imageFile;
+    let uploadedImageUrl = null;
+
+    // Validate and upload image if file exists
+    if (file) {
+      if (!validateFile(file)) {
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('upload_preset', import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET);
+      formData.append('cloud_name', import.meta.env.VITE_CLOUDINARY_CLOUD_NAME);
+
+      try {
+        const response = await axios.post(
+          `https://api.cloudinary.com/v1_1/${import.meta.env.VITE_CLOUDINARY_CLOUD_NAME}/image/upload`,
+          formData
+        );
+
+        uploadedImageUrl = response.data.secure_url;
+        setImageFileUrl(uploadedImageUrl);
+        setImageError(null);
+      } catch (error) {
+        handleErrorTimeout(setImageError, 'Image upload failed. Please try again.');
+        return;
+      }
+    }
+
+    // Update Data
+    const data = {
+      ...formData,
+      photoURL: uploadedImageUrl || currentUser.photoURL,
+    };
+
     try {
-      // Handle form submission logic here
-      console.log(formData);
+      await axios.put(`${import.meta.env.VITE_BACKEND_APP_BASE_URL}/auth/update`, data, {
+        withCredentials: true,
+      });
     } catch (error) {
-      console.log(error);
+      handleErrorTimeout(setUpdateError, 'User Profile Failed To Update. Please Try Again.');
+    }
+  };
+
+  const handleInputChange = (e) => {
+    setFormData({ ...formData, [e.target.id]: e.target.value.trim() });
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      if (validateFile(file)) {
+        setImageFile(file); // Save the valid file to state
+        setImageFileUrl(URL.createObjectURL(file)); // Generate a preview for the valid image
+      } else {
+        // Reset to current user's photoURL if validation fails
+        setImageFile(null);
+        setImageFileUrl(currentUser.photoURL || null);
+      }
     }
   };
 
   return (
-    <div className='max-w-lg mx-auto p-3 w-full'>
-      <h1 className='my-7 text-center font-semibold text-3xl'>Profile</h1>
-      <form onSubmit={handleSubmit} className='flex flex-col gap-4'>
+    <div className="max-w-lg mx-auto p-3 w-full">
+      <h1 className="my-7 text-center font-semibold text-3xl">Profile</h1>
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        {/* File Input */}
         <input
-          type='file'
-          accept='image/*'
-          onChange={handleImageChange}
-          className='hidden'
-          id='imageInput'
+          type="file"
+          accept="image/*"
+          ref={ImageFileRef}
+          className="hidden"
+          onChange={handleFileChange}
         />
-        <div 
-          className='relative w-32 h-32 self-center cursor-pointer shadow-md overflow-hidden rounded-full' 
-          onClick={() => document.getElementById('imageInput').click()}
+        {/* Profile Image */}
+        <div
+          className="w-32 h-32 self-center cursor-pointer shadow-md overflow-hidden rounded-full"
+          onClick={() => ImageFileRef.current.click()}
         >
           <img
-            src={ImageUrl}
+            src={
+              imageFileUrl ||
+              currentUser.photoURL || 
+              'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'
+            }
             alt={currentUser.username}
-            className='rounded-full w-full h-full object-cover border-4 border-[lightgray]'
-            crossOrigin="anonymous"
+            className="rounded-full w-full h-full object-cover border-8 border-[lightgray]"
+            
           />
         </div>
+        {/* File Validation Messages */}
+        {imageError && <Alert color="failure">{imageError}</Alert>}
+        {imageUploadReady && <Alert color="success">File is ready to upload!</Alert>}
+
+        {/* Username Input */}
         <TextInput
-          type='text'
-          id='username'
-          placeholder='username'
-          defaultValue={currentUser.username}
-          className='bg-gray-50'
-          onChange={handleChange}
+          type="text"
+          id="username"
+          name="username"
+          placeholder="Your Username"
+          value={formData.username}
+          onChange={handleInputChange}
         />
+        {/* Email Input */}
         <TextInput
-          type='email'
-          id='email'
-          placeholder='email'
-          defaultValue={currentUser?.email}
-          className='bg-gray-50'
-          onChange={handleChange}
+          type="email"
+          id="email"
+          name="email"
+          placeholder="Your Email"
+          value={formData.email}
+          onChange={handleInputChange}
         />
+        {/* Password Input */}
         <TextInput
-          type='password'
-          id='password'
-          placeholder='Enter the New Password'
-          className='bg-gray-50'
-          onChange={handleChange}
+          type="password"
+          id="password"
+          name="password"
+          placeholder="Update Your Password"
+          value={formData.password}
+          onChange={handleInputChange}
         />
-        <Button type='submit' gradientDuoTone='purpleToBlue' outline>
+        {/* Submit Button */}
+        <Button type="submit" gradientDuoTone="purpleToBlue" outline>
           Update
         </Button>
+        {/* Update Error */}
+        {updateError && <Alert color="failure">{updateError}</Alert>}
       </form>
+
+      {/* Action Links */}
+      <div className="text-red-500 flex justify-between mt-5">
+        <span className="cursor-pointer">Delete Account</span>
+        <span className="cursor-pointer">Sign Out</span>
+      </div>
     </div>
   );
 }

@@ -1,5 +1,5 @@
 import { Alert, Button, Label, Spinner, TextInput } from 'flowbite-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
@@ -55,6 +55,17 @@ const SignUpPage = () => {
       setError(error.response?.data?.message || error.message);
     }
   };
+
+  // Automatically clear the error message after 6 seconds
+  useEffect(() => {
+    if (error) {
+      const timer = setTimeout(() => {
+        setError(null);
+      }, 6000); // Clear error after 6 seconds
+
+      return () => clearTimeout(timer); // Cleanup timer on component unmount
+    }
+  }, [error]);
 
   return (
     <div className="min-h-screen mt-20">
@@ -131,7 +142,7 @@ const SignUpPage = () => {
 
           {error && (
             <Alert className="mt-5" color="failure">
-              {error}
+              {error} 
             </Alert>
           )}
         </div>

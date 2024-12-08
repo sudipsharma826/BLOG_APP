@@ -1,8 +1,13 @@
-VITE_BACKEND_APP_BASE_URL=your_backend_url
-VITE_FIREBASE_apiKey= your_firebase_code
-VITE_FIREBASE_authDomain= your_firebase_code
-VITE_FIREBASE_projectId= your_firebase_code
-VITE_FIREBASE_storageBucket= your_firebase_code
-VITE_FIREBASE_messagingSenderId= your_firebase_code
-VITE_FIREBASE_appId=your_firebase_code
-VITE_FIREBASE_measurementId= your_firebase_code
+VITE_BACKEND_APP_BASE_URL=.....
+VITE_FIREBASE_API_KEY="....."
+VITE_FIREBASE_AUTH_DOMAIN="....."
+VITE_FIREBASE_PROJECT_ID="....."
+VITE_FIREBASE_STORAGE_BUCKET="...."
+VITE_FIREBASE_MESSAGING_SENDER_ID="...."
+VITE_FIREBASE_APP_ID="..."
+VITE_FIREBASE_MEASUREMENT_ID="...."
+
+
+
+
+

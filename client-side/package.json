@@ -12,6 +12,8 @@
   "dependencies": {
     "@reduxjs/toolkit": "^2.3.0",
     "axios": "^1.7.7",
+    "cloudinary": "^2.5.1",
+    "cloudinary-react": "^1.8.1",
     "dotenv": "^16.4.5",
     "firebase": "^11.0.2",
     "flowbite-react": "^0.10.2",

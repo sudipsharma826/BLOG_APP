@@ -1,5 +1,5 @@
 import { Alert, Button, Label, Spinner, TextInput } from 'flowbite-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
@@ -11,7 +11,21 @@ const SignInPage = () => {
   const dispatch = useDispatch();
   const { loading, error: errorMessage } = useSelector((state) => state.user);
   const { theme } = useSelector((state) => state.theme);
+  const [showError, setShowError] = useState(false);
+
   const [formData, setFormData] = useState({ email: '', password: '' });
+
+  // Show error for 6 seconds
+  useEffect(() => {
+    if (errorMessage) {
+      setShowError(true);
+      const timeout = setTimeout(() => {
+        setShowError(false);
+      }, 6000); // Hide error after 6 seconds
+
+      return () => clearTimeout(timeout); // Clean up the timeout on unmount
+    }
+  }, [errorMessage]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value.trim() });
@@ -26,7 +40,7 @@ const SignInPage = () => {
 
     try {
       dispatch(signInStart());
-      
+
       const { data } = await axios.post(
         `${import.meta.env.VITE_BACKEND_APP_BASE_URL}/auth/signin`,
         formData,
@@ -36,15 +50,15 @@ const SignInPage = () => {
       );
 
       if (data.success === false) {
-        dispatch(signInFailure(data.message));
+        dispatch(signInFailure(data.message)); // Dispatch error to Redux
         return;
       }
 
-      dispatch(signInSuccess(data)); 
+      dispatch(signInSuccess(data)); // Success: Dispatch to Redux
       navigate('/');
-      
+
     } catch (error) {
-      dispatch(signInFailure(error?.response?.data?.message || error.message));
+      dispatch(signInFailure(error?.response?.data?.message || error.message)); // Dispatch error to Redux
     }
   };
 
@@ -53,15 +67,15 @@ const SignInPage = () => {
       <div className="flex p-3 max-w-3xl mx-auto flex-col md:flex-row md:items-center gap-5">
         {/* Left */}
         <div className="flex-1">
-        <Link
-              to='/'
-              className='font-bold dark:text-white text-4xl'
-            >
-              <span className='px-2 py-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-lg text-white'>
-                Sudip's
-              </span>
-              Blog
-             </Link>
+          <Link
+            to='/'
+            className='font-bold dark:text-white text-4xl'
+          >
+            <span className='px-2 py-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-lg text-white'>
+              Sudip's
+            </span>
+            Blog
+          </Link>
           {theme === 'dark' ? (
             <p className="text-sm mt-5 font-semibold text-white">
               We're excited to have you here! Please sign in to continue exploring our latest posts,
@@ -108,7 +122,7 @@ const SignInPage = () => {
                 'Sign In'
               )}
             </Button>
-           < GoogleOuth />
+            <GoogleOuth />
           </form>
 
           <div className="flex gap-2 text-sm mt-5">
@@ -118,9 +132,10 @@ const SignInPage = () => {
             </Link>
           </div>
 
-          {errorMessage && (
+          {/* Display error message from Redux state */}
+          {showError && errorMessage && (
             <Alert className="mt-5" color="failure">
-              {errorMessage}
+              {errorMessage} {/* Display error message from Redux */}
             </Alert>
           )}
         </div>

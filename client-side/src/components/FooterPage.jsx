@@ -79,7 +79,7 @@ export default function FooterPage() {
             year={new Date().getFullYear()}
            
           />
-          <img src="images/logo.png" alt="logo" className="w-17 h-10 " />
+          {/* <img src="/images/code_firebase.png" alt="logo" className="w-17 h-20 " /> */}
           <div className="flex gap-6 sm:mt-0 mt-4 sm:justify-center">
             <Footer.Icon href='https://www.facebook.com/sudipsharma.np/' icon={BsFacebook}/>
             <Footer.Icon href='https://www.linkedin.com/in/sudipsharmanp/' icon={BsLinkedin}/>

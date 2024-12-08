@@ -17,7 +17,7 @@ const userSchema = new mongoose.Schema({
   },
   photoURL: {
     type: String,
-    default: 'https://th.bing.com/th/id/OIP.AM9J9nDVFAf_ssjpdxsKKQHaHa?w=186&h=186&c=7&r=0&o=5&pid=1.7'
+    default: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'
   }
 });
 

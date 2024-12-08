@@ -18,7 +18,7 @@ export default function Header() {
         className='self-center whitespace-nowrap text-sm sm:text-xl font-semibold dark:text-white'
       >
        
-        <img src="images/logo.png" alt="logo" className="w-15 h-10 pill inline " />
+        <img src="/images/logo.png" alt="logo" className="w-15 h-10 pill inline " />
       </Link>
       <form>
         <TextInput
@@ -46,7 +46,11 @@ export default function Header() {
                         arrowIcon={false}
                         inline
                         label={
-                          <Avatar alt={currentUser.username} img={currentUser.photoURL} rounded />
+                          <Avatar alt={currentUser.username} img={currentUser.photoURL || 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'} rounded 
+                          onError={(e) => {
+                            e.target.onerror = null;
+                            e.target.src = 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png';
+                          }}/>
                         }
                     >
                         <Dropdown.Header>
