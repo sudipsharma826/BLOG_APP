@@ -1,6 +1,6 @@
 import User from '../models/userModel.js';
 import bcrypt from 'bcrypt';
-import { errorHandler } from '../utilites/errorHandler.js';
+import { errorHandler } from '../middleware/errorHandler.js';
 import jwt from 'jsonwebtoken';
 
 // Helper function to validate inputs

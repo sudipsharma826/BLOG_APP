@@ -102,7 +102,7 @@ const SignInPage = () => {
                 type="email"
                 placeholder="abc@sudipsharma.com.np"
                 id="email"
-                value={formData.email}
+                
                 onChange={handleChange}
               />
             </div>
@@ -112,7 +112,7 @@ const SignInPage = () => {
                 type="password"
                 placeholder="********"
                 id="password"
-                value={formData.password}
+                
                 onChange={handleChange}
               />
             </div>

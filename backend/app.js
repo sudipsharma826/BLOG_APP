@@ -30,9 +30,11 @@ mongoose.connect(process.env.MONGODB_URI)
 
 // Importing Routes
 import authRoutes from './routes/authRoutes.js';
+import userRoutes from './routes/userRoutes.js';
 
 // Using Routes
 app.use('/auth', authRoutes);
+app.use('/user', userRoutes);
 
 // Global error-handling middleware
 app.use((err, req, res, next) => {

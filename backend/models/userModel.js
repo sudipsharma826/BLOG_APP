@@ -17,8 +17,12 @@ const userSchema = new mongoose.Schema({
   },
   photoURL: {
     type: String,
-    default: ''
-  }
+    default: '/images/user.png'
+  },
+  isAdmin: {
+    type: Boolean,
+    default: false
+  } 
 });
 
 const User = mongoose.model('user', userSchema);
