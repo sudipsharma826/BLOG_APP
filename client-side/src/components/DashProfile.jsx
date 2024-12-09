@@ -20,7 +20,6 @@ export default function DashProfile() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [updateError, setUpdateError] = useState(null);
   const [updateSuccess, setUpdateSuccess] = useState(null);
-  const [isUpdated, setIsUpdated] = useState(false);  // Track changes for photo or password
 
   // Message handler function
   const handleMessage = (successMessage, errorMessage) => {
@@ -51,19 +50,16 @@ export default function DashProfile() {
       setImageFile(file);
       handleMessage("File uploaded successfully!", null);
       setImageFileUrl(URL.createObjectURL(file));
-      setIsUpdated(true);  // Set updated state to true if photo changes
     }
   };
 
   // Input change handler
   const handleInputChange = (e) => {
+    const { id, value } = e.target;
     setFormValues({
       ...formValues,
-      [e.target.id]: e.target.value,
+      [id]: value,
     });
-    if (e.target.id === 'password' && e.target.value !== '') {
-      setIsUpdated(true);  // Set updated state to true if password changes
-    }
   };
 
   // Check password format function
@@ -93,6 +89,11 @@ export default function DashProfile() {
     if (imageFile) formData.append('photoURL', imageFile);
 
     try {
+      if (!imageFile && !formValues.password) {
+        handleMessage(null, 'No changes detected');
+        setIsSubmitting(false);
+        return;
+      }
       const response = await axios.put(
         `${import.meta.env.VITE_BACKEND_APP_BASE_URL}/user/update/${currentUser._id}`,
         formData,
@@ -105,7 +106,6 @@ export default function DashProfile() {
       );
       handleMessage('Profile updated successfully!', null);
       dispatch(signInSuccess(response.data)); // Dispatch success action with updated data
-      setIsUpdated(false); // Reset updated state after successful update
     } catch (error) {
       handleMessage(null, error.response?.data?.message || 'Failed to update profile');
     } finally {
@@ -178,7 +178,7 @@ export default function DashProfile() {
           type="submit"
           gradientDuoTone="purpleToBlue"
           outline
-          disabled={!isUpdated || isSubmitting}  // Enable only if photo or password changes
+          disabled={isSubmitting || (!imageFile && !formValues.password)}  // Disable button if no changes
         >
           {isSubmitting ? (
             <>
