@@ -1,5 +1,5 @@
 import { Alert, Button, Spinner, TextInput } from 'flowbite-react';
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { signInSuccess } from '../redux/user/authSlice';
 import axios from 'axios';
@@ -11,7 +11,7 @@ export default function DashProfile() {
 
   // State hooks
   const [imageFile, setImageFile] = useState(null);
-  const [imageFileUrl, setImageFileUrl] = useState(currentUser?.photoURL || null); // Add safety check here
+  const [imageFileUrl, setImageFileUrl] = useState(currentUser?.photoURL || null);
   const [formValues, setFormValues] = useState({
     username: currentUser?.username || '',
     email: currentUser?.email || '',
@@ -20,7 +20,7 @@ export default function DashProfile() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [updateError, setUpdateError] = useState(null);
   const [updateSuccess, setUpdateSuccess] = useState(null);
-  const [passwordError, setPasswordError] = useState(null); // For password validation errors
+  const [isUpdated, setIsUpdated] = useState(false);  // Track changes for photo or password
 
   // Message handler function
   const handleMessage = (successMessage, errorMessage) => {
@@ -40,15 +40,18 @@ export default function DashProfile() {
     if (file) {
       if (file.size > 2 * 1024 * 1024) { // Max 2MB
         handleMessage(null, 'File size exceeds 2MB limit');
+        ImageFileRef.current.value = ''; // Reset input
         return;
       }
       if (!file.type.match(/^image\/(jpeg|png)$/)) {
         handleMessage(null, 'Only JPEG and PNG images are allowed');
+        ImageFileRef.current.value = ''; // Reset input
         return;
       }
       setImageFile(file);
       handleMessage("File uploaded successfully!", null);
       setImageFileUrl(URL.createObjectURL(file));
+      setIsUpdated(true);  // Set updated state to true if photo changes
     }
   };
 
@@ -58,6 +61,9 @@ export default function DashProfile() {
       ...formValues,
       [e.target.id]: e.target.value,
     });
+    if (e.target.id === 'password' && e.target.value !== '') {
+      setIsUpdated(true);  // Set updated state to true if password changes
+    }
   };
 
   // Check password format function
@@ -72,11 +78,10 @@ export default function DashProfile() {
     setIsSubmitting(true);
     setUpdateError(null);
     setUpdateSuccess(null);
-    setPasswordError(null); // Reset password error on submit
 
     // Password validation
     if (formValues.password && !validatePassword(formValues.password)) {
-      setPasswordError('Password must contain at least 8 characters, one uppercase letter, one lowercase letter, one number, and one special character');
+      handleMessage(null, "Password must contain at least 8 characters, one uppercase letter, one lowercase letter, one number, and one special character");
       setIsSubmitting(false);
       return; // Stop the form submission if password is invalid
     }
@@ -85,8 +90,8 @@ export default function DashProfile() {
     formData.append('username', formValues.username.trim());
     formData.append('email', formValues.email.trim());
     if (formValues.password) formData.append('password', formValues.password.trim());
-    if (imageFile) formData.append('photoURL', imageFile); // Make sure the file name is 'photoURL'
-  console.log(formData);
+    if (imageFile) formData.append('photoURL', imageFile);
+
     try {
       const response = await axios.put(
         `${import.meta.env.VITE_BACKEND_APP_BASE_URL}/user/update/${currentUser._id}`,
@@ -100,6 +105,7 @@ export default function DashProfile() {
       );
       handleMessage('Profile updated successfully!', null);
       dispatch(signInSuccess(response.data)); // Dispatch success action with updated data
+      setIsUpdated(false); // Reset updated state after successful update
     } catch (error) {
       handleMessage(null, error.response?.data?.message || 'Failed to update profile');
     } finally {
@@ -119,6 +125,7 @@ export default function DashProfile() {
           className="hidden"
           onChange={handleFileChange}
           id="photoURL"
+          disabled={isSubmitting}  // Disable during submission
         />
         <div
           className="w-32 h-32 self-center cursor-pointer shadow-md overflow-hidden rounded-full"
@@ -171,7 +178,7 @@ export default function DashProfile() {
           type="submit"
           gradientDuoTone="purpleToBlue"
           outline
-          disabled={isSubmitting}
+          disabled={!isUpdated || isSubmitting}  // Enable only if photo or password changes
         >
           {isSubmitting ? (
             <>
@@ -186,7 +193,6 @@ export default function DashProfile() {
         {/* Success/Error messages */}
         {updateSuccess && <Alert color="success">{updateSuccess}</Alert>}
         {updateError && <Alert color="failure">{updateError}</Alert>}
-        {passwordError && <Alert color="failure">{passwordError}</Alert>} {/* Show password error */}
       </form>
 
       {/* Action links */}
