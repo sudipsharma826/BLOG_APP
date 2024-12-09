@@ -137,15 +137,14 @@ export default function DashProfile() {
           onClick={() => ImageFileRef.current.click()}
         >
           <img
-            src={
-              imageFileUrl ||
-              currentUser.photoURL || 
-              'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'
-            }
-            alt={currentUser.username}
-            className="rounded-full w-full h-full object-cover border-8 border-[lightgray]"
-            
-          />
+  src={imageFileUrl || currentUser.photoURL }
+  alt={currentUser.username}
+  className="rounded-full w-full h-full object-cover border-8 border-[lightgray]"
+  onError={(e) => {
+    e.target.src = '/images/user.png';
+  }}
+/>
+
         </div>
         {/* File Validation Messages */}
         {imageError && <Alert color="failure">{imageError}</Alert>}

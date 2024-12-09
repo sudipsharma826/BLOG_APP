@@ -6,7 +6,7 @@ import { app } from '../fireBaseConfig';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { signInSuccess } from '../redux/user/authSlice';
+import { signInFailure, signInSuccess } from '../redux/user/authSlice';
 
 export const GoogleOuth = () => {
     const navigate = useNavigate();

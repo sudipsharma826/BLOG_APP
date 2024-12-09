@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
-import { signInStart, signInSuccess, signInFailure } from '../redux/user/authSlice';
+import { signInStart, signInSuccess, signInFailure, resetError } from '../redux/user/authSlice'; // Import clearError action
 import { GoogleOuth } from '../components/GoogleOuth';
 
 const SignInPage = () => {
@@ -11,19 +11,23 @@ const SignInPage = () => {
   const dispatch = useDispatch();
   const { loading, error: errorMessage } = useSelector((state) => state.user);
   const { theme } = useSelector((state) => state.theme);
+  const [formData, setFormData] = useState({ email: '', password: '' });
   const [showError, setShowError] = useState(false);
 
-  const [formData, setFormData] = useState({ email: '', password: '' });
+  // Clear the previous error message from redux store
+  useEffect(() => {
+    dispatch(resetError());  
+  }, [dispatch]);
 
-  // Show error for 6 seconds
+  // Show error for 6 seconds after receiving it from Redux
   useEffect(() => {
     if (errorMessage) {
-      setShowError(true);
+      setShowError(true);  
       const timeout = setTimeout(() => {
-        setShowError(false);
-      }, 6000); // Hide error after 6 seconds
+        setShowError(false); 
+      }, 6000);
 
-      return () => clearTimeout(timeout); // Clean up the timeout on unmount
+      return () => clearTimeout(timeout);  // Clean up the timeout when the component unmounts
     }
   }, [errorMessage]);
 
@@ -58,7 +62,7 @@ const SignInPage = () => {
       navigate('/');
 
     } catch (error) {
-      dispatch(signInFailure(error?.response?.data?.message || error.message)); // Dispatch error to Redux
+      dispatch(signInFailure(error.message)); // Dispatch error to Redux
     }
   };
 
@@ -132,7 +136,7 @@ const SignInPage = () => {
             </Link>
           </div>
 
-          {/* Display error message from Redux state */}
+          {/* Display error message from Redux state for 6 seconds */}
           {showError && errorMessage && (
             <Alert className="mt-5" color="failure">
               {errorMessage} {/* Display error message from Redux */}

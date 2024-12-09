@@ -46,10 +46,9 @@ export default function Header() {
                         arrowIcon={false}
                         inline
                         label={
-                          <Avatar alt={currentUser.username} img={currentUser.photoURL || 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'} rounded 
+                          <Avatar alt={currentUser.username} img={currentUser.photoURL } rounded 
                           onError={(e) => {
-                            e.target.onerror = null;
-                            e.target.src = 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png';
+                            e.target.src='/images/user.png'
                           }}/>
                         }
                     >
