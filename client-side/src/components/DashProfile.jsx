@@ -1,9 +1,7 @@
-
-import { Alert, Button, TextInput } from 'flowbite-react';
+import { Alert, Button, Spinner, TextInput } from 'flowbite-react';
 import { useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
-
 
 export default function DashProfile() {
   const ImageFileRef = useRef(null);
@@ -15,6 +13,7 @@ export default function DashProfile() {
   const [imageError, setImageError] = useState(null);
   const [imageUploadReady, setImageUploadReady] = useState(false);
   const [updateError, setUpdateError] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false); // New state for tracking submission
 
   // Initialize form data
   const [formData, setFormData] = useState({
@@ -26,7 +25,7 @@ export default function DashProfile() {
   // Message Timer
   const handleErrorTimeout = (setter, message) => {
     setter(message); // Set the message
-    setTimeout(() => setter(null), 6000); // Clear message after 10 seconds
+    setTimeout(() => setter(null), 60000); 
   };
 
   // Validate file type and size
@@ -53,9 +52,8 @@ export default function DashProfile() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // Reset previous errors
-    setUpdateError(null);
+setIsSubmitting(true);
+setUpdateError(null);
 
     const file = imageFile;
     let uploadedImageUrl = null;
@@ -63,6 +61,7 @@ export default function DashProfile() {
     // Validate and upload image if file exists
     if (file) {
       if (!validateFile(file)) {
+        setIsSubmitting(false); // Reset submitting state in case of validation failure
         return;
       }
 
@@ -82,6 +81,7 @@ export default function DashProfile() {
         setImageError(null);
       } catch (error) {
         handleErrorTimeout(setImageError, 'Image upload failed. Please try again.');
+        setIsSubmitting(false); 
         return;
       }
     }
@@ -98,6 +98,7 @@ export default function DashProfile() {
       });
     } catch (error) {
       handleErrorTimeout(setUpdateError, 'User Profile Failed To Update. Please Try Again.');
+      setIsSubmitting(false);
     }
   };
 
@@ -112,7 +113,7 @@ export default function DashProfile() {
         setImageFile(file); // Save the valid file to state
         setImageFileUrl(URL.createObjectURL(file)); // Generate a preview for the valid image
       } else {
-        // Reset to current user's photoURL if validation fails
+        
         setImageFile(null);
         setImageFileUrl(currentUser.photoURL || null);
       }
@@ -137,14 +138,13 @@ export default function DashProfile() {
           onClick={() => ImageFileRef.current.click()}
         >
           <img
-  src={imageFileUrl || currentUser.photoURL }
-  alt={currentUser.username}
-  className="rounded-full w-full h-full object-cover border-8 border-[lightgray]"
-  onError={(e) => {
-    e.target.src = '/images/user.png';
-  }}
-/>
-
+            src={imageFileUrl || currentUser.photoURL }
+            alt={currentUser.username}
+            className="rounded-full w-full h-full object-cover border-8 border-[lightgray]"
+            onError={(e) => {
+              e.target.src = '/images/user.png';
+            }}
+          />
         </div>
         {/* File Validation Messages */}
         {imageError && <Alert color="failure">{imageError}</Alert>}
@@ -178,14 +178,24 @@ export default function DashProfile() {
           onChange={handleInputChange}
         />
         {/* Submit Button */}
-        <Button type="submit" gradientDuoTone="purpleToBlue" outline>
-          Update
+        <Button
+          type="submit"
+          gradientDuoTone="purpleToBlue"
+          outline
+          disabled={isSubmitting} // Disable button while submitting
+        >
+          {isSubmitting ? (
+            <>
+            <Spinner className="sm" />
+            <span className="pl-3">Loading.... </span>
+          </>
+          ) : "Update"} 
         </Button>
-        {/* Update Error */}
+        
         {updateError && <Alert color="failure">{updateError}</Alert>}
       </form>
 
-      {/* Action Links */}
+      
       <div className="text-red-500 flex justify-between mt-5">
         <span className="cursor-pointer">Delete Account</span>
         <span className="cursor-pointer">Sign Out</span>
