@@ -1,17 +1,18 @@
 import { Alert, Button, Spinner, TextInput } from 'flowbite-react';
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { signInSuccess } from '../redux/user/authSlice';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 export default function DashProfile() {
   const ImageFileRef = useRef(null);
   const { currentUser } = useSelector((state) => state.user);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   // State hooks
   const [imageFile, setImageFile] = useState(null);
-  const [imageFileUrl, setImageFileUrl] = useState(currentUser?.photoURL || null);
   const [formValues, setFormValues] = useState({
     username: currentUser?.username || '',
     email: currentUser?.email || '',
@@ -49,7 +50,6 @@ export default function DashProfile() {
       }
       setImageFile(file);
       handleMessage("File uploaded successfully!", null);
-      setImageFileUrl(URL.createObjectURL(file));
     }
   };
 
@@ -89,11 +89,6 @@ export default function DashProfile() {
     if (imageFile) formData.append('photoURL', imageFile);
 
     try {
-      if (!imageFile && !formValues.password) {
-        handleMessage(null, 'No changes detected');
-        setIsSubmitting(false);
-        return;
-      }
       const response = await axios.put(
         `${import.meta.env.VITE_BACKEND_APP_BASE_URL}/user/update/${currentUser._id}`,
         formData,
@@ -105,6 +100,7 @@ export default function DashProfile() {
         }
       );
       handleMessage('Profile updated successfully!', null);
+      navigate('/dashboard?tab=profile');
       dispatch(signInSuccess(response.data)); // Dispatch success action with updated data
     } catch (error) {
       handleMessage(null, error.response?.data?.message || 'Failed to update profile');
@@ -132,7 +128,7 @@ export default function DashProfile() {
           onClick={() => ImageFileRef.current.click()}
         >
           <img
-            src={imageFileUrl || currentUser?.photoURL} // Check if `currentUser` exists
+            src={imageFile ? URL.createObjectURL(imageFile) : currentUser?.photoURL} // Use uploaded file or current user's photo
             alt={currentUser?.username || 'User'}
             className="rounded-full w-full h-full object-cover border-8 border-[lightgray]"
             onError={(e) => {

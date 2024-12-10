@@ -88,11 +88,24 @@ export const signin = async (req, res, next) => {
     const { password: pass, ...rest } = user._doc;
 
     // Set cookie and send response
+    const DAYS_TO_EXPIRE = 7;
+    const expirationDate = new Date();
+    expirationDate.setDate(expirationDate.getDate() + DAYS_TO_EXPIRE);
+
+    const cookieOptions = {
+      httpOnly: true,
+      expires: expirationDate,
+      path: '/',
+      sameSite: 'lax',
+    };
+
+    if (process.env.NODE_ENV === 'production') {
+      cookieOptions.secure = true;
+    }
+
     res
       .status(200)
-      .cookie('accessToken', token, {
-        httpOnly: true,
-      })
+      .cookie('accessToken', token, cookieOptions)
       .json(rest);
   } catch (err) {
     console.error('Error in signin:', err);
@@ -113,10 +126,24 @@ export const googleouth = async (req, res, next) => {
       const token = jwt.sign({id:user._id, email:user.email}, process.env.JWT_SECRET, {expiresIn: process.env.JWT_EXPIRES_IN});
       const updatedUser = await User.findOne({email});
       const {password, ...rest} = updatedUser._doc;
+
+      const DAYS_TO_EXPIRE = 7;
+      const expirationDate = new Date();
+      expirationDate.setDate(expirationDate.getDate() + DAYS_TO_EXPIRE);
+
+      const cookieOptions = {
+        httpOnly: true,
+        expires: expirationDate,
+        path: '/',
+        sameSite: 'lax',
+      };
+
+      if (process.env.NODE_ENV === 'production') {
+        cookieOptions.secure = true;
+      }
+
       res.status(200)
-        .cookie("accessToken", token, {
-          httpOnly: true
-        })
+        .cookie("accessToken", token, cookieOptions)
         .json(rest);
     } else {
       const generatedPassword = Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8);
@@ -130,10 +157,24 @@ export const googleouth = async (req, res, next) => {
       await newUser.save();
       const token = jwt.sign({id:newUser._id, email:newUser.email}, process.env.JWT_SECRET, {expiresIn: process.env.JWT_EXPIRES_IN});
       const {password, ...rest} = newUser._doc;
+
+      const DAYS_TO_EXPIRE = 7;
+      const expirationDate = new Date();
+      expirationDate.setDate(expirationDate.getDate() + DAYS_TO_EXPIRE);
+
+      const cookieOptions = {
+        httpOnly: true,
+        expires: expirationDate,
+        path: '/',
+        sameSite: 'lax',
+      };
+
+      if (process.env.NODE_ENV === 'production') {
+        cookieOptions.secure = true;
+      }
+
       res.status(200)
-        .cookie("accessToken", token, {
-          httpOnly: true
-        })
+        .cookie("accessToken", token, cookieOptions)
         .json(rest);
     }
   } catch(error) {
