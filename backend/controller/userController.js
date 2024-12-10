@@ -80,13 +80,34 @@ export const deleteUser = async (req, res, next) => {
   if (req.user.id !== req.params.userId) {
     return next(errorHandler(403, 'You are not allowed to delete this user'));
   }
+
   try {
+    // Fetch the user from the database
+    const user = await User.findById(req.params.userId);
+    if (!user) {
+      return next(errorHandler(404, 'User not found'));
+    }
+
+    // Extract the public_id from the Cloudinary URL
+    const imageUrl = user.photoURL; // Ensure 'photoURL' exists in the user schema
+    if (imageUrl) {
+      const urlParts = imageUrl.split('/');
+      const publicIdWithExtension = urlParts[urlParts.length - 1];
+      const publicId = `blog_app_users/${publicIdWithExtension.split('.')[0]}`; // Adjust the folder name as necessary
+
+      // Delete the image from Cloudinary
+      await deleteFromCloudinary(publicId);
+    }
+
+    // Delete the user from the database
     await User.findByIdAndDelete(req.params.userId);
-    res.status(200).json('User has been deleted');
+
+    res.status(200).json('User and associated profile image have been deleted');
   } catch (error) {
     next(error);
   }
 };
+
 
 //SignOut
 export const signout = (req, res, next) => {
