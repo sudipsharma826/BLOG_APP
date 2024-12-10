@@ -1,7 +1,7 @@
 import { Alert, Button, Spinner, TextInput, Modal, ModalBody } from 'flowbite-react';
 import { useRef, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { signInSuccess, deleteUserStart, deleteUserSuccess, deleteUserFailure } from '../redux/user/authSlice';
+import { signInSuccess, deleteUserStart, deleteUserSuccess, deleteUserFailure ,signoutSuccess} from '../redux/user/authSlice';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { HiOutlineExclamationCircle } from 'react-icons/hi'; // Import for the modal icon
@@ -132,6 +132,27 @@ export default function DashProfile() {
     setShowModal(false); // Close modal after deletion
   };
 
+  // Signout
+  const handleSignout = async () => {
+    if (!currentUser) return; 
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_BACKEND_APP_BASE_URL}/user/signout/${currentUser._id}`, 
+        {},
+        {
+          withCredentials: true,
+        }
+      );
+      if (response.status === 200) {
+        dispatch(signoutSuccess());
+      } else {
+        console.log(response.data);
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
   
 
   return (
@@ -219,7 +240,7 @@ export default function DashProfile() {
       {/* Action links */}
       <div className="text-red-500 flex justify-between mt-5">
         <span onClick={() => setShowModal(true)} className="cursor-pointer">Delete Account</span>
-        <span  className="cursor-pointer">Sign Out</span>
+        <span onClick={handleSignout} className="cursor-pointer">Sign Out</span>
       </div>
 
       {/* Delete Confirmation Modal */}
