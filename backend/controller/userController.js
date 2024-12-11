@@ -102,7 +102,10 @@ export const deleteUser = async (req, res, next) => {
     // Delete the user from the database
     await User.findByIdAndDelete(req.params.userId);
 
-    res.status(200).json('User and associated profile image have been deleted');
+    res.
+    clearCookie('accessToken')
+    .status(200).
+    json('User and associated profile image have been deleted');
   } catch (error) {
     next(error);
   }
@@ -115,11 +118,14 @@ export const signout = (req, res, next) => {
     return next(errorHandler(403, 'UnAuthorized'));
   }
   try {
+  
     res
-      .clearCookie('access_token')
+      .clearCookie('accessToken')
       .status(200)
       .json('User has been signed out');
+      
   } catch (error) {
     next(error);
   }
+ 
 };

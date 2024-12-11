@@ -15,7 +15,7 @@ export default function Header() {
     
     // Signout
     const handleSignout = async () => {
-      if (!currentUser) return; // Make sure currentUser is not null or undefined
+      if (!currentUser) return; 
       try {
         const response = await axios.post(
           `${import.meta.env.VITE_BACKEND_APP_BASE_URL}/user/signout/${currentUser._id}`, 

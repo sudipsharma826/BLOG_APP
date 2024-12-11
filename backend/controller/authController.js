@@ -113,20 +113,35 @@ export const signin = async (req, res, next) => {
   }
 };
 
-//Google Outh
+
 export const googleouth = async (req, res, next) => {
   const { email, displayName, photoURL } = req.body;
-  try {
-    const user = await User.findOne({email});
-    if(user){
-      // Update the user's photoURL if it has changed
-      if (photoURL && user.photoURL !== photoURL) {
-        await User.findOneAndUpdate({ email }, { photoURL });
-      }
-      const token = jwt.sign({id:user._id, email:user.email}, process.env.JWT_SECRET, {expiresIn: process.env.JWT_EXPIRES_IN});
-      const updatedUser = await User.findOne({email});
-      const {password, ...rest} = updatedUser._doc;
 
+  try {
+    // Find the user by email
+    const user = await User.findOne({ email });
+
+    if (user) {
+      // Check if the user already has a photoURL in the database
+      if (!user.photoURL || user.photoURL.trim() === '') {
+        // Only update photoURL if it is not already set
+        if (photoURL) {
+          await User.findOneAndUpdate({ email }, { photoURL });
+        }
+      }
+
+      // Generate JWT token
+      const token = jwt.sign(
+        { id: user._id, email: user.email },
+        process.env.JWT_SECRET,
+        { expiresIn: process.env.JWT_EXPIRES_IN }
+      );
+
+      // Fetch the updated user
+      const updatedUser = await User.findOne({ email });
+      const { password, ...rest } = updatedUser._doc;
+
+      // Set the cookie
       const DAYS_TO_EXPIRE = 7;
       const expirationDate = new Date();
       expirationDate.setDate(expirationDate.getDate() + DAYS_TO_EXPIRE);
@@ -142,22 +157,39 @@ export const googleouth = async (req, res, next) => {
         cookieOptions.secure = true;
       }
 
-      res.status(200)
-        .cookie("accessToken", token, cookieOptions)
+      // Send response
+      res
+        .status(200)
+        .cookie('accessToken', token, cookieOptions)
         .json(rest);
     } else {
-      const generatedPassword = Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8);
+      // If user does not exist, create a new user
+      const generatedPassword =
+        Math.random().toString(36).slice(-8) +
+        Math.random().toString(36).slice(-8);
       const hashedPassword = await bcrypt.hash(generatedPassword, 10);
+
       const newUser = new User({
-        username: displayName.toLowerCase().split(' ').join('') + Math.random().toString(9).slice(-4),
+        username:
+          displayName.toLowerCase().split(' ').join('') +
+          Math.random().toString(9).slice(-4),
         email,
         password: hashedPassword,
         photoURL: photoURL || 'https://icons8.com/icon/21441/user',
       });
-      await newUser.save();
-      const token = jwt.sign({id:newUser._id, email:newUser.email}, process.env.JWT_SECRET, {expiresIn: process.env.JWT_EXPIRES_IN});
-      const {password, ...rest} = newUser._doc;
 
+      await newUser.save();
+
+      // Generate JWT token
+      const token = jwt.sign(
+        { id: newUser._id, email: newUser.email },
+        process.env.JWT_SECRET,
+        { expiresIn: process.env.JWT_EXPIRES_IN }
+      );
+
+      const { password, ...rest } = newUser._doc;
+
+      // Set the cookie
       const DAYS_TO_EXPIRE = 7;
       const expirationDate = new Date();
       expirationDate.setDate(expirationDate.getDate() + DAYS_TO_EXPIRE);
@@ -173,12 +205,16 @@ export const googleouth = async (req, res, next) => {
         cookieOptions.secure = true;
       }
 
-      res.status(200)
-        .cookie("accessToken", token, cookieOptions)
+      // Send response
+      res
+        .status(200)
+        .cookie('accessToken', token, cookieOptions)
         .json(rest);
     }
-  } catch(error) {
-    console.log("Error in googleouth", error);
+  } catch (error) {
+    console.log('Error in googleouth:', error);
     next(errorHandler(500, 'Internal Server Error'));
   }
 };
+
+
