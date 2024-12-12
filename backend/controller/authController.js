@@ -176,13 +176,14 @@ export const googleouth = async (req, res, next) => {
         email,
         password: hashedPassword,
         photoURL: photoURL || 'https://icons8.com/icon/21441/user',
+        isAdmin: false,
       });
 
       await newUser.save();
 
       // Generate JWT token
       const token = jwt.sign(
-        { id: newUser._id, email: newUser.email , isAdmin: newser.isAdmin },
+        { id: newUser._id, email: newUser.email , isAdmin: newUser.isAdmin },
         process.env.JWT_SECRET,
         { expiresIn: process.env.JWT_EXPIRES_IN }
       );
