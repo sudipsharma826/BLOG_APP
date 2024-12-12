@@ -1,3 +1,11 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* For the React Qill */
+body {
+    height: 100vh;
+  }
+  .ql-editor {
+    font-size: 1.05rem;
+  }

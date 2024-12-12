@@ -5,7 +5,7 @@ import { signInSuccess, deleteUserStart, deleteUserSuccess, deleteUserFailure ,s
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { HiOutlineExclamationCircle } from 'react-icons/hi'; // Import for the modal icon
-
+import { Link } from 'react-router-dom';
 export default function DashProfile() {
   const ImageFileRef = useRef(null);
   const { currentUser } = useSelector((state) => state.user);
@@ -231,6 +231,17 @@ export default function DashProfile() {
             "Update"
           )}
         </Button>
+        {currentUser.isAdmin && (
+          <Link to={'/create-post'}>
+            <Button
+              type='button'
+              gradientDuoTone='purpleToPink'
+              className='w-full'
+            >
+              Create a post
+            </Button>
+          </Link>
+        )}
 
         {/* Success/Error messages */}
         {updateSuccess && <Alert color="success">{updateSuccess}</Alert>}

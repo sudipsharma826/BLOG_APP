@@ -182,7 +182,7 @@ export const googleouth = async (req, res, next) => {
 
       // Generate JWT token
       const token = jwt.sign(
-        { id: newUser._id, email: newUser.email , isAdmin: user.isAdmin },
+        { id: newUser._id, email: newUser.email , isAdmin: newser.isAdmin },
         process.env.JWT_SECRET,
         { expiresIn: process.env.JWT_EXPIRES_IN }
       );
