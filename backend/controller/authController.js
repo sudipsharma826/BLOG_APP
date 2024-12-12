@@ -79,7 +79,7 @@ export const signin = async (req, res, next) => {
 
     // Generate JWT token
     const token = jwt.sign(
-      { id: user._id, email: user.email },
+      { id: user._id, email: user.email , isAdmin: user.isAdmin},
       process.env.JWT_SECRET,
       { expiresIn: process.env.JWT_EXPIRES_IN },
     );
@@ -132,7 +132,7 @@ export const googleouth = async (req, res, next) => {
 
       // Generate JWT token
       const token = jwt.sign(
-        { id: user._id, email: user.email },
+        { id: user._id, email: user.email, isAdmin: user.isAdmin },
         process.env.JWT_SECRET,
         { expiresIn: process.env.JWT_EXPIRES_IN }
       );
@@ -182,7 +182,7 @@ export const googleouth = async (req, res, next) => {
 
       // Generate JWT token
       const token = jwt.sign(
-        { id: newUser._id, email: newUser.email },
+        { id: newUser._id, email: newUser.email , isAdmin: user.isAdmin },
         process.env.JWT_SECRET,
         { expiresIn: process.env.JWT_EXPIRES_IN }
       );
