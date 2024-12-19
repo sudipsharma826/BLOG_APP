@@ -1,15 +1,20 @@
 import jwt from 'jsonwebtoken';
 import { errorHandler } from './errorHandler.js';
+
 export const verifyToken = (req, res, next) => {
-  const token = req.cookies.accessToken; // Acess the token from the cookie that we set the token name in the controller in signin
+  const token = req.cookies.accessToken;
+
+
   if (!token) {
-    return next(errorHandler(401, 'Unauthorized'));
+    return next(errorHandler(401, 'Unauthorized: No token provided'));
   }
+
   jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
     if (err) {
-      return next(errorHandler(401, 'Unauthorized'));
+      return next(errorHandler(401, 'Unauthorized: Invalid token'));
     }
-    req.user = user; // Set the user object in the request (in whole system it can be acessed)
+
+    req.user = user;
     next();
   });
 };

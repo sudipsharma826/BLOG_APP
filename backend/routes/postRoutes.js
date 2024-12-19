@@ -1,6 +1,11 @@
-import express from 'express';
-import { verifyToken } from '../middleware/verifyToken.js';
-import { createPost } from '../controller/postController.js';
+import express from "express";
 const router = express.Router();
-router.post('/create', verifyToken, createPost)
+import { verifyToken } from '../middleware/verifyToken.js';
+import { upload } from '../middleware/uploadMiddleware.js';
+import { createPost, getCategories } from "../controller/postController.js";
+
+//Routes
+router.route("/createpost").post(verifyToken,upload.single('image'),createPost);
+router.route("/getCategories").get(getCategories);
+
 export default router;
