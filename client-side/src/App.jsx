@@ -11,6 +11,7 @@ import NotFound from './pages/NotFound';
 import OnlyAdminPrivateRoute from './components/OnlyAdminPrivateRoute';
 import CreatePost from './pages/CreatePost';
 import HomeRoutes from './components/HomeRoutes';
+import UpdatePost from './pages/UpdatePost';
 
 
 const App = () => {
@@ -20,10 +21,10 @@ const App = () => {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<Home />} />
+        <Route path="/signin"  element={< SignInPage/>}/>
         <Route path="/projects"  />
         <Route element={<HomeRoutes />}> 
         <Route path="/signup"  element={<SignUpPage />}/>
-        <Route path="/signin"  element={< SignInPage/>}/>
         </Route>
         <Route element={<PrivateRoute  />}>
         <Route path="/dashboard" element={<DashBoard />} />
@@ -31,6 +32,7 @@ const App = () => {
         <Route path="*" element={<NotFound />} />
         <Route element={<OnlyAdminPrivateRoute />}>
           <Route path='/create-post' element={<CreatePost />} />
+        <Route path="/updatepost/:slug" element={<UpdatePost />} />
         </Route>
       </Routes>
       <Footer />

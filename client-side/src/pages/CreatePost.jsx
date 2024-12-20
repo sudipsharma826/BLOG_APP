@@ -60,7 +60,7 @@ export default function CreatePost() {
     if (!newCategory) return;
     const newCategoryObj = { id: Date.now(), name: newCategory };
     setCategories((prev) => [newCategoryObj, ...prev]);
-    handleInput('category', newCategoryObj.name);  // Save name of new category instead of ID
+    handleInput('category', newCategoryObj.name);  
     setNewCategory('');
     showMessage('Category added successfully', 'success');
   };
@@ -110,86 +110,102 @@ export default function CreatePost() {
 
   return (
     <div className="p-3 max-w-3xl mx-auto min-h-screen">
-      <h1 className="text-center text-3xl my-7 font-semibold">Create a Post</h1>
-      <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
-        <TextInput
-          type="text"
-          placeholder="Title"
-          required
-          id="title"
-          className="flex-1"
-          onChange={(e) => handleInput('title', e.target.value)}
-        />
-        <TextInput
-          type="text"
-          placeholder="Subtitle"
-          required
-          id="subtitle"
-          className="flex-1"
-          onChange={(e) => handleInput('subtitle', e.target.value)}
-        />
-        <div className="flex flex-col gap-4 sm:flex-row justify-between">
-          <Select
-            onChange={handleCategorySelect}
-            value={formData.category || ''}
-          >
-            <option value="" disabled>
-              Select a category
+    <h1 className="text-center text-3xl my-7 font-semibold">Create a Post</h1>
+    <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
+      <TextInput
+        type="text"
+        placeholder="Title"
+        required
+        id="title"
+        className="flex-1 placeholder:text-gray-400"
+        onChange={(e) => handleInput('title', e.target.value)}
+      />
+      <TextInput
+        type="text"
+        placeholder="Subtitle"
+        required
+        id="subtitle"
+        className="flex-1 placeholder:text-gray-400"
+        onChange={(e) => handleInput('subtitle', e.target.value)}
+      />
+      <div className="flex flex-col gap-4 sm:flex-row justify-between">
+        <Select
+          onChange={handleCategorySelect}
+          className="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring focus:ring-teal-500"
+          aria-label="Select category"
+        >
+          <option value="" disabled selected>
+            Select a category
+          </option>
+          {categories.map((cat) => (
+            <option key={cat.id} value={cat.id}>
+              {cat.name}
             </option>
-            {categories.map((cat) => (
-              <option key={cat.id} value={cat.id}>
-                {cat.name} {/* Display category name */}
-              </option>
-            ))}
-          </Select>
-          <div className="flex items-center gap-2">
-            <TextInput
-              type="text"
-              placeholder="Add new category"
-              value={newCategory}
-              onChange={(e) => setNewCategory(e.target.value)}
-            />
-            <Button type="button" onClick={handleAddCategory}>
-              Add
-            </Button>
-          </div>
-        </div>
-        <div className="flex gap-4 items-center justify-between border-4 border-teal-500 border-dotted p-3">
-          <FileInput
-            type="file"
-            accept="image/*"
-            onChange={handleFileChange}
-            name="image" // Ensures name matches backend expectation
+          ))}
+        </Select>
+        <div className="flex items-center gap-2">
+          <TextInput
+            type="text"
+            placeholder="Add new category"
+            value={newCategory}
+            onChange={(e) => setNewCategory(e.target.value)}
           />
+          <Button type="button" onClick={handleAddCategory}>
+          + Add
+          </Button>
         </div>
-        {previewImage && <img src={previewImage} alt="Preview" className="h-auto w-auto" />}
-
-        <ReactQuill
-          theme="snow"
-          placeholder="Write something..."
-          className="h-72 mb-12"
-          required
-          modules={{
-            toolbar: [
-              [{ header: [1, 2, false] }],
-              ['bold', 'italic', 'underline', 'strike'],
-              [{ color: [] }, { background: [] }],
-              [{ list: 'ordered' }, { list: 'bullet' }],
-              ['blockquote', 'code-block'],
-              ['link', 'image'],
-            ],
-          }}
-          onChange={(value) => handleInput('content', value)}
+      </div>
+      <div className="flex gap-4 items-center justify-between border-4 border-teal-500 border-dotted p-3">
+        <FileInput
+          type="file"
+          accept="image/*"
+          onChange={handleFileChange}
+          name="image"
+          aria-label="Upload image"
+          className="cursor-pointer p-2 rounded-md border border-gray-300 hover:bg-gray-100"
         />
-        <Button type="submit" gradientDuoTone="purpleToPink">
-          Publish
-        </Button>
-        {handleMessage.message && (
-          <Alert className="mt-5" color={handleMessage.type === 'success' ? 'success' : 'failure'}>
-            {handleMessage.message}
-          </Alert>
-        )}
-      </form>
-    </div>
+      </div>
+      {previewImage && (
+        <img
+          src={previewImage}
+          alt="Preview"
+          className="h-auto w-auto max-w-full rounded-lg shadow-md"
+        />
+      )}
+      <ReactQuill
+        theme="snow"
+        placeholder="Write something..."
+        className="h-72 mb-12"
+        required
+        modules={{
+          toolbar: [
+            [{ header: [1, 2, false] }],
+            ['bold', 'italic', 'underline', 'strike'],
+            [{ color: [] }, { background: [] }],
+            [{ list: 'ordered' }, { list: 'bullet' }],
+            ['blockquote', 'code-block'],
+            ['link', 'image'],
+          ],
+        }}
+        onChange={(value) => handleInput('content', value)}
+      />
+      <Button
+        type="submit"
+        gradientDuoTone="purpleToPink"
+        className="hover:scale-105 transition-transform"
+      >
+        Publish
+      </Button>
+      {handleMessage.message && (
+        <Alert
+          className="mt-5 flex items-center gap-2"
+          color={handleMessage.type === 'success' ? 'success' : 'failure'}
+        >
+        
+          {handleMessage.message}
+        </Alert>
+      )}
+    </form>
+  </div>
   );
 }
