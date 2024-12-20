@@ -126,6 +126,14 @@ export default function DashPosts() {
           </div>
         </Modal.Body>
       </Modal>
+
+      {/* Floating Add Post Button */}
+      <Link
+        to="/create-post"
+        className="fixed bottom-10 right-10 w-16 h-16 bg-blue-500 text-white rounded-full flex items-center justify-center shadow-lg hover:bg-blue-600 transition-colors"
+      >
+        <span className="text-3xl font-bold">+</span>
+      </Link>
     </div>
   );
 }

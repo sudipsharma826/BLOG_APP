@@ -134,7 +134,7 @@ export default function CreatePost() {
           className="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring focus:ring-teal-500"
           aria-label="Select category"
         >
-          <option value="" disabled selected>
+          <option value="" disabled >
             Select a category
           </option>
           {categories.map((cat) => (

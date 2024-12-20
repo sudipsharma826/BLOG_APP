@@ -77,7 +77,7 @@ export const updateUser = async (req, res, next) => {
 
 //Deleted User
 export const deleteUser = async (req, res, next) => {
-  if (req.user.id !== req.params.userId) {
+  if (!req.user.isAdmin) {
     return next(errorHandler(403, 'You are not allowed to delete this user'));
   }
 
@@ -132,9 +132,9 @@ export const signout = (req, res, next) => {
 
 
 //Get All User
-export const getUser = async (req, res, next) => {
+export const getUsers = async (req, res, next) => {
   if(!req.user.isAdmin){
-    return next(errorHandler(403, 'UnAuthorized'));
+    return next(errorHandler(403, 'You are not allowed to view all users'));
   }
   try{
     const startIndex = parseInt(req.query.startIndex) || 0;

@@ -6,6 +6,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { toggleTheme } from '../redux/theme/themeSlice';
 import { signoutSuccess } from '../redux/user/authSlice';
 import axios from 'axios';
+import { current } from '@reduxjs/toolkit';
 
 export default function Header() {
     const path = useLocation().pathname;
@@ -82,16 +83,17 @@ export default function Header() {
                             <span className='block text-sm font-medium truncate'>{currentUser.email}</span>
                         </Dropdown.Header>
                         <Dropdown.Divider />
-                        
+                        {currentUser.isAdmin && (
                         <Link to='/dashboard'>
                             <Dropdown.Item>Dashboard</Dropdown.Item>
-                        </Link>
+                        </Link>)
+                          }
                         <Link to='/dashboard?tab=profile'>
                             <Dropdown.Item>Profile</Dropdown.Item>
                         </Link>
                     
                         
-                            {/* <Dropdown.Item onClick={handleSignout}>SignOut</Dropdown.Item> */}
+                            <Dropdown.Item onClick={handleSignout}>SignOut</Dropdown.Item>
                         
                     </Dropdown>
                 ) : (

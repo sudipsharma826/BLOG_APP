@@ -1,17 +1,16 @@
 import { Sidebar } from 'flowbite-react';
-import { HiUser, HiArrowSmRight, HiDocumentText } from 'react-icons/hi';
+import { HiUser, HiArrowSmRight, HiDocumentText, HiOutlineUserGroup } from 'react-icons/hi';
 import { useEffect, useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';  // Add useNavigate for redirection
 import { useSelector, useDispatch } from 'react-redux';
 import axios from 'axios';
 import { signoutSuccess } from '../redux/user/authSlice';
 
 export default function DashSidebar() {
   const location = useLocation();
+  const navigate = useNavigate();  // Use navigate for redirection after signout
   const [tab, setTab] = useState('');
   const { currentUser } = useSelector((state) => state.user);
-  // Deleted Model Local State
-  const [showModal, setShowModal] = useState(false); 
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -24,21 +23,28 @@ export default function DashSidebar() {
 
   const handleSignout = async () => {
     if (!currentUser) return;
+
     try {
       const response = await axios.post(
         `${import.meta.env.VITE_BACKEND_APP_BASE_URL}/user/signout/${currentUser._id}`,
         {},
         {
-          withCredentials: true,
+          withCredentials: true, // Ensure credentials are sent (cookies)
         }
       );
+
       if (response.status === 200) {
+        // Dispatch signout action to clear user data in Redux store
         dispatch(signoutSuccess());
+
+        // Redirect to the home page or login page after signout
+        navigate('/login');  // Adjust the path as needed (e.g., '/login' or '/')
+        console.log('Successfully signed out');
       } else {
-        console.log(response.data);
+        console.error('Signout failed:', response.data);
       }
     } catch (error) {
-      console.log(error.message);
+      console.error('Error signing out:', error.message);
     }
   };
 
@@ -64,6 +70,17 @@ export default function DashSidebar() {
             >
               <Link to={`/dashboard?tab=posts`}>Posts</Link>
             </Sidebar.Item>
+          )}
+          {currentUser.isAdmin && (
+            <Link to='/dashboard?tab=users'>
+              <Sidebar.Item
+                active={tab === 'users'}
+                icon={HiOutlineUserGroup}
+                as='div'
+              >
+                Users
+              </Sidebar.Item>
+            </Link>
           )}
           <Sidebar.Item icon={HiArrowSmRight} className='cursor-pointer' onClick={handleSignout}>
             Sign Out

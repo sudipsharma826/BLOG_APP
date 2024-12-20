@@ -5,6 +5,7 @@ export const verifyToken = (req, res, next) => {
   const token = req.cookies.accessToken;
 
 
+
   if (!token) {
     return next(errorHandler(401, 'Unauthorized: No token provided'));
   }
