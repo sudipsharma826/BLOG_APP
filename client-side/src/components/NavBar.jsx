@@ -77,14 +77,19 @@ export default function Header() {
                         }
                     >
                         <Dropdown.Header>
+                          <p>🙏{currentUser.username}</p>
                             <span className='block text-sm'>{currentUser.displayName}</span>
                             <span className='block text-sm font-medium truncate'>{currentUser.email}</span>
                         </Dropdown.Header>
                         <Dropdown.Divider />
                         
+                        <Link to='/dashboard'>
+                            <Dropdown.Item>Dashboard</Dropdown.Item>
+                        </Link>
                         <Link to='/dashboard?tab=profile'>
                             <Dropdown.Item>Profile</Dropdown.Item>
                         </Link>
+                    
                         
                             {/* <Dropdown.Item onClick={handleSignout}>SignOut</Dropdown.Item> */}
                         
