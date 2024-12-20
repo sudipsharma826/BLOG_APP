@@ -86,7 +86,7 @@ export default function Header() {
                             <Dropdown.Item>Profile</Dropdown.Item>
                         </Link>
                         
-                            <Dropdown.Item onClick={handleSignout}>SignOut</Dropdown.Item>
+                            {/* <Dropdown.Item onClick={handleSignout}>SignOut</Dropdown.Item> */}
                         
                     </Dropdown>
                 ) : (

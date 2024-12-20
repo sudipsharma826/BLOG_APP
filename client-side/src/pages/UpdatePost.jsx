@@ -112,8 +112,8 @@ export default function UpdatePost() {
   };
 
   return (
-    <div className="p-8 max-w-4xl mx-auto min-h-screen bg-gradient-to-r from-blue-50 via-white to-purple-50 shadow-xl rounded-xl">
-      <h1 className="text-center text-4xl font-bold text-gray-800 mb-10 underline decoration-teal-400">Update Post</h1>
+    <div className="p-8 max-w-4xl mx-auto min-h-screen bg-gradient-to-r from-blue-50 via-white to-purple-50 shadow-xl rounded-xl  dark:bg-gray-700">
+      <h1 className="text-center text-4xl font-bold text-gray-800 mb-10 underline decoration-teal-400  dark:text-gray-500">Update Post</h1>
       <form className="space-y-4" onSubmit={handleSubmit}>
         <TextInput
           type="text"
@@ -122,7 +122,7 @@ export default function UpdatePost() {
           value={formData.title || ''}
           onChange={(e) => handleInput('title', e.target.value)}
         />
-        <span className="font-bold">Title</span>
+        <span className="font-bold  dark:text-gray-500">Title</span>
         <TextInput
           type="text"
           placeholder="Subtitle"
@@ -130,7 +130,7 @@ export default function UpdatePost() {
           value={formData.subtitle || ''}
           onChange={(e) => handleInput('subtitle', e.target.value)}
         />
-        <span className="font-bold">Sub-Title</span>
+        <span className="font-bold dark:text-gray-500">Sub-Title</span>
         <p className="text-sm text-gray-600">
           Current Category: <span className="font-medium text-teal-500">{formData.category}</span>
         </p>
@@ -150,7 +150,7 @@ export default function UpdatePost() {
         </div>
         {previewImage && (
           <div className="flex justify-center mb-6">
-            <img src={previewImage} alt="Preview of the selected image" />
+            <img src={previewImage} alt={formData.title} />
           </div>
         )}
         <ReactQuill

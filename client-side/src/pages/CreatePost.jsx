@@ -166,11 +166,13 @@ export default function CreatePost() {
         />
       </div>
       {previewImage && (
+        <div className="flex justify-center mb-6">
         <img
           src={previewImage}
-          alt="Preview"
-          className="h-auto w-auto max-w-full rounded-lg shadow-md"
+          alt={formData.title}
+          
         />
+        </div>
       )}
       <ReactQuill
         theme="snow"

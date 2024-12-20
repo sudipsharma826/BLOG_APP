@@ -64,18 +64,6 @@ export const getCategories = async (req, res) => {
     }
 };
 
-//Get all posts
-export const getPosts = async (req, res) => {
-    try {
-        const posts = await Post.find().sort({ createdAt: -1 }); // Fetch posts that latest first
-        res.status(200).json({ posts });
-    } catch (error) {
-        console.error('Error fetching posts:', error.message);
-        res.status(500).json({ error: 'Failed to fetch posts' });
-    }
-};
-
-
 // Get a single post by slug
 export const getPostBySlug = async (req, res) => {
     const slug = req.params.slug;
@@ -145,6 +133,8 @@ export const updatePost = async (req, res) => {
       post.category = category;
       post.content = content;
       post.image = image;
+      post.updatedAt = new Date();
+      post.userId = req.user.id;
   
       await post.save();
   
@@ -153,7 +143,7 @@ export const updatePost = async (req, res) => {
         const existingOldCategory = await Category.findOne({ name: oldCategory });
         if (existingOldCategory) {
           existingOldCategory.postCount -= 1;
-          if (existingOldCategory.postCount <= 0) await existingOldCategory.remove();
+          if (existingOldCategory.postCount <= 0) await existingOldCategory.deleteOne();
           else await existingOldCategory.save();
         }
       }
@@ -198,16 +188,63 @@ export const updatePost = async (req, res) => {
       const existingCategory = await Category.findOne({ name: post.category });
       if (existingCategory) {
         existingCategory.postCount -= 1;
-        if (existingCategory.postCount <= 0) await existingCategory.remove();
-        else await existingCategory.save();
+        if (existingCategory.postCount <= 0) {
+          await existingCategory.deleteOne();
+        } else {
+          await existingCategory.save();
+        }
       }
   
-      await post.remove();
+      // Delete the post
+      await Post.deleteOne({ slug });
   
       res.status(200).json({ message: 'Post deleted successfully' });
     } catch (error) {
       console.error('Error deleting post:', error.message);
       res.status(500).json({ error: 'Failed to delete post' });
     }
+  };
+
+// Get all posts with  filters
+export const getposts = async (req, res, next) => {
+  try {
+    const startIndex = parseInt(req.query.startIndex) || 0;
+    const limit = parseInt(req.query.limit) || 9;
+    const sortDirection = req.query.order === 'asc' ? 1 : -1;
+    const posts = await Post.find({
+      ...(req.query.userId && { userId: req.query.userId }),
+      ...(req.query.category && { category: req.query.category }),
+      ...(req.query.slug && { category: req.query.slug }),
+      ...(req.query.postId && { _id: req.query.postId }),
+      ...(req.query.searchTerm && {
+        $or: [
+          { title: { $regex: req.query.searchTerm, $options: 'i' } },
+          { content: { $regex: req.query.searchTerm, $options: 'i' } },
+        ],
+      }),
+    })
+      .sort({ updatedAt: sortDirection })
+      .skip(startIndex)
+      .limit(limit);
+    const totalPosts = await Post.countDocuments();
+    const now = new Date();
+    const oneMonthAgo = new Date(
+      now.getFullYear(),
+      now.getMonth() - 1,
+      now.getDate()
+    );
+    const lastMonthPosts = await Post.countDocuments({
+      createdAt: { $gte: oneMonthAgo },
+    });
+    res.status(200).json({
+      posts,
+      totalPosts,
+      lastMonthPosts,
+    });
+  } catch (error) {
+    next(error);
   }
+};
+
+
   
