@@ -1,5 +1,5 @@
 import express from 'express';
-import { deleteUser, getUsers, signout, updateUser } from '../controller/userController.js';
+import { deleteUser, getUserByEmail, getUsers, signout, updateUser } from '../controller/userController.js';
 import { verifyToken } from '../middleware/verifyToken.js';
 import { upload } from '../middleware/uploadMiddleware.js';
 
@@ -10,5 +10,8 @@ router.route('/update/:userId').put(verifyToken, upload.single('photoURL'), upda
 router.route('/delete/:userId').delete(verifyToken, deleteUser);
 router.route('/signout/:userId').post(verifyToken, signout);
 router.route('/getusers').get(verifyToken, getUsers);
+router.route('/getuser/:email').get(verifyToken, getUserByEmail);
+
+
 
 export default router;

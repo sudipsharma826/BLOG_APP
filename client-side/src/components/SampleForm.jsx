@@ -20,7 +20,16 @@ const SampleForm = () => {
 
     try {
       // Make a POST request to the backend to save the user data
-      const response = await axios.post('http://localhost:3000/signup', userData);
+      const response = await axios.post('http://localhost:3000/signup', 
+        userData, // The body of the request
+        {
+          headers: {
+            Authorization: `Bearer ${currentUser.currentToken}`,
+          },
+          withCredentials: true, // This should be part of the config object
+        }
+      );
+      
       
       // If successful, show a success message
       if(response.status === 201){

@@ -1,11 +1,12 @@
 import { Alert, Button, Spinner, TextInput, Modal, ModalBody } from 'flowbite-react';
 import { useRef, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { signInSuccess, deleteUserStart, deleteUserSuccess, deleteUserFailure ,signoutSuccess} from '../redux/user/authSlice';
+import { signInSuccess, deleteUserStart, deleteUserSuccess, deleteUserFailure, signoutSuccess } from '../redux/user/authSlice';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { HiOutlineExclamationCircle } from 'react-icons/hi'; // Import for the modal icon
 import { Link } from 'react-router-dom';
+
 export default function DashProfile() {
   const ImageFileRef = useRef(null);
   const { currentUser } = useSelector((state) => state.user);
@@ -98,11 +99,13 @@ export default function DashProfile() {
           withCredentials: true,
           headers: {
             'Content-Type': 'multipart/form-data',
+            Authorization: `Bearer ${currentUser.currentToken}`,
           },
         }
       );
       handleMessage('Profile updated successfully!', null);
-      navigate('/dashboard?tab=profile');
+      setFormValues({ ...formValues, password: '' }); // Clear password field after successful update
+      setImageFile(null); // Reset image if successfully updated
       dispatch(signInSuccess(response.data)); // Dispatch success action with updated data
     } catch (error) {
       handleMessage(null, error.response?.data?.message || 'Failed to update profile');
@@ -118,7 +121,8 @@ export default function DashProfile() {
       dispatch(deleteUserStart());
       const response = await axios.delete(
         `${import.meta.env.VITE_BACKEND_APP_BASE_URL}/user/delete/${currentUser._id}`,
-        { withCredentials: true }
+        { withCredentials: true },
+        {headers: { 'Authorization': `Bearer ${currentUser.token}` }}
       );
       if (response.status === 200) {
         dispatch(deleteUserSuccess(response.data));
@@ -134,11 +138,11 @@ export default function DashProfile() {
 
   // Signout
   const handleSignout = async () => {
-    if (!currentUser) return; 
+    if (!currentUser) return;
     try {
       const response = await axios.post(
-        `${import.meta.env.VITE_BACKEND_APP_BASE_URL}/user/signout/${currentUser._id}`, 
-        {},
+        `${import.meta.env.VITE_BACKEND_APP_BASE_URL}/user/signout/${currentUser._id}`,
+        {headers: { 'Authorization': `Bearer ${currentUser.token}` }},
         {
           withCredentials: true,
         }
@@ -153,7 +157,12 @@ export default function DashProfile() {
     }
   };
 
-  
+  // Button disable logic based on changes
+  const isButtonDisabled = !(
+    formValues.username !== currentUser?.username ||
+    formValues.password ||
+    imageFile
+  );
 
   return (
     <div className="max-w-lg mx-auto p-3 w-full">
@@ -191,7 +200,6 @@ export default function DashProfile() {
           placeholder="Username"
           value={formValues.username}
           onChange={handleInputChange}
-          disabled
         />
 
         {/* Email input */}
@@ -220,7 +228,7 @@ export default function DashProfile() {
           type="submit"
           gradientDuoTone="purpleToBlue"
           outline
-          disabled={isSubmitting || (!imageFile && !formValues.password)}  // Disable button if no changes
+          disabled={isSubmitting || isButtonDisabled}  // Disable button if no changes
         >
           {isSubmitting ? (
             <>

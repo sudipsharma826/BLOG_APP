@@ -47,11 +47,16 @@ const SignInPage = () => {
 
       const { data } = await axios.post(
         `${import.meta.env.VITE_BACKEND_APP_BASE_URL}/auth/signin`,
-        formData,
+        formData, // Request body
         {
-          headers: { 'Content-Type': 'application/json' }
+          headers: { 
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${currentUser.currentToken}`,
+          },
+          withCredentials: true, // Part of the config object
         }
       );
+      
 
       if (data.success === false) {
         dispatch(signInFailure(data.message)); // Dispatch error to Redux

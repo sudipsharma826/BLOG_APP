@@ -5,8 +5,10 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
 export default function UpdatePost() {
+  const currentUser = useSelector((state) => state.user);
   const [file, setFile] = useState(null);
   const [previewImage, setPreviewImage] = useState(null);
   const [formData, setFormData] = useState({
@@ -26,7 +28,11 @@ export default function UpdatePost() {
       try {
         const res = await axios.get(
           `${import.meta.env.VITE_BACKEND_APP_BASE_URL}/post/getPost/${slug}`,
-          { withCredentials: true }
+          { withCredentials: true },{
+            headers: {
+              Authorization : `Bearer ${currentUser.currentToken}`,
+            },
+          }
         );
         setFormData({
           title: res.data.post.title,
@@ -95,18 +101,27 @@ export default function UpdatePost() {
       const res = await axios.put(
         `${import.meta.env.VITE_BACKEND_APP_BASE_URL}/post/updatepost/${slug}`,
         data,
-        { headers: { 'Content-Type': 'multipart/form-data' }, withCredentials: true }
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            Authorization: `Bearer ${currentUser.currentToken}`,
+          },
+          withCredentials: true,
+        }
       );
+      
 
       if (!res) {
-        showMessage('Failed to publish: Title already exists or server error.', 'failure');
+        showMessage('Failed to update post: Server error or invalid data.', 'failure');
         return;
       }
 
-      showMessage('Post published successfully.', 'success');
+      showMessage('Post updated successfully.', 'success');
       navigate(`/post/${res.data.post.slug}`);
+      setFile(null);  // Clear file state after submission
+      setPreviewImage(null);  // Clear preview image state
     } catch (error) {
-      showMessage('Failed to publish: Title already exists or server error.', 'failure');
+      showMessage('Failed to update post: Server error or invalid data.', 'failure');
       console.error(error);
     }
   };
@@ -122,7 +137,7 @@ export default function UpdatePost() {
           value={formData.title || ''}
           onChange={(e) => handleInput('title', e.target.value)}
         />
-        <span className="font-bold  dark:text-gray-500">Title</span>
+        <span className="font-bold dark:text-gray-500">Title</span>
         <TextInput
           type="text"
           placeholder="Subtitle"
@@ -157,6 +172,16 @@ export default function UpdatePost() {
           theme="snow"
           value={formData.content || ''}
           onChange={(value) => handleInput('content', value)}
+          modules={{
+            toolbar: [
+              [{ header: [1, 2, false] }],
+              ['bold', 'italic', 'underline', 'strike'],
+              [{ color: [] }, { background: [] }],
+              [{ list: 'ordered' }, { list: 'bullet' }],
+              ['blockquote', 'code-block'],
+              ['link', 'image'],
+            ],
+          }}
         />
         <Button type="submit">Update Post</Button>
         {alertMessage.message && (

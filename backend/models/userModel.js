@@ -23,6 +23,29 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   } ,
+  isSignIn: {
+    type: Boolean,
+    default: false
+  },
+  lastLogin: {
+    type: Date,
+    default: null,
+  },
+  currentToken: {
+    type: String,
+    default: null
+  },
+  iNMaintenance: {
+    type: Boolean,
+    default: false
+  },
+  devices: [{  // Store device details
+    deviceType: { type: String },  // Mobile, Desktop, etc.
+    os: { type: String },  // OS info
+    browser: { type: String },  // Browser info
+    ip: { type: String },
+    loginTime: { type: Date }
+  }],
   createdAt: {
     type: Date,
     default: Date.now

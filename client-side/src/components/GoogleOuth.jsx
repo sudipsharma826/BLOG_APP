@@ -5,11 +5,13 @@ import { getAuth, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { app } from '../fireBaseConfig';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { useDispatch,useSelector } from 'react-redux';
 import { signInFailure, signInSuccess } from '../redux/user/authSlice';
+
 
 export const GoogleOuth = () => {
     const navigate = useNavigate();
+    const currentUser = useSelector((state) => state.user);
     const dispatch = useDispatch();
     const auth = getAuth(app);
 
@@ -28,7 +30,12 @@ export const GoogleOuth = () => {
             const response = await axios.post(
                 `${import.meta.env.VITE_BACKEND_APP_BASE_URL}/auth/googleouth`,
                 { displayName, email, photoURL },
-                { withCredentials: true }
+                { withCredentials: true },{
+                    headers: {
+                        Authorization: `Bearer ${currentUser.currentToken}`,
+                    }
+                    
+                }
             );
 
             // Handle the response

@@ -2,22 +2,39 @@ import bcrypt from 'bcrypt';
 import { errorHandler } from '../middleware/errorHandler.js';
 import User from '../models/userModel.js';
 import { uploadToCloudinary, deleteFromCloudinary } from '../utils/cloudinary.js';
+import { getDeviceType, getOperatingSystem, getBrowser } from '../utils/deviceUtils.js'; // Device utilities
 
+// Function to track device details
+const trackDevice = async (req, userId) => {
+  const userAgent = req.headers['user-agent'];
+  const deviceType = getDeviceType(userAgent);
+  const os = getOperatingSystem(userAgent);
+  const browser = getBrowser(userAgent);
+  const ip = req.ip;
+
+  const user = await User.findById(userId);
+
+  // Restrict devices to a maximum of 2
+  if (user.devices.length >= 2) {
+    user.devices.shift(); // Remove the oldest device
+  }
+
+  user.devices.push({ deviceType, os, browser, ip, loginTime: new Date() });
+  await user.save();
+};
+
+// Update user
 export const updateUser = async (req, res, next) => {
   const { userId } = req.params;
   const { username, email, password } = req.body;
 
   try {
-    // Check if the logged-in user is authorized to update this user
     if (req.user.id !== userId) {
       return next(errorHandler(403, 'You are not allowed to update this user'));
     }
 
-    // Find the user in the database
     const user = await User.findById(userId);
-    if (!user) {
-      return next(errorHandler(404, 'User not found'));
-    }
+    if (!user) return next(errorHandler(404, 'User not found'));
 
     let hashedPassword;
     if (password) {
@@ -29,29 +46,17 @@ export const updateUser = async (req, res, next) => {
 
     let photoURL = user.photoURL;
 
-    // Handle file upload if a new image is provided
     if (req.file) {
-      try {
-        // Delete old image if it exists
-        if (user.photoURL) {
-          // Extract public ID from Cloudinary URL
-          // URL format: https://res.cloudinary.com/[cloud_name]/image/upload/v[version]/[folder]/[public_id].[extension]
-          const urlParts = user.photoURL.split('/');
-          const publicIdWithExtension = urlParts[urlParts.length - 1];
-          const publicId = `blog_app_users/${publicIdWithExtension.split('.')[0]}`;
-          await deleteFromCloudinary(publicId);
-        }
-
-        // Upload new image
-        const uploadResult = await uploadToCloudinary(req.file);
-        photoURL = uploadResult.secure_url;
-      } catch (error) {
-        console.error('Error handling image:', error);
-        return next(errorHandler(500, 'Error processing image upload'));
+      if (photoURL) {
+        const publicId = photoURL.split('/').pop().split('.')[0];
+        await deleteFromCloudinary(`blog_app_users/${publicId}`);
       }
+      const uploadResult = await uploadToCloudinary(req.file);
+      photoURL = uploadResult.secure_url;
     }
 
-    // Update user in database
+    await trackDevice(req, userId);
+
     const updatedUser = await User.findByIdAndUpdate(
       userId,
       {
@@ -59,114 +64,118 @@ export const updateUser = async (req, res, next) => {
           username: username || user.username,
           email: email || user.email,
           ...(hashedPassword && { password: hashedPassword }),
-          photoURL
-        }
+          photoURL,
+        },
       },
       { new: true }
     );
 
-    // Remove password from response
     const { password: pass, ...rest } = updatedUser._doc;
-
     res.status(200).json(rest);
   } catch (error) {
-    console.error('Error updating user:', error);
     next(error);
   }
 };
 
-//Deleted User
+// Delete user
 export const deleteUser = async (req, res, next) => {
-  if (!req.user.isAdmin) {
+  if (!req.user.isAdmin && req.user.id !== req.params.userId) {
     return next(errorHandler(403, 'You are not allowed to delete this user'));
   }
 
   try {
-    // Fetch the user from the database
     const user = await User.findById(req.params.userId);
-    if (!user) {
-      return next(errorHandler(404, 'User not found'));
+    if (!user) return next(errorHandler(404, 'User not found'));
+
+    if (user.photoURL) {
+      const publicId = user.photoURL.split('/').pop().split('.')[0];
+      await deleteFromCloudinary(`blog_app_users/${publicId}`);
     }
 
-    // Extract the public_id from the Cloudinary URL
-    const imageUrl = user.photoURL; // Ensure 'photoURL' exists in the user schema
-    if (imageUrl) {
-      const urlParts = imageUrl.split('/');
-      const publicIdWithExtension = urlParts[urlParts.length - 1];
-      const publicId = `blog_app_users/${publicIdWithExtension.split('.')[0]}`; // Adjust the folder name as necessary
-
-      // Delete the image from Cloudinary
-      await deleteFromCloudinary(publicId);
-    }
-
-    // Delete the user from the database
     await User.findByIdAndDelete(req.params.userId);
-
-    res.
-    clearCookie('accessToken')
-    .status(200).
-    json('User and associated profile image have been deleted');
+    res.clearCookie('accessToken').status(200).json('User has been deleted');
   } catch (error) {
     next(error);
   }
 };
 
-
-//SignOut
-export const signout = (req, res, next) => {
-  if (req.user.id !== req.params.userId) {
-    return next(errorHandler(403, 'UnAuthorized'));
-  }
+// Sign out
+export const signout = async (req, res, next) => {
   try {
-  
-    res
-      .clearCookie('accessToken')
-      .status(200)
-      .json('User has been signed out');
-      
+    if (!req.user) {
+      return next(errorHandler(401, 'You are not signed in'));
+    }
+
+    const user = await User.findById(req.user.id);
+    if (!user) return next(errorHandler(404, 'User not found'));
+
+    // Remove the current device from the devices array
+    const userAgent = req.headers['user-agent'];
+    const currentDevice = {
+      ip: req.ip,
+      deviceType: getDeviceType(userAgent),
+      os: getOperatingSystem(userAgent),
+      browser: getBrowser(userAgent),
+    };
+
+    user.devices = user.devices.filter(
+      device =>
+        !(
+          device.ip === currentDevice.ip &&
+          device.deviceType === currentDevice.deviceType &&
+          device.os === currentDevice.os &&
+          device.browser === currentDevice.browser
+        )
+    );
+
+    await user.save();
+
+    res.clearCookie('accessToken').status(200).json({ message: 'Successfully signed out' });
   } catch (error) {
     next(error);
   }
- 
 };
 
-
-//Get All User
+// Get all users
 export const getUsers = async (req, res, next) => {
-  if(!req.user.isAdmin){
+  if (!req.user.isAdmin) {
     return next(errorHandler(403, 'You are not allowed to view all users'));
   }
-  try{
-    const startIndex = parseInt(req.query.startIndex) || 0;
-    const limit = parseInt(req.query.limit) || 9;
-    const sortDirection = req.query.sort === 'asc' ? 1 : -1;
-    const getUsers = await User.find()
-    .skip(startIndex)
-    .limit(limit)
-    .sort({createdAt: sortDirection});
 
-    //Remove the password from the response
-    const users = getUsers.map(user => {
-      const { password, ...rest } = user._doc;
-      return rest;
+  try {
+    const { startIndex = 0, limit = 9, sort = 'desc' } = req.query;
+    const users = await User.find()
+      .skip(parseInt(startIndex))
+      .limit(parseInt(limit))
+      .sort({ createdAt: sort === 'asc' ? 1 : -1 });
+
+    const totalUsers = await User.countDocuments();
+    const lastMonthUsers = await User.countDocuments({
+      createdAt: { $gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) },
     });
 
-    //Total number of users
-    const totalUsers = await User.countDocuments();
+    res.status(200).json({ users, totalUsers, lastMonthUsers });
+  } catch (error) {
+    next(error);
+  }
+};
 
-    //Total user In Last Month
-   const now= new Date();
-   const oneMonthAgo = new Date(
-    now.getFullYear(), 
-    now.getMonth() - 1, //Subtract 1 month to get the last month
-    now.getDate()
-  );
-  const lastMonthUsers = await User.countDocuments({
-    createdAt: { $gte: oneMonthAgo }
-  });
-  res.status(200).json({ users, totalUsers, lastMonthUsers });
+// Get user by email
+export const getUserByEmail = async (req, res, next) => {
+  if (!req.user.isAdmin) {
+    return next(errorHandler(403, 'You are not allowed to view this user'));
+  }
 
-  }catch(error){
+  const { email } = req.params;
+  try {
+    const user = await User.findOne({ email });
+    if (user) {
+      const { username, email, photoURL } = user;
+      res.status(200).json({ username, email, photoURL });
+    } else {
+      res.status(404).json({ message: 'User not found' });
+    }
+  } catch (error) {
     next(error);
   }
 };

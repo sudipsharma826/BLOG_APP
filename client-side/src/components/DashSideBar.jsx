@@ -1,5 +1,5 @@
 import { Sidebar } from 'flowbite-react';
-import { HiUser, HiArrowSmRight, HiDocumentText, HiOutlineUserGroup } from 'react-icons/hi';
+import { HiUser, HiArrowSmRight, HiDocumentText, HiOutlineUserGroup, HiBookmark } from 'react-icons/hi';
 import { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';  // Add useNavigate for redirection
 import { useSelector, useDispatch } from 'react-redux';
@@ -27,7 +27,9 @@ export default function DashSidebar() {
     try {
       const response = await axios.post(
         `${import.meta.env.VITE_BACKEND_APP_BASE_URL}/user/signout/${currentUser._id}`,
-        {},
+        {headers:{
+          Authorization: `Bearer ${currentUser.currentToken}`,
+        }},
         {
           withCredentials: true, // Ensure credentials are sent (cookies)
         }
@@ -79,6 +81,17 @@ export default function DashSidebar() {
                 as='div'
               >
                 Users
+              </Sidebar.Item>
+            </Link>
+          )}
+          {currentUser.isAdmin && (
+            <Link to='/dashboard?tab=categories'>
+              <Sidebar.Item
+                active={tab === 'categories'}
+                icon={HiBookmark}
+                as='div'
+              >
+                Categories
               </Sidebar.Item>
             </Link>
           )}

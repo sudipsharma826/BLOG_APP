@@ -10,6 +10,7 @@ const SignUpPage = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const { theme } = useSelector((state) => state.theme);
+  const currentUser = useSelector((state) => state.user);
   const [formData, setFormData] = useState({});
 
   // Check the password in the frontend part using regular expression
@@ -43,8 +44,16 @@ const SignUpPage = () => {
 
       const response = await axios.post(
         `${import.meta.env.VITE_BACKEND_APP_BASE_URL}/auth/signup`,
-        formData
+        formData, // Request body
+        {
+          headers: { 
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${currentUser.currentToken}`,
+          },
+          withCredentials: true, // Include credentials in the request
+        }
       );
+      
       
       if (response.status === 201) {
         setLoading(false);

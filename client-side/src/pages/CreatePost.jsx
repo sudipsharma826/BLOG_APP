@@ -4,6 +4,7 @@ import 'react-quill/dist/quill.snow.css';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import {useSelector} from 'react-redux';
 
 export default function CreatePost() {
   const [file, setFile] = useState(null);
@@ -13,12 +14,19 @@ export default function CreatePost() {
   const [newCategory, setNewCategory] = useState('');
   const [handleMessage, setHandleMessage] = useState({ message: '', type: '' });
   const navigate = useNavigate();
+  const {currentUser} = useSelector(state => state.user);
 
   // Fetch categories from backend
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const res = await axios.get(`${import.meta.env.VITE_BACKEND_APP_BASE_URL}/post/getCategories`);
+        const res = await axios.get(`${import.meta.env.VITE_BACKEND_APP_BASE_URL}/post/getCategories`, {
+          headers: { 
+            'Authorization': `Bearer ${currentUser.token}` 
+          },
+          withCredentials: true
+        });
+        
         setCategories(res.data.categories); 
       } catch (error) {
         showMessage('Error fetching categories', 'failure');
@@ -86,11 +94,12 @@ export default function CreatePost() {
       // Send category name instead of ID
       data.append('category', formData.category); 
       if (file) data.append('image', file);
-      console.log(formData.category)
+      
 
       const res = await axios.post(`${import.meta.env.VITE_BACKEND_APP_BASE_URL}/post/createpost`, data, {
         headers: {
           'Content-Type': 'multipart/form-data',
+          'Authorization': `Bearer ${currentUser.token}`
         },
         withCredentials: true,
       });
@@ -134,7 +143,7 @@ export default function CreatePost() {
           className="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring focus:ring-teal-500"
           aria-label="Select category"
         >
-          <option value="" disabled >
+          <option value="" disabled selected >
             Select a category
           </option>
           {categories.map((cat) => (

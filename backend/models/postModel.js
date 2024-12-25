@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 
 const PostSchema = new mongoose.Schema({
   userId: { type: String, required: true },
+  authorEmail: { type: String, required: true },
   title: { type: String, required: true, unique: true },  // Title must be unique
   subtitle: { type: String, required: true },
   content: { type: String, required: true },

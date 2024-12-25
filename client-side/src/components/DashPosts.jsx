@@ -1,4 +1,4 @@
-import { Table, Modal, Button } from 'flowbite-react';
+import { Table, Modal, Button, Alert } from 'flowbite-react';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
@@ -10,11 +10,18 @@ export default function DashPosts() {
   const [userPosts, setUserPosts] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [deleteSlug, setDeleteSlug] = useState(null);
+  const [handleMessage, setHandleMessage] = useState({ message: '', type: '' }); // Added state for message
 
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const res = await axios.get(`${import.meta.env.VITE_BACKEND_APP_BASE_URL}/post/getposts?userId=${currentUser._id}`);
+        const res = await axios.get(`${import.meta.env.VITE_BACKEND_APP_BASE_URL}/post/getposts`,{
+          withCredentials: true},{
+          headers: {
+            Authorization: `Bearer ${currentUser.currentToken}`,
+            
+          },
+        });
         if (res.status === 200) {
           setUserPosts(res.data.posts);
         }
@@ -28,27 +35,44 @@ export default function DashPosts() {
     }
   }, [currentUser]);
 
+  // Handle messages
+  const showMessage = (message, type) => {
+    setHandleMessage({ message, type });
+    setTimeout(() => setHandleMessage({ message: '', type: '' }), 6000);
+  };
+
   // Delete Post Handler
   const handleDeletePost = async () => {
     try {
       const response = await axios.delete(`${import.meta.env.VITE_BACKEND_APP_BASE_URL}/post/deletepost/${deleteSlug}`, {
-        withCredentials: true,
+      withCredentials: true,
+      },{
+        headers: {
+          Authorization: `Bearer ${currentUser.currentToken}`,
+          
+        },
       });
       if (response.status === 200) {
         // Remove the deleted post from the UI
         setUserPosts((prevPosts) => prevPosts.filter((post) => post.slug !== deleteSlug));
         setShowModal(false);
         setDeleteSlug(null);
+        showMessage("Post deleted successfully", "success"); // Show success message after delete
       } else {
         console.error("Failed to delete post:", response.data);
+        showMessage("Failed to delete post. Please try again.", "error"); // Show error message on failure
       }
     } catch (error) {
       console.error("Error deleting post:", error.message);
+      showMessage("An error occurred while deleting the post. Please try again.", "error"); // Show error message on catch
     }
   };
 
   return (
     <div className="table-auto overflow-x-scroll md:mx-auto p-3 scrollbar scrollbar-track-slate-100 scrollbar-thumb-slate-300 dark:scrollbar-track-slate-700 dark:scrollbar-thumb-slate-500">
+      {/* Show Message */}
+       
+
       {currentUser?.isAdmin && userPosts.length > 0 ? (
         <Table hoverable className="shadow-md">
           <Table.Head>
@@ -56,6 +80,7 @@ export default function DashPosts() {
             <Table.HeadCell>Post Image</Table.HeadCell>
             <Table.HeadCell>Post Title</Table.HeadCell>
             <Table.HeadCell>Category</Table.HeadCell>
+            <Table.HeadCell>Author Email</Table.HeadCell>
             <Table.HeadCell>Delete</Table.HeadCell>
             <Table.HeadCell>
               <span>Edit</span>
@@ -82,6 +107,7 @@ export default function DashPosts() {
                   </Link>
                 </Table.Cell>
                 <Table.Cell>{post.category}</Table.Cell>
+                <Table.Cell>{post.authorEmail}</Table.Cell>
                 <Table.Cell>
                   <span
                     onClick={() => {
@@ -103,8 +129,16 @@ export default function DashPosts() {
           </Table.Body>
         </Table>
       ) : (
-        <p>You have no posts yet!</p>
+        <div className="text-center text-2xl font-semibold text-gray-800 dark:text-white">No Post Found</div>
       )}
+          {handleMessage.message && (
+            <Alert
+              className="mb-5 flex items-center gap-2"
+              color={handleMessage.type === 'success' ? 'success' : 'failure'}
+            >
+              {handleMessage.message}
+            </Alert>
+          )}
 
       {/* Delete Confirmation Modal */}
       <Modal show={showModal} onClose={() => setShowModal(false)} popup size="md">
