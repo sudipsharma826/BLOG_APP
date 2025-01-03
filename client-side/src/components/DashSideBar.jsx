@@ -1,10 +1,11 @@
 import { Sidebar } from 'flowbite-react';
-import { HiUser, HiArrowSmRight, HiDocumentText, HiOutlineUserGroup, HiBookmark } from 'react-icons/hi';
+import { HiUser, HiArrowSmRight, HiDocumentText, HiOutlineUserGroup, HiBookmark, HiAtSymbol, HiAnnotation,HiUserCircle, HiChartPie } from 'react-icons/hi';
 import { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';  // Add useNavigate for redirection
 import { useSelector, useDispatch } from 'react-redux';
 import axios from 'axios';
 import { signoutSuccess } from '../redux/user/authSlice';
+
 
 export default function DashSidebar() {
   const location = useLocation();
@@ -27,11 +28,12 @@ export default function DashSidebar() {
     try {
       const response = await axios.post(
         `${import.meta.env.VITE_BACKEND_APP_BASE_URL}/user/signout/${currentUser._id}`,
-        {headers:{
-          Authorization: `Bearer ${currentUser.currentToken}`,
-        }},
+        {},
         {
-          withCredentials: true, // Ensure credentials are sent (cookies)
+          withCredentials: true,
+    headers: {
+      Authorization: `Bearer ${currentUser.currentToken}`,
+    },
         }
       );
 
@@ -40,8 +42,8 @@ export default function DashSidebar() {
         dispatch(signoutSuccess());
 
         // Redirect to the home page or login page after signout
-        navigate('/login');  // Adjust the path as needed (e.g., '/login' or '/')
-        console.log('Successfully signed out');
+        navigate('/signin');  // Adjust the path as needed (e.g., '/login' or '/')
+        
       } else {
         console.error('Signout failed:', response.data);
       }
@@ -54,6 +56,16 @@ export default function DashSidebar() {
     <Sidebar className='w-full md:w-56'>
       <Sidebar.Items>
         <Sidebar.ItemGroup className='flex flex-col gap-1'>
+        {currentUser.isAdmin && (
+            <Sidebar.Item
+              active={tab === 'dash'}
+              icon={HiChartPie}
+              labelColor='dark'
+              as='div'
+            >
+              <Link to={`/dashboard?tab=dash`}>DashBoard</Link>
+            </Sidebar.Item>
+          )}
           <Sidebar.Item
             active={tab === 'profile'}
             icon={HiUser}
@@ -88,10 +100,43 @@ export default function DashSidebar() {
             <Link to='/dashboard?tab=categories'>
               <Sidebar.Item
                 active={tab === 'categories'}
-                icon={HiBookmark}
+                icon={HiAtSymbol}
                 as='div'
               >
                 Categories
+              </Sidebar.Item>
+            </Link>
+          )}
+          {currentUser && (
+            <Link to='/dashboard?tab=savedposts'>
+              <Sidebar.Item
+                active={tab === 'savedposts'}
+                icon={HiBookmark}
+                as='div'
+              >
+                Saved Posts
+              </Sidebar.Item>
+            </Link>
+          )}
+          {currentUser.isAdmin && (
+            <Link to='/dashboard?tab=getsubscribers'>
+              <Sidebar.Item
+                active={tab === 'getsubscribers'}
+                icon={HiUserCircle}
+                as='div'
+              >
+                Subscriber List
+              </Sidebar.Item>
+            </Link>
+          )}
+          {currentUser.isAdmin && (
+            <Link to='/dashboard?tab=comments'>
+              <Sidebar.Item
+                active={tab === 'comments'}
+                icon={HiAnnotation}
+                as='div'
+              >
+                Comments
               </Sidebar.Item>
             </Link>
           )}

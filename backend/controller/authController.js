@@ -5,6 +5,8 @@ import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 dotenv.config();
 import { getDeviceType, getOperatingSystem, getBrowser } from '../utils/deviceUtils.js';
+import sendMail from '../utils/nodemailer.js';
+import Subscribe from '../models/subscribeModel.js';
 
 // Helper function to validate inputs
 const validateInputs = (inputs) => {
@@ -57,6 +59,46 @@ export const signup = async (req, res, next) => {
     const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = new User({ username, email, password: hashedPassword });
     await newUser.save();
+    await sendMail({
+      email,
+      subject: 'Welcome to Sudip Sharma Blog – Let’s Get Started!',
+      message: null,
+      html: `
+      <div style="font-family: Arial, sans-serif; padding: 20px; border: 1px solid #ddd; border-radius: 5px; max-width: 600px; margin: auto; background-color: #f9f9f9;">
+        <div style="text-align: center; margin-bottom: 20px;">
+          <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjDWbNklDVmYkFY8qpAEi1wO-nDVSdiW9hLmf4JqUQyyKFiK_cCS4ZtcqOTD_XKc2faeOCenbFAr9nSEG9ZcC7wy3t1KFbnXUyMaQpi_mF61oSTxluNRr3lQe0-zz9-uYh-45WZGlBzWOr5ZjNfRbTx3DwptVtSwequyJ_70fdX1nbYxz4PpaTER6_0LLw/s1600/Screenshot_2024-05-18_163234-removebg-preview.png" alt="Sudip Sharma Logo" style="max-width: 200px; border-radius: 10px;">
+        </div>
+        <h2 style="color: #333;">Welcome, ${newUser.username}!</h2>
+        <p style="font-size: 16px; line-height: 1.5;">We are delighted to have you join our Blog Management System! Here’s a motivational thought to inspire you:</p>
+        <blockquote style="font-size: 18px; line-height: 1.5; font-style: italic; color: #555; margin: 20px 0;">
+          "Every accomplishment starts with the decision to try."
+        </blockquote>
+        
+        <p style="font-size: 16px; line-height: 1.5; margin-bottom: 20px;">You can now log in to your account and explore the exciting features we offer.</p>
+        <p style="font-size: 16px; line-height: 1.5;">For assistance, feel free to reach out to us:</p>
+        <ul style="font-size: 16px; line-height: 1.5; padding-left: 20px;">
+          <li><strong>Email:</strong> <a href="mailto:info@sudipsharma.com.np" style="color: #007BFF;">info@sudipsharma.com.np</a></li>
+          <li><strong>Mobile:</strong> 9816662624</li>
+        </ul>
+        <p style="font-size: 16px; line-height: 1.5;">Connect with us on social media:</p>
+        <div style="text-align: center; margin-top: 20px;">
+          <a href="https://www.linkedin.com/in/sudipsharmanp/" style="margin-right: 10px;">
+            <img src="https://cdn-icons-png.flaticon.com/512/174/174857.png" alt="LinkedIn" style="width: 30px; height: 30px;">
+          </a>
+          <a href="https://www.facebook.com/sudipsharma.np/" style="margin-left: 10px;">
+            <img src="https://cdn-icons-png.flaticon.com/512/733/733547.png" alt="Facebook" style="width: 30px; height: 30px;">
+          </a>
+        </div>
+        <div style="text-align: center; margin-top: 30px;">
+          <a href="https://sudipsharma.com.np" style="display: inline-block; padding: 10px 20px; background-color: #007BFF; color: #fff; text-decoration: none; border-radius: 5px;">Visit Our Website</a>
+        </div>
+        <p style="font-size: 16px; line-height: 1.5; margin-top: 30px; text-align: center; color: #666;">
+          Thank you for being part of our community!<br>
+          <strong>- Sudip Sharma Team</strong>
+        </p>
+      </div>
+    `,
+    });
 
     res.status(201).json({ message: 'User registered successfully!' });
   } catch (err) {
@@ -84,6 +126,7 @@ export const signin = async (req, res, next) => {
       return next(errorHandler(400, 'Invalid password'));
     }
 
+    // Track the device of the user signing in
     await trackDevice(req, user._id);
 
     const token = jwt.sign(
@@ -96,6 +139,18 @@ export const signin = async (req, res, next) => {
     user.isSignIn = true;
     user.currentToken = token;
     await user.save();
+
+    // Check if the user's email is already in the subscribe list
+    const existingSubscriber = await Subscribe.findOne({ email: user.email });
+    if (!existingSubscriber) {
+      // Add the user to the subscription list only if they are not already subscribed
+      await Subscribe.create({
+        email: user.email,
+        isUser: true,
+        subscribeDate: new Date(),
+      });
+      await Subscribe.save();
+    }
 
     const { password: pass, ...rest } = user._doc;
 
@@ -114,6 +169,7 @@ export const signin = async (req, res, next) => {
   }
 };
 
+
 // GOOGLE OAUTH ROUTE
 export const googleouth = async (req, res, next) => {
   const { email, displayName, photoURL } = req.body;
@@ -124,6 +180,7 @@ export const googleouth = async (req, res, next) => {
     if (!user) {
       const generatedPassword = Math.random().toString(36).slice(-8);
       const hashedPassword = await bcrypt.hash(generatedPassword, 10);
+
       user = new User({
         username: displayName.toLowerCase().replace(/\s+/g, '') + Math.random().toString().slice(-4),
         email,
@@ -131,9 +188,65 @@ export const googleouth = async (req, res, next) => {
         photoURL,
         isAdmin: false,
       });
+
+      // Check if the email is already in the subscription list
+      const existingSubscriber = await Subscribe.findOne({ email });
+      if (!existingSubscriber) {
+        // Add the user to the subscription list
+        await Subscribe.create({
+          email,
+          userId: user._id, // Link subscription to the user
+          isUser: true,
+          subscribeDate: new Date(),
+        });
+      }
+
+      // Send welcome email asynchronously
+      sendMail({
+        email,
+        subject: 'Welcome to Sudip Sharma Blog – Let’s Get Started!',
+        message: null,
+        html: `
+          <div style="font-family: Arial, sans-serif; padding: 20px; border: 1px solid #ddd; border-radius: 5px; max-width: 600px; margin: auto; background-color: #f9f9f9;">
+            <div style="text-align: center; margin-bottom: 20px;">
+              <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjDWbNklDVmYkFY8qpAEi1wO-nDVSdiW9hLmf4JqUQyyKFiK_cCS4ZtcqOTD_XKc2faeOCenbFAr9nSEG9ZcC7wy3t1KFbnXUyMaQpi_mF61oSTxluNRr3lQe0-zz9-uYh-45WZGlBzWOr5ZjNfRbTx3DwptVtSwequyJ_70fdX1nbYxz4PpaTER6_0LLw/s1600/Screenshot_2024-05-18_163234-removebg-preview.png" alt="Sudip Sharma Logo" style="max-width: 200px; border-radius: 10px;">
+            </div>
+            <h2 style="color: #333;">Welcome, ${user.username}!</h2>
+            <p style="font-size: 16px; line-height: 1.5;">We are delighted to have you join our Blog Management System! Here’s a motivational thought to inspire you:</p>
+            <blockquote style="font-size: 18px; line-height: 1.5; font-style: italic; color: #555; margin: 20px 0;">
+              "Every accomplishment starts with the decision to try."
+            </blockquote>
+            <p style="font-size: 16px; line-height: 1.5; margin-bottom: 20px;">You can now log in to your account and explore the exciting features we offer.</p>
+            <p style="font-size: 16px; line-height: 1.5;">For assistance, feel free to reach out to us:</p>
+            <ul style="font-size: 16px; line-height: 1.5; padding-left: 20px;">
+              <li><strong>Email:</strong> <a href="mailto:info@sudipsharma.com.np" style="color: #007BFF;">info@sudipsharma.com.np</a></li>
+              <li><strong>Mobile:</strong> 9816662624</li>
+            </ul>
+            <p style="font-size: 16px; line-height: 1.5;">Connect with us on social media:</p>
+            <div style="text-align: center; margin-top: 20px;">
+              <a href="https://www.linkedin.com/in/sudipsharmanp/" style="margin-right: 10px;">
+                <img src="https://cdn-icons-png.flaticon.com/512/174/174857.png" alt="LinkedIn" style="width: 30px; height: 30px;">
+              </a>
+              <a href="https://www.facebook.com/sudipsharma.np/" style="margin-left: 10px;">
+                <img src="https://cdn-icons-png.flaticon.com/512/733/733547.png" alt="Facebook" style="width: 30px; height: 30px;">
+              </a>
+            </div>
+            <div style="text-align: center; margin-top: 30px;">
+              <a href="https://sudipsharma.com.np" style="display: inline-block; padding: 10px 20px; background-color: #007BFF; color: #fff; text-decoration: none; border-radius: 5px;">Visit Our Website</a>
+            </div>
+            <p style="font-size: 16px; line-height: 1.5; margin-top: 30px; text-align: center; color: #666;">
+              Thank you for being part of our community!<br>
+              <strong>- Sudip Sharma Team</strong>
+            </p>
+          </div>
+        `,
+      });
+
+      // Save the new user
       await user.save();
     }
 
+    // Update user login details
     await trackDevice(req, user._id);
 
     const token = jwt.sign(
@@ -163,6 +276,9 @@ export const googleouth = async (req, res, next) => {
     next(errorHandler(500, 'Internal Server Error'));
   }
 };
+
+
+
 
 // Enable Maintenance Mode
 export const enableMaintenance = async (req, res, next) => {
@@ -210,16 +326,20 @@ export const disableMaintenance = async (req, res, next) => {
   }
 };
 
-//Maintenance Mode Status  ( if maintencawe Mode is on then return true else false)
+// Maintenance Mode Status (if Maintenance Mode is on, return true; otherwise, return false)
 export const maintenanceStatus = async (req, res, next) => {
-  
   try {
+    // Fetch all users that are not admins
     const users = await User.find({ isAdmin: false });
+
+    // Check if any user has maintenance mode enabled
     const isMaintenance = users.some((user) => user.iNMaintenance);
-    
-      return res.status(200).json({ isMaintenance });
+
+    // Return the maintenance status
+    return res.status(200).json({ isMaintenance });
   } catch (error) {
-    console.error('Error in maintenanceStatus:', error);
-    next(errorHandler(500, 'Internal Server Error'));
+    console.error("Error in maintenanceStatus:", error);
+    next(errorHandler(500, "Internal Server Error"));
   }
 };
+

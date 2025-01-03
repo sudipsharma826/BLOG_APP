@@ -1,11 +1,11 @@
-import { Alert, Button, FileInput, Select, TextInput } from 'flowbite-react';
+import { Alert, Button, FileInput, Label, TextInput } from 'flowbite-react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
-import { useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+import 'tailwindcss/tailwind.css'; // Ensure Tailwind is imported
 
 export default function UpdatePost() {
   const currentUser = useSelector((state) => state.user);
@@ -15,79 +15,112 @@ export default function UpdatePost() {
     title: '',
     subtitle: '',
     content: '',
-    category: '',
   });
+  const [isFeatured, setIsFeatured] = useState(false);
   const [categories, setCategories] = useState([]);
   const [newCategory, setNewCategory] = useState('');
+  const [selectedCategories, setSelectedCategories] = useState([]);
   const [alertMessage, setAlertMessage] = useState({ message: '', type: '' });
   const navigate = useNavigate();
   const { slug } = useParams();
 
+  // Fetch categories and post details
   useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const res = await axios.get(`${import.meta.env.VITE_BACKEND_APP_BASE_URL}/post/getCategories`, {
+          withCredentials: true,
+          headers: { Authorization: `Bearer ${currentUser.currentToken}` },
+        });
+        setCategories(res.data.categories);
+      } catch (error) {
+        showMessage('Error fetching categories.', 'failure');
+      }
+    };
+
     const fetchPost = async () => {
       try {
         const res = await axios.get(
           `${import.meta.env.VITE_BACKEND_APP_BASE_URL}/post/getPost/${slug}`,
-          { withCredentials: true },{
-            headers: {
-              Authorization : `Bearer ${currentUser.currentToken}`,
-            },
+          {
+            withCredentials: true,
+            headers: { Authorization: `Bearer ${currentUser.currentToken}` },
           }
         );
+        const post = res.data.post;
+
         setFormData({
-          title: res.data.post.title,
-          subtitle: res.data.post.subtitle,
-          content: res.data.post.content,
-          category: res.data.post.category,
+          title: post.title,
+          subtitle: post.subtitle,
+          content: post.content,
+          isFeatured: post.isFeatured,
         });
-        setPreviewImage(res.data.post.image);
-        setCategories(res.data.categories || []);
+        setPreviewImage(post.image);
+        setIsFeatured(post.isFeatured);
+
+        const fetchedCategories = post.category || [];
+        const formattedCategories =
+          typeof fetchedCategories[0] === 'string'
+            ? fetchedCategories.map((cat) => ({ name: cat }))
+            : fetchedCategories;
+
+        setSelectedCategories(formattedCategories);
       } catch (error) {
         showMessage('Error fetching post details.', 'failure');
-        console.error('Error fetching post:', error);
       }
     };
 
+    fetchCategories();
     fetchPost();
-  }, [slug]);
+  }, [slug, currentUser]);
 
+  // Show alert messages
   const showMessage = (message, type) => {
     setAlertMessage({ message, type });
     setTimeout(() => setAlertMessage({ message: '', type: '' }), 6000);
   };
 
+  // Handle text input changes
   const handleInput = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
+  // Handle file changes
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
     if (!selectedFile || selectedFile.size > 10 * 1024 * 1024) {
-      showMessage('Failed to upload: File must be an image under 10MB.', 'failure');
+      showMessage('File must be under 10MB.', 'failure');
       return;
     }
     const validTypes = ['image/png', 'image/jpg', 'image/jpeg'];
     if (!validTypes.includes(selectedFile.type)) {
-      showMessage('Failed to upload: Only .png, .jpg, or .jpeg files are allowed.', 'failure');
+      showMessage('Only .png, .jpg, or .jpeg files are allowed.', 'failure');
       return;
     }
     setFile(selectedFile);
     setPreviewImage(URL.createObjectURL(selectedFile));
   };
 
+  // Add new category
   const addCategory = () => {
     if (!newCategory.trim()) return;
     if (categories.some((cat) => cat.name.toLowerCase() === newCategory.toLowerCase())) {
       showMessage('Category already exists.', 'failure');
       return;
     }
-    const newCategoryObj = { id: Date.now(), name: newCategory };
-    setCategories((prev) => [newCategoryObj, ...prev]);
-    handleInput('category', newCategoryObj.name);
+    const newCategoryObj = { name: newCategory };
+    setCategories((prev) => [...prev, newCategoryObj]);
+    setSelectedCategories((prev) => [...prev, newCategoryObj]);
     setNewCategory('');
     showMessage('Category added successfully.', 'success');
   };
 
+  // Remove a category
+  const removeCategory = (categoryToRemove) => {
+    setSelectedCategories((prev) => prev.filter((cat) => cat.name !== categoryToRemove.name));
+  };
+
+  // Submit the form
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -95,7 +128,8 @@ export default function UpdatePost() {
       data.append('title', formData.title);
       data.append('subtitle', formData.subtitle);
       data.append('content', formData.content);
-      data.append('category', formData.category);
+      data.append('category', JSON.stringify(selectedCategories));
+      data.append('isFeatured', isFeatured); // Include isFeatured in the payload
       if (file) data.append('image', file);
 
       const res = await axios.put(
@@ -109,86 +143,145 @@ export default function UpdatePost() {
           withCredentials: true,
         }
       );
-      
-
-      if (!res) {
-        showMessage('Failed to update post: Server error or invalid data.', 'failure');
-        return;
-      }
 
       showMessage('Post updated successfully.', 'success');
       navigate(`/post/${res.data.post.slug}`);
-      setFile(null);  // Clear file state after submission
-      setPreviewImage(null);  // Clear preview image state
     } catch (error) {
-      showMessage('Failed to update post: Server error or invalid data.', 'failure');
-      console.error(error);
+      showMessage('Failed to update post.', 'failure');
     }
   };
 
   return (
-    <div className="p-8 max-w-4xl mx-auto min-h-screen bg-gradient-to-r from-blue-50 via-white to-purple-50 shadow-xl rounded-xl  dark:bg-gray-700">
-      <h1 className="text-center text-4xl font-bold text-gray-800 mb-10 underline decoration-teal-400  dark:text-gray-500">Update Post</h1>
-      <form className="space-y-4" onSubmit={handleSubmit}>
+    <div className="p-8 max-w-4xl mx-auto min-h-screen bg-gradient-to-r from-blue-50 via-white to-purple-50 shadow-xl rounded-xl dark:bg-gray-800 dark:text-white">
+      <h1 className="text-center text-4xl font-bold mb-10 dark:text-gray-900">Update Post</h1>
+      <form className="space-y-6" onSubmit={handleSubmit}>
         <TextInput
           type="text"
           placeholder="Title"
           required
           value={formData.title || ''}
           onChange={(e) => handleInput('title', e.target.value)}
+          className="dark:bg-gray-700 dark:text-white"
         />
-        <span className="font-bold dark:text-gray-500">Title</span>
+        <Label className="dark:text-gray-900">Title</Label>
+
         <TextInput
           type="text"
           placeholder="Subtitle"
           required
           value={formData.subtitle || ''}
           onChange={(e) => handleInput('subtitle', e.target.value)}
+          className="dark:bg-gray-700 dark:text-white"
         />
-        <span className="font-bold dark:text-gray-500">Sub-Title</span>
-        <p className="text-sm text-gray-600">
-          Current Category: <span className="font-medium text-teal-500">{formData.category}</span>
-        </p>
-        <div className="flex items-center gap-3">
-          <TextInput
-            type="text"
-            placeholder="Add new category"
-            value={newCategory}
-            onChange={(e) => setNewCategory(e.target.value)}
-          />
-          <Button type="button" onClick={addCategory}>
-            + Add
-          </Button>
+        <Label className="dark:text-gray-900">Subtitle</Label>
+
+        {/* Feature Post Toggle */}
+        <div className="flex items-center gap-4">
+          <Label className="dark:text-gray-900">Feature this post</Label>
+          <button
+            type="button"
+            onClick={() => setIsFeatured((prev) => !prev)}
+            className={`p-2 rounded-lg ${
+              isFeatured ? 'bg-teal-600 text-white' : 'bg-gray-300 text-black'
+            }`}
+          >
+            {isFeatured ? 'Yes' : 'No'}
+          </button>
         </div>
-        <div className="border-4 border-dashed border-teal-400 p-5 rounded-lg bg-teal-50">
-          <FileInput type="file" accept="image/*" onChange={handleFileChange} />
-        </div>
+
+        {/* File Input */}
+        <FileInput type="file" accept="image/*" onChange={handleFileChange} />
         {previewImage && (
-          <div className="flex justify-center mb-6">
-            <img src={previewImage} alt={formData.title} />
+          <img
+            src={previewImage}
+            alt="Preview"
+            className="w-auto h-auto object-cover rounded-lg shadow-md mt-4"
+          />
+        )}
+
+        {/* Categories Selection */}
+        <div className="mt-6">
+          <Label className="dark:text-gray-900">Categories</Label>
+          <div className="space-y-2 mt-2">
+            {/* Category Selector */}
+            <div className="flex flex-wrap gap-4">
+              {categories.map((category) => (
+                <div key={category.name} className="flex items-center dark:text-black">
+                  <input
+                    type="checkbox"
+                    id={category.name}
+                    checked={selectedCategories.some(
+                      (selectedCategory) => selectedCategory.name === category.name
+                    )}
+                    onChange={() => {
+                      if (selectedCategories.some((selectedCategory) => selectedCategory.name === category.name)) {
+                        setSelectedCategories((prev) =>
+                          prev.filter((selectedCategory) => selectedCategory.name !== category.name)
+                        );
+                      } else {
+                        setSelectedCategories((prev) => [...prev, category]);
+                      }
+                    }}
+                    className="mr-2"
+                  />
+                  <label htmlFor={category.name} className="text-sm">
+                    {category.name}
+                  </label>
+                </div>
+              ))}
+            </div>
+
+            {/* Manually Add Category */}
+            <div className="flex items-center mt-4">
+              <TextInput
+                value={newCategory}
+                onChange={(e) => setNewCategory(e.target.value)}
+                placeholder="Add new category"
+                className="dark:bg-gray-700 dark:text-white"
+              />
+              <Button
+                type="button"
+                onClick={addCategory}
+                className="ml-2 bg-teal-600 hover:bg-teal-700 text-white"
+              >
+                Add
+              </Button>
+            </div>
           </div>
-        )}
-        <ReactQuill
-          theme="snow"
-          value={formData.content || ''}
-          onChange={(value) => handleInput('content', value)}
-          modules={{
-            toolbar: [
-              [{ header: [1, 2, false] }],
-              ['bold', 'italic', 'underline', 'strike'],
-              [{ color: [] }, { background: [] }],
-              [{ list: 'ordered' }, { list: 'bullet' }],
-              ['blockquote', 'code-block'],
-              ['link', 'image'],
-            ],
-          }}
-        />
-        <Button type="submit">Update Post</Button>
-        {alertMessage.message && (
-          <Alert color={alertMessage.type === 'success' ? 'success' : 'failure'}>
-            {alertMessage.message}
-          </Alert>
-        )}
+        </div>
+
+        {/* Quill Editor */}
+        <div className="mt-4 dark:text-black">
+          <ReactQuill
+            value={formData.content || ''}
+            theme="snow"
+            placeholder="Write something..."
+            className="h-72 mb-12 dark:text-black"
+            required
+            modules={{
+              toolbar: [
+                [{ header: [1, 2, false] }],
+                ['bold', 'italic', 'underline', 'strike'],
+                [{ color: [] }, { background: [] }],
+                [{ list: 'ordered' }, { list: 'bullet' }],
+                ['blockquote', 'code-block'],
+                ['link', 'image'],
+              ],
+            }}
+            onChange={(value) => handleInput('content', value)}
+          />
+        </div>
+
+        {/* Alert Message */}
+        {alertMessage.message && <Alert color={alertMessage.type}>{alertMessage.message}</Alert>}
+
+        {/* Submit Button */}
+        <Button
+          type="submit"
+          className="w-full bg-teal-600 hover:bg-teal-700 text-white font-semibold py-2 rounded-lg dark:bg-teal-700 dark:hover:bg-teal-800"
+        >
+          Update Post
+        </Button>
       </form>
     </div>
   );

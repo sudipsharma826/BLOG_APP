@@ -4,6 +4,7 @@ import User from '../models/userModel.js';
 
 export const verifyToken = async (req, res, next) => {
   const token = req.cookies.accessToken;
+  
  
   // If no token is found
   if (!token) {
@@ -32,6 +33,7 @@ export const verifyToken = async (req, res, next) => {
 
 // For non-admin users, proceed as normal
       req.user = user; // Attach the user data to the request object
+      
       next();
     } catch (error) {
       return next(errorHandler(500, 'Server error while checking token version'));

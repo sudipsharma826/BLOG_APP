@@ -1,9 +1,11 @@
 import { Alert, Button, Label, Spinner, TextInput } from 'flowbite-react';
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import { useSelector } from 'react-redux';
+import { Pen } from 'lucide-react';
+import axios from 'axios';
 import { GoogleOuth } from '../components/GoogleOuth';
+import AdSpaceContainer from '../components/blog/AdSpaceContainer';
 
 const SignUpPage = () => {
   const navigate = useNavigate();
@@ -13,18 +15,15 @@ const SignUpPage = () => {
   const currentUser = useSelector((state) => state.user);
   const [formData, setFormData] = useState({});
 
-  // Check the password in the frontend part using regular expression
   const validatePassword = (password) => {
     const passwordRegex = /^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.*[a-z])[A-Za-z\d!@#$%^&*]{8,16}$/;
     return passwordRegex.test(password);
   };
 
-  // Handle input changes
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
   };
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
@@ -33,28 +32,26 @@ const SignUpPage = () => {
       setError('Please fill all the fields');
       return;
     }
-    
+
     if (!validatePassword(formData.password)) {
       setError('Password must contain at least 8 characters, one uppercase letter, one lowercase letter, one number, and one special character');
       return;
     }
-  
+
     try {
       setLoading(true);
-
       const response = await axios.post(
         `${import.meta.env.VITE_BACKEND_APP_BASE_URL}/auth/signup`,
-        formData, // Request body
+        formData,
         {
-          headers: { 
+          headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${currentUser.currentToken}`,
           },
-          withCredentials: true, // Include credentials in the request
+          withCredentials: true,
         }
       );
-      
-      
+
       if (response.status === 201) {
         setLoading(false);
         navigate('/signin');
@@ -65,97 +62,130 @@ const SignUpPage = () => {
     }
   };
 
-  // Automatically clear the error message after 6 seconds
   useEffect(() => {
     if (error) {
       const timer = setTimeout(() => {
         setError(null);
-      }, 6000); // Clear error after 6 seconds
-
-      return () => clearTimeout(timer); // Cleanup timer on component unmount
+      }, 6000);
+      return () => clearTimeout(timer);
     }
   }, [error]);
 
   return (
-    <div className="min-h-screen mt-20">
-      <div className="flex p-3 max-w-3xl mx-auto flex-col md:flex-row md:items-center gap-5">
-        {/* Left */}
-        <div className="flex-1">
-          <Link
-            to='/'
-            className='font-bold dark:text-white text-4xl'
-          >
-            <span className='px-2 py-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-lg text-white'>
-              Sudip's
-            </span>
-            Blog
-          </Link>
-          {theme === "dark" ? (
-            <p className="text-sm mt-5 font-semibold text-white">
-              We're excited to have you here! Please sign up to continue exploring our latest posts, join discussions, and share your thoughts with the community. If you're new, feel free to sign up and start your blogging journey today!
-            </p>
-          ) : (
-            <p className="text-sm mt-5 font-semibold text-gray-400">
-              We're excited to have you here! Please sign up to continue exploring our latest posts, join discussions, and share your thoughts with the community. If you're new, feel free to sign up and start your blogging journey today!
-            </p>
-          )}
-        </div>
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 pt-20">
+      <div className="max-w-4xl mx-auto px-4">
+        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl overflow-hidden">
+          <div className="flex flex-col md:flex-row">
+            {/* Left Side - Branding */}
+            <div className="md:w-1/2 p-8 bg-gradient-to-br from-purple-600 to-blue-600 text-white">
+              <div className="h-full flex flex-col justify-between">
+                <div>
+                  <div className="flex items-center gap-2 mb-8">
+                    <Pen className="h-8 w-8" />
+                    <h1 className="text-3xl font-bold">TechKnow</h1>
+                  </div>
+                  <p className="text-xl font-semibold mb-4">Start Your Journey!</p>
+                  <p className="text-gray-100 mb-8">
+                    "Every expert was once a beginner. Join our community of tech enthusiasts and start sharing your unique perspective with the world."
+                  </p>
+                </div>
+                <div className="hidden md:block">
+                  <p className="text-sm text-gray-200">
+                    Already have an account?{' '}
+                    <Link to="/signin" className="font-medium hover:underline">
+                      Sign in here
+                    </Link>
+                  </p>
+                </div>
+              </div>
+            </div>
 
-        {/* Right */}
-        <div className="flex-1">
-          <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
-            <div>
-              <Label value="Your Username" />
-              <TextInput
-                type="text"
-                placeholder="Your Username"
-                id="username" 
-                onChange={handleChange}
-              />
-            </div>
-            <div>
-              <Label value="Your Email" />
-              <TextInput
-                type="email"
-                placeholder="abc@sudipsharma.com.np"
-                id="email"
-                onChange={handleChange}
-              />
-            </div>
-            <div>
-              <Label value="Your Password" />
-              <TextInput
-                type="password"
-                placeholder="Your Password"
-                id="password"
-                onChange={handleChange}
-              />
-            </div>
-            <Button gradientMonochrome="info" pill type="submit" disabled={loading}>
-              {loading ? (
-                <>
-                  <Spinner className="sm" />
-                  <span className="pl-3">Loading.... </span>
-                </>
-              ) : 'Sign Up'}
-            </Button>
-            <GoogleOuth />
-          </form>
+            {/* Right Side - Form */}
+            <div className="md:w-1/2 p-8">
+              <h2 className="text-2xl font-bold mb-6 text-gray-800 dark:text-white">
+                Create your account
+              </h2>
+              <form className="space-y-6" onSubmit={handleSubmit}>
+                <div>
+                  <Label className="text-gray-700 dark:text-gray-200" value="Username" />
+                  <TextInput
+                    type="text"
+                    id="username"
+                    placeholder="Sudip Sharma"
+                    onChange={handleChange}
+                    className="mt-1"
+                  />
+                </div>
+                <div>
+                  <Label className="text-gray-700 dark:text-gray-200" value="Email address" />
+                  <TextInput
+                    type="email"
+                    id="email"
+                    placeholder="info@sudipsharma.com.np"
+                    onChange={handleChange}
+                    className="mt-1"
+                  />
+                </div>
+                <div>
+                  <Label className="text-gray-700 dark:text-gray-200" value="Password" />
+                  <TextInput
+                    type="password"
+                    id="password"
+                    placeholder="••••••••"
+                    onChange={handleChange}
+                    className="mt-1"
+                  />
+                  <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                    Must contain 8-16 characters, uppercase, lowercase, number, and special character
+                  </p>
+                </div>
+                <Button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full"
+                  gradientDuoTone="purpleToBlue"
+                >
+                  {loading ? (
+                    <>
+                      <Spinner size="sm" />
+                      <span className="ml-2">Creating account...</span>
+                    </>
+                  ) : (
+                    'Sign up'
+                  )}
+                </Button>
+                <div className="relative">
+                  <div className="absolute inset-0 flex items-center">
+                    <div className="w-full border-t border-gray-300 dark:border-gray-600"></div>
+                  </div>
+                  <div className="relative flex justify-center text-sm">
+                    <span className="px-2 bg-white dark:bg-gray-800 text-gray-500">
+                      Or continue with
+                    </span>
+                  </div>
+                </div>
+                <GoogleOuth />
+              </form>
 
-          <div className="flex gap-2 text-sm mt-5">
-            <span>Already have an account?</span>
-            <Link to="/signin" className="text-blue-500">
-              Sign In
-            </Link>
+              <div className="mt-6 text-center md:hidden">
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  Already have an account?{' '}
+                  <Link to="/signin" className="text-blue-600 hover:underline">
+                    Sign in here
+                  </Link>
+                </p>
+              </div>
+
+              {error && (
+                <Alert className="mt-4" color="failure">
+                  {error}
+                </Alert>
+              )}
+            </div>
           </div>
-
-          {error && (
-            <Alert className="mt-5" color="failure">
-              {error} 
-            </Alert>
-          )}
         </div>
       </div>
+      <AdSpaceContainer />
     </div>
   );
 };

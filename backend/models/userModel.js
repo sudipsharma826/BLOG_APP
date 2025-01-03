@@ -1,4 +1,3 @@
-// models/userModel.js
 import mongoose from 'mongoose';
 
 const userSchema = new mongoose.Schema({
@@ -22,7 +21,7 @@ const userSchema = new mongoose.Schema({
   isAdmin: {
     type: Boolean,
     default: false
-  } ,
+  },
   isSignIn: {
     type: Boolean,
     default: false
@@ -39,19 +38,23 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
-  devices: [{  // Store device details
-    deviceType: { type: String },  // Mobile, Desktop, etc.
-    os: { type: String },  // OS info
-    browser: { type: String },  // Browser info
+  devices: [{ 
+    deviceType: { type: String }, 
+    os: { type: String }, 
+    browser: { type: String }, 
     ip: { type: String },
     loginTime: { type: Date }
   }],
+  likedPosts: [{ type: String }],
+  lovedPosts: [{ type: String }],
+  savedPosts: [{ type: String }],
+  commentPosts: [{ type: String }],
   createdAt: {
     type: Date,
     default: Date.now
   }
-},{timestamps: true});
+}, { timestamps: true });
 
-const User = mongoose.model('user', userSchema);
+const User = mongoose.model('User', userSchema);  // Ensure the model is registered correctly
 
 export default User;

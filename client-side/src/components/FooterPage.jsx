@@ -1,95 +1,142 @@
-import { Footer } from 'flowbite-react';
+// components/footer/Footer.jsx
+import React from 'react';
+import { Github, Twitter, Linkedin, Pen } from 'lucide-react';
+import { Facebook } from 'react-feather';
 import { Link } from 'react-router-dom';
-import { BsFacebook, BsInstagram, BsTwitter, BsGithub, BsDribbble, BsLinkedin, BsPersonBadge } from 'react-icons/bs';
-import {useSelector} from 'react-redux';
-export default function FooterPage() {
-  const {theme} = useSelector(state => state.theme);  
+
+const APP_VERSION = '1.0.0'; // Define version constant
+
+const Footer = () => {
   return (
-    <Footer container className='border border-t-8 border-teal-500'>
-      <div className='w-full max-w-7xl mx-auto'>
-        <div className='grid w-full justify-between sm:flex md:grid-cols-1'>
-          <div className='mt-5'>
-            <Link
-              to='/'
-              className='self-center whitespace-nowrap text-lg sm:text-xl font-semibold dark:text-white'
-            >
-              <span className='px-2 py-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-lg text-white'>
-                Sudip's
-              </span>
-              Blog
-             </Link>
-             { theme ==='dark' ? (
+    <>
+      <div className="h-[2px] bg-gray-300 dark:bg-gray-700 my-6" />
 
-             <p className="mt-4 font-semibold text-white ">
-          Join a growing community of readers and writers! 🔥
-        </p> 
-             ) : (
-              <p className="mt-4 font-semibold text-gray-400 ">
-              Join a growing community of readers and writers! 🔥
-            </p> 
-             )}
+      <footer className="bg-gray-100 text-gray-900 dark:bg-gray-900 dark:text-gray-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+            {/* TechKnows Section */}
+            <div>
+              <div className="flex items-center">
+                <Pen className="h-8 w-8 text-purple-600" />
+                <span className="ml-2 text-2xl font-bold bg-gradient-to-r from-purple-600 to-blue-500 text-transparent bg-clip-text dark:from-purple-400 dark:to-blue-500">
+                  TechKnows
+                </span>
+              </div>
+              <p className="text-gray-600 dark:text-gray-400 mt-4">
+                Exploring the world of technology through thoughtful writing.
+              </p>
+            </div>
+
+            {/* Quick Links Section */}
+            <div>
+              <h4 className="text-lg font-semibold mb-4">Quick Links</h4>
+              <ul className="space-y-2">
+                <li>
+                  <Link
+                    to="/about"
+                    className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100"
+                  >
+                    About
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/contact"
+                    className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100"
+                  >
+                    Contact
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/categories"
+                    className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100"
+                  >
+                    Categories
+                  </Link>
+                </li>
+              </ul>
+            </div>
+
+            {/* Legal Section */}
+            <div>
+              <h4 className="text-lg font-semibold mb-4">Legal</h4>
+              <ul className="space-y-2">
+                <li>
+                  <Link
+                    to="/privacy"
+                    className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100"
+                  >
+                    Privacy Policy
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/terms"
+                    className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100"
+                  >
+                    Terms & Conditions
+                  </Link>
+                </li>
+              </ul>
+            </div>
+
+            {/* Social Media Section */}
+            <div>
+              <h4 className="text-lg font-semibold mb-4">Follow Us</h4>
+              <div className="flex space-x-4">
+                <a
+                  href="https://www.facebook.com/sudipsharma.np/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100"
+                >
+                  <Facebook className="h-6 w-6" />
+                </a>
+                <a
+                  href="https://github.com/sudipsharma826"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100"
+                >
+                  <Github className="h-6 w-6" />
+                </a>
+                <a
+                  href="https://www.linkedin.com/in/sudipsharmanp/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100"
+                >
+                  <Linkedin className="h-6 w-6" />
+                </a>
+              </div>
+            </div>
           </div>
-          <div className='grid grid-cols-2 gap-8 mt-4 sm:grid-cols-3 sm:gap-6'>
-            <div>
-              <Footer.Title title='About' />
-              <Footer.LinkGroup col>
-                <Footer.Link
-                  href='https://sudipsharma.info.np'
-                  target='_blank'
-                  rel='noopener noreferrer'
-                >
-                  Sudip Sharma
-                </Footer.Link>
-                <Footer.Link
-                  href='/projects'
-                  target='_blank'
-                  rel='noopener noreferrer'
-                >
-                  Projects
-                </Footer.Link>
-              </Footer.LinkGroup>
-            </div>
-            <div>
-              <Footer.Title title='Follow us' />
-              <Footer.LinkGroup col>
-                <Footer.Link
-                  href='https://github.com/sudipsharma826'
-                  target='_blank'
-                  rel='noopener noreferrer'
-                >
-                  Github
-                </Footer.Link>
-                <Footer.Link href='https://www.linkedin.com/in/sudipsharmanp/'>LinkedIn</Footer.Link>
-              </Footer.LinkGroup>
-            </div>
-            <div>
-              <Footer.Title title='Legal' />
-              <Footer.LinkGroup col>
-                <Footer.Link href='/privacypolicy'>Privacy Policy</Footer.Link>
-                <Footer.Link href='/termsandconditions'>Terms &amp; Conditions</Footer.Link>
-              </Footer.LinkGroup>
-            </div>
+
+          {/* Copyright Section */}
+          <div className="mt-8 pt-8 border-t border-gray-300 dark:border-gray-700 text-center">
+            <p className="text-sm text-gray-600 dark:text-gray-400">
+              © {new Date().getFullYear()} TechKnows. All rights reserved.
+            </p>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
+              Designed & Developed by{' '}
+              <a
+                href="https://sudipsharma.com.np"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-medium text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 transition-colors"
+              >
+                Sudip Sharma
+              </a>
+            </p>
+            <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">
+              Version {APP_VERSION}
+            </p>
           </div>
         </div>
-        <Footer.Divider />
-        <div className='w-full sm:flex sm:items-center sm:justify-between'>
-          <Footer.Copyright
-            href='https://sudipsharma.info.np'
-            by="Sudip Sharma"
-            year={new Date().getFullYear()}
-           
-          />
-          {/* <img src="/images/code_firebase.png" alt="logo" className="w-17 h-20 " /> */}
-          <div className="flex gap-6 sm:mt-0 mt-4 sm:justify-center">
-            <Footer.Icon href='https://www.facebook.com/sudipsharma.np/' icon={BsFacebook}/>
-            <Footer.Icon href='https://www.linkedin.com/in/sudipsharmanp/' icon={BsLinkedin}/>
-            <Footer.Icon href='https://www.instagram.com/sudeep_sharma.np/' icon={BsInstagram}/>
-            <Footer.Icon href='https://github.com/sudipsharma826/' icon={BsGithub}/>
-            <Footer.Icon href='https://sudipsharma.info.np' icon={BsPersonBadge}/>
-
-          </div>
-        </div>
-      </div>
-    </Footer>
+      </footer>
+    </>
   );
-}
+};
+
+export default Footer;

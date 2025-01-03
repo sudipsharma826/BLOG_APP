@@ -120,10 +120,13 @@ export default function DashProfile() {
     try {
       dispatch(deleteUserStart());
       const response = await axios.delete(
-        `${import.meta.env.VITE_BACKEND_APP_BASE_URL}/user/delete/${currentUser._id}`,
-        { withCredentials: true },
-        {headers: { 'Authorization': `Bearer ${currentUser.token}` }}
-      );
+        `${import.meta.env.VITE_BACKEND_APP_BASE_URL}/user/delete/${currentUser._id}`,{},
+      {
+        withCredentials: true,
+    headers: {
+      Authorization: `Bearer ${currentUser.currentToken}`,
+    },
+      }      );
       if (response.status === 200) {
         dispatch(deleteUserSuccess(response.data));
         handleMessage('Account deleted successfully!', null);
@@ -142,9 +145,12 @@ export default function DashProfile() {
     try {
       const response = await axios.post(
         `${import.meta.env.VITE_BACKEND_APP_BASE_URL}/user/signout/${currentUser._id}`,
-        {headers: { 'Authorization': `Bearer ${currentUser.token}` }},
+        {},
         {
           withCredentials: true,
+    headers: {
+      Authorization: `Bearer ${currentUser.currentToken}`,
+    },
         }
       );
       if (response.status === 200) {

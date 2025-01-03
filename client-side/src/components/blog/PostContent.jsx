@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import { Heart, Share2, Bookmark } from "react-feather"; // Assuming Bookmark is used in SavePostButton
-import { SavePostButton } from "./ActionButtons";
+
 import { Link } from "react-router-dom";
+
 
 export function PostContent({ content = "" }) {
   const [isLiked, setIsLiked] = useState(false);
@@ -80,39 +80,10 @@ export function PostContent({ content = "" }) {
         )}
       </div>
 
-      {/* Interaction Buttons */}
-      <div className="flex flex-wrap gap-4 mt-8 pt-8 border-t dark:border-gray-700">
-        <button
-          onClick={() => setIsLiked(!isLiked)}
-          className="flex items-center space-x-2 px-4 py-2 rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-        >
-          <Heart
-            className={`w-5 h-5 ${
-              isLiked ? "fill-red-500 text-red-500" : "text-gray-600 dark:text-gray-300"
-            }`}
-          />
-        </button>
+      {/* Action Buttons */}
+      
+      
 
-        <button
-          onClick={() => {
-            if (navigator.share) {
-              navigator.share({ url: window.location.href });
-            } else {
-              alert("Sharing is not supported in this browser.");
-            }
-          }}
-          className="flex items-center space-x-2 px-4 py-2 rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-        >
-          <Share2 className="w-5 h-5 text-gray-600 dark:text-gray-300" />
-        </button>
-   
-
-
-         
-        
-
-        <SavePostButton />
-      </div>
     </div>
   );
 }

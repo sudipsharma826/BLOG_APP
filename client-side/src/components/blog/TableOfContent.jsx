@@ -1,5 +1,6 @@
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import AdSense from './AdSense';
 
 export default function TableOfContents({ content }) {
   const [isExpanded, setIsExpanded] = useState(true);
@@ -10,7 +11,7 @@ export default function TableOfContents({ content }) {
     const contentElement = document.createElement('div');
     contentElement.innerHTML = content;
     const headings = contentElement.querySelectorAll('h1, h2');
-  
+
     headings.forEach((heading, index) => {
       if (!heading.id) {
         heading.id = `heading-${index}`; // Ensure an ID is added if not already
@@ -18,7 +19,7 @@ export default function TableOfContents({ content }) {
       const level = parseInt(heading.tagName.replace('H', ''), 10);
       toc.push({ id: heading.id, title: heading.textContent, level });
     });
-  
+
     return toc;
   };
 
@@ -78,15 +79,29 @@ export default function TableOfContents({ content }) {
       </div>
 
       {/* Ad Section: 40% width */}
-      <div className="adsense lg:w-2/5 w-full flex items-center justify-center border border-gray-300 p-4 rounded-lg">
-        <div className="text-center">
-          <p className="text-lg font-semibold">Ad Space</p>
-          <p className="text-sm mt-2">Your ad could be here!</p>
-          <div className="bg-gray-100 w-full h-32 mt-4 rounded-lg flex items-center justify-center">
-            <p className="text-gray-400">Placeholder for Ad Content</p>
-          </div>
-        </div>
-      </div>
+      <div className="adsense lg:w-2/5 w-full flex items-center justify-center border border-gray-300 p-4 rounded-lg relative">
+  <p
+    className="text-sm font-semibold flex absolute top-2 right-2 px-2 py-1 rounded"
+    style={{
+      background: 'linear-gradient(to right, red, blue)', // Gradient background for the "Ad Space" label
+      color: 'white', // Text color for the label
+      // Dynamically adjust the text color for dark mode
+      ...(document.body.classList.contains('dark') ? {
+        background: 'linear-gradient(to right, #444, #888)', // Darker gradient for dark mode
+      } : {}),
+    }}
+  >
+    Ad Space
+  </p>
+  <AdSense
+    adClient={import.meta.env.VITE_ADSENSE_CLIENT}
+    adSlot={import.meta.env.VITE_ADSENSE_SLOT}
+    style={{ height: '250px' }}
+    adFormat="auto"
+    fullWidthResponsive={true}
+  />
+</div>
+
     </div>
   );
 }

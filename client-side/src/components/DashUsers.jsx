@@ -19,7 +19,7 @@ export default function DashUsers() {
   const [isMaintained, setIsMaintained] = useState(false); // Maintenance state
   const [loadingMaintenance, setLoadingMaintenance] = useState(false);
   const [showMaintenanceModal, setShowMaintenanceModal] = useState(false); // For maintenance confirmation modal
-  const [statusofMaintenance, setStatusofMaintenance] = useState({}); // For maintenance status
+  const [statusofMaintenance, setStatusofMaintenance] = useState(false); // For maintenance status
 
   // Fetch users
   useEffect(() => {
@@ -49,32 +49,26 @@ export default function DashUsers() {
     }
   }, [currentUser?.isAdmin]);
 
-  // Handle device modal open
-  const handleDeviceClick = (device) => {
-    setSelectedDevice(device); // Set selected device
-    setShowDeviceModal(true); // Open the device modal
-  };
-
-// Get Maintenance Status (GET)
-useEffect(() => {
-  const getMaintenanceStatus = async () => {
-    try {
-      const response = await axios.get(`${import.meta.env.VITE_BACKEND_APP_BASE_URL}/auth/maintenanceStatus`, {
-        headers: {
-          Authorization: `Bearer ${currentUser.currentToken}`,
-        },
-        withCredentials: true,
-      });
-      if (response.status === 200) {
-        setStatusofMaintenance(response.data.isMaintenance);
+  // Get Maintenance Status (GET)
+  useEffect(() => {
+    const getMaintenanceStatus = async () => {
+      try {
+        const response = await axios.get(`${import.meta.env.VITE_BACKEND_APP_BASE_URL}/auth/maintenanceStatus`, {
+          headers: {
+            Authorization: `Bearer ${currentUser.currentToken}`,
+          },
+          withCredentials: true,
+        });
+        if (response.status === 200) {
+          setStatusofMaintenance(response.data.isMaintenance);
+          setIsMaintained(response.data.isMaintenance); // Sync maintenance status with the state
+        }
+      } catch (error) {
+        console.error('Error fetching maintenance status:', error.message);
       }
-    } catch (error) {
-      console.error('Error fetching maintenance status:', error.message);
-    }
-  };
-  getMaintenanceStatus();
-}, []);
-
+    };
+    getMaintenanceStatus();
+  }, [currentUser?.currentToken]);
 
   // Enable maintenance
   const handleEnableMaintenance = async () => {
@@ -93,6 +87,7 @@ useEffect(() => {
 
       if (response.status === 200) {
         setIsMaintained(true); // Set maintenance state to enabled
+        setStatusofMaintenance(true); // Sync status
         setShowMaintenanceModal(false); // Close modal after enabling maintenance
       }
     } catch (error) {
@@ -111,15 +106,15 @@ useEffect(() => {
         {},
         {
           headers: {
-            Authorization: `Bearer ${currentUser.currentToken}`,  // Make sure token is being set here
+            Authorization: `Bearer ${currentUser.currentToken}`,
           },
-          withCredentials: true,  // Ensure this is set for sending cookies
+          withCredentials: true,
         }
       );
-      
 
       if (response.status === 200) {
-        setIsMaintained(true); // Set maintenance state to disabled
+        setIsMaintained(false); // Set maintenance state to disabled
+        setStatusofMaintenance(false); // Sync status
         setShowMaintenanceModal(false); // Close modal after disabling maintenance
       }
     } catch (error) {
@@ -127,6 +122,12 @@ useEffect(() => {
     } finally {
       setLoadingMaintenance(false);
     }
+  };
+
+  // Handle device modal open
+  const handleDeviceClick = (device) => {
+    setSelectedDevice(device); // Set selected device
+    setShowDeviceModal(true); // Open the device modal
   };
 
   // Handle user deletion
@@ -159,10 +160,12 @@ useEffect(() => {
     try {
       const response = await axios.get(
         `${import.meta.env.VITE_BACKEND_APP_BASE_URL}/user/getusers?page=2`, // Adjust pagination as needed
-        { withCredentials: true },{
+        {
           headers: {
             Authorization: `Bearer ${currentUser.currentToken}`,
-        }}
+          },
+          withCredentials: true,
+        }
       );
       if (response.status === 200) {
         setUsers((prevUsers) => [...prevUsers, ...response.data.users]);
@@ -173,7 +176,6 @@ useEffect(() => {
     } finally {
       setLoading(false);
     }
-    
   };
 
   return (
@@ -206,7 +208,6 @@ useEffect(() => {
                           setShowImageModal(true); // Open the image modal
                         }}
                       />
-                      {/* Conditional Dot */}
                       <div
                         className={`absolute bottom-0 right-0 w-3 h-3 rounded-full ${user.isSignIn ? 'bg-green-500' : 'bg-red-500'}`}
                       />
@@ -216,11 +217,7 @@ useEffect(() => {
                   <Table.Cell>{user.email}</Table.Cell>
                   <Table.Cell>{new Date(user.lastLogin).toLocaleString()}</Table.Cell>
                   <Table.Cell>
-                    {user.isAdmin ? (
-                      <FaCheck className="text-green-500" />
-                    ) : (
-                      <FaTimes className="text-red-500" />
-                    )}
+                    {user.isAdmin ? <FaCheck className="text-green-500" /> : <FaTimes className="text-red-500" />}
                   </Table.Cell>
                   <Table.Cell>
                     {user.devices && user.devices.length > 0 ? (
@@ -258,68 +255,25 @@ useEffect(() => {
           {/* Toggle Maintenance */}
           <Button
             onClick={() => setShowMaintenanceModal(true)} // Open modal for maintenance action
-            color={isMaintained  != statusofMaintenance ? 'success' : 'failure'}
+            color={isMaintained ? 'success' : 'failure'} // Toggle color
             className="mt-4 font-bold"
           >
-            {isMaintained != statusofMaintenance ? 'Disable Maintenance and Unlock Users' : 'Enable Maintenance and Lock Users'}
+            {isMaintained ? 'Disable Maintenance and Unlock Users' : 'Enable Maintenance and Lock Users'}
           </Button>
-
-          {/* User Image Modal */}
-          <Modal show={showImageModal} onClose={() => setShowImageModal(false)} size="sm">
-            <Modal.Header>User Photo</Modal.Header>
-            <Modal.Body>
-              <div className="text-center">
-                <img src={selectedImage} alt="User" className="w-40 h-40 object-cover rounded-full mx-auto mb-4" />
-                <p className="text-lg font-semibold">Username: {currentUser?.username}</p>
-              </div>
-            </Modal.Body>
-            <Modal.Footer>
-              <Button color="gray" onClick={() => setShowImageModal(false)}>
-                Close
-              </Button>
-            </Modal.Footer>
-          </Modal>
-
-          {/* Device Modal */}
-          <Modal show={showDeviceModal} onClose={() => setShowDeviceModal(false)} size="lg">
-            <Modal.Header>Device Details</Modal.Header>
-            <Modal.Body>
-              {selectedDevice ? (
-                <div className="space-y-2">
-                  <div>
-                    <strong>OS:</strong> {selectedDevice.os}
-                  </div>
-                  <div>
-                    <strong>IP Address:</strong> {selectedDevice.ip}
-                  </div>
-                  <div>
-                    <strong>Last Active:</strong> {new Date(selectedDevice.lastActive).toLocaleString()}
-                  </div>
-                </div>
-              ) : (
-                <div>No device information available</div>
-              )}
-            </Modal.Body>
-            <Modal.Footer>
-              <Button color="gray" onClick={() => setShowDeviceModal(false)}>
-                Close
-              </Button>
-            </Modal.Footer>
-          </Modal>
 
           {/* Maintenance Confirmation Modal */}
           <Modal show={showMaintenanceModal} onClose={() => setShowMaintenanceModal(false)}>
             <Modal.Header>
-              {isMaintained != statusofMaintenance ? 'Disable Maintenance' : 'Enable Maintenance'}
+              {isMaintained ? 'Disable Maintenance' : 'Enable Maintenance'}
             </Modal.Header>
             <Modal.Body>
               <p className="text-sm text-gray-700 dark:text-gray-300">
-                Are you sure you want to {isMaintained  != statusofMaintenance? 'disable maintenance mode?' : 'enable maintenance mode?'}
+                Are you sure you want to {isMaintained ? 'disable maintenance mode?' : 'enable maintenance mode?'}
               </p>
             </Modal.Body>
             <Modal.Footer>
               <Button
-                onClick={isMaintained != statusofMaintenance ? handleDisableMaintenance : handleEnableMaintenance}
+                onClick={isMaintained ? handleDisableMaintenance : handleEnableMaintenance}
                 color="success"
                 disabled={loadingMaintenance}
               >
@@ -331,39 +285,12 @@ useEffect(() => {
             </Modal.Footer>
           </Modal>
 
-          {/* Delete Confirmation Modal */}
-          <Modal show={showModal} onClose={() => setShowModal(false)}>
-            <Modal.Header>
-              <HiOutlineExclamationCircle className="mr-2" /> Confirm Deletion
-            </Modal.Header>
-            <Modal.Body>
-              <p className="text-sm text-gray-700 dark:text-gray-300">
-                Are you sure you want to delete this user? This action cannot be undone.
-              </p>
-            </Modal.Body>
-            <Modal.Footer>
-              <Button
-                onClick={handleDeleteUser}
-                color="failure"
-                disabled={loading}
-              >
-                Confirm
-              </Button>
-              <Button color="gray" onClick={() => setShowModal(false)}>
-                Cancel
-              </Button>
-            </Modal.Footer>
-          </Modal>
         </>
       ) : (
-        <p>No users available or not authorized</p>
-      )}
-
-      {/* Show More */}
-      {showMore && (
-        <Button onClick={handleShowMore} color="primary" className="mt-4">
-          Show More
-        </Button>
+        <div className="text-center mt-10">
+          <HiOutlineExclamationCircle size={50} className="text-gray-400 mx-auto" />
+          <h3 className="text-2xl font-medium">No users found</h3>
+        </div>
       )}
     </div>
   );

@@ -10,23 +10,25 @@ export default function DashPosts() {
   const [userPosts, setUserPosts] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [deleteSlug, setDeleteSlug] = useState(null);
-  const [handleMessage, setHandleMessage] = useState({ message: '', type: '' }); // Added state for message
+  const [handleMessage, setHandleMessage] = useState({ message: '', type: '' });
 
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const res = await axios.get(`${import.meta.env.VITE_BACKEND_APP_BASE_URL}/post/getposts`,{
-          withCredentials: true},{
-          headers: {
-            Authorization: `Bearer ${currentUser.currentToken}`,
-            
-          },
-        });
+        const res = await axios.get(
+          `${import.meta.env.VITE_BACKEND_APP_BASE_URL}/post/getposts`,
+          {
+            withCredentials: true,
+            headers: {
+              Authorization: `Bearer ${currentUser.currentToken}`,
+            },
+          }
+        );
         if (res.status === 200) {
           setUserPosts(res.data.posts);
         }
       } catch (error) {
-        console.error("Error fetching posts:", error.message);
+        console.error('Error fetching posts:', error.message);
       }
     };
 
@@ -44,35 +46,38 @@ export default function DashPosts() {
   // Delete Post Handler
   const handleDeletePost = async () => {
     try {
-      const response = await axios.delete(`${import.meta.env.VITE_BACKEND_APP_BASE_URL}/post/deletepost/${deleteSlug}`, {
-      withCredentials: true,
-      },{
-        headers: {
-          Authorization: `Bearer ${currentUser.currentToken}`,
-          
-        },
-      });
+      const response = await axios.delete(
+        `${import.meta.env.VITE_BACKEND_APP_BASE_URL}/post/deletepost/${deleteSlug}`,
+        {
+          headers: {
+            Authorization: `Bearer ${currentUser.currentToken}`,
+          },
+          withCredentials: true,
+        }
+      );
       if (response.status === 200) {
         // Remove the deleted post from the UI
-        setUserPosts((prevPosts) => prevPosts.filter((post) => post.slug !== deleteSlug));
+        setUserPosts((prevPosts) =>
+          prevPosts.filter((post) => post.slug !== deleteSlug)
+        );
         setShowModal(false);
         setDeleteSlug(null);
-        showMessage("Post deleted successfully", "success"); // Show success message after delete
+        showMessage('Post deleted successfully', 'success');
       } else {
-        console.error("Failed to delete post:", response.data);
-        showMessage("Failed to delete post. Please try again.", "error"); // Show error message on failure
+        console.error('Failed to delete post:', response.data);
+        showMessage('Failed to delete post. Please try again.', 'error');
       }
     } catch (error) {
-      console.error("Error deleting post:", error.message);
-      showMessage("An error occurred while deleting the post. Please try again.", "error"); // Show error message on catch
+      console.error('Error deleting post:', error.message);
+      showMessage(
+        'An error occurred while deleting the post. Please try again.',
+        'error'
+      );
     }
   };
 
   return (
     <div className="table-auto overflow-x-scroll md:mx-auto p-3 scrollbar scrollbar-track-slate-100 scrollbar-thumb-slate-300 dark:scrollbar-track-slate-700 dark:scrollbar-thumb-slate-500">
-      {/* Show Message */}
-       
-
       {currentUser?.isAdmin && userPosts.length > 0 ? (
         <Table hoverable className="shadow-md">
           <Table.Head>
@@ -81,17 +86,19 @@ export default function DashPosts() {
             <Table.HeadCell>Post Title</Table.HeadCell>
             <Table.HeadCell>Category</Table.HeadCell>
             <Table.HeadCell>Author Email</Table.HeadCell>
+            <Table.HeadCell>👍</Table.HeadCell>
+            <Table.HeadCell>❣️</Table.HeadCell>
+            <Table.HeadCell>📑</Table.HeadCell>
             <Table.HeadCell>Delete</Table.HeadCell>
-            <Table.HeadCell>
-              <span>Edit</span>
-            </Table.HeadCell>
+            <Table.HeadCell>Edit</Table.HeadCell>
           </Table.Head>
           <Table.Body className="divide-y">
             {userPosts.map((post) => (
-              <Table.Row key={post._id} className="bg-white dark:border-gray-700 dark:bg-gray-800">
-                <Table.Cell>
-                  {new Date(post.updatedAt).toLocaleDateString()}
-                </Table.Cell>
+              <Table.Row
+                key={post._id}
+                className="bg-white dark:border-gray-700 dark:bg-gray-800"
+              >
+                <Table.Cell>{new Date(post.updatedAt).toLocaleDateString()}</Table.Cell>
                 <Table.Cell>
                   <Link to={`/post/${post.slug}`}>
                     <img
@@ -102,26 +109,41 @@ export default function DashPosts() {
                   </Link>
                 </Table.Cell>
                 <Table.Cell>
-                  <Link className="font-medium text-gray-900 dark:text-white" to={`/post/${post.slug}`}>
-                    {post.title}
+                  <Link
+                    className="font-medium text-gray-900 dark:text-white"
+                    to={`/post/${post.slug}`}
+                  >
+                    {post.title.length > 10
+                      ? `${post.title.slice(0, 10)}...`
+                      : post.title}
                   </Link>
                 </Table.Cell>
-                <Table.Cell>{post.category}</Table.Cell>
-                <Table.Cell>{post.authorEmail}</Table.Cell>
+                <Table.Cell>{post.category.join(', ')}</Table.Cell>
                 <Table.Cell>
+                  {post.authorEmail.length > 3
+                    ? `${post.authorEmail.slice(0, 3)}...`
+                    : post.authorEmail}
+                </Table.Cell>
+                <Table.Cell>{post.usersLikeList.length}</Table.Cell>
+                <Table.Cell>{post.usersLoveList.length}</Table.Cell>
+                <Table.Cell>{post.usersSaveList.length}</Table.Cell>
+                <Table.Cell className="text-center">
                   <span
                     onClick={() => {
                       setShowModal(true);
-                      setDeleteSlug(post.slug); // Set the slug of the post to delete
+                      setDeleteSlug(post.slug);
                     }}
                     className="font-medium text-red-500 hover:underline cursor-pointer"
                   >
                     Delete
                   </span>
                 </Table.Cell>
-                <Table.Cell>
-                  <Link className="text-teal-500 hover:underline" to={`/updatepost/${post.slug}`}>
-                    <span>Edit</span>
+                <Table.Cell className="text-center">
+                  <Link
+                    className="text-teal-500 hover:underline"
+                    to={`/updatepost/${post.slug}`}
+                  >
+                    Edit
                   </Link>
                 </Table.Cell>
               </Table.Row>
@@ -129,19 +151,18 @@ export default function DashPosts() {
           </Table.Body>
         </Table>
       ) : (
-        <div className="text-center text-2xl font-semibold text-gray-800 dark:text-white">No Post Found</div>
+        <div className="text-center text-2xl font-bold text-red-900 dark:text-white">
+          No Post Found
+        </div>
       )}
-          {handleMessage.message && (
-            <Alert
-              className="mb-5 flex items-center gap-2"
-              color={handleMessage.type === 'success' ? 'success' : 'failure'}
-            >
-              {handleMessage.message}
-            </Alert>
-          )}
 
       {/* Delete Confirmation Modal */}
-      <Modal show={showModal} onClose={() => setShowModal(false)} popup size="md">
+      <Modal
+        show={showModal}
+        onClose={() => setShowModal(false)}
+        popup
+        size="md"
+      >
         <Modal.Header />
         <Modal.Body>
           <div className="text-center">
@@ -168,6 +189,16 @@ export default function DashPosts() {
       >
         <span className="text-3xl font-bold">+</span>
       </Link>
+
+      {/* Message Alert */}
+      {handleMessage.message && (
+        <Alert
+          className="mb-5 flex items-center gap-2"
+          color={handleMessage.type === 'success' ? 'success' : 'failure'}
+        >
+          {handleMessage.message}
+        </Alert>
+      )}
     </div>
   );
 }
