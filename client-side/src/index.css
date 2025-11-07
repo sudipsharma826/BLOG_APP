@@ -1,0 +1,317 @@
+
+:root{
+  /* Theme colors */
+  --color-bg: #f8fafc; /* page background */
+  --color-surface: #ffffff; /* card / surface */
+  --color-text: #0f172a; /* primary text */
+  --color-muted: #6b7280; /* muted text */
+  --color-primary: #6d28d9; /* purple */
+  --color-accent: #f59e0b; /* amber accent */
+  --color-card-shadow: 0 8px 24px rgba(16,24,40,0.06);
+  --radius-lg: 12px;
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Theme helper classes */
+.hero-bg{
+  background: linear-gradient(135deg,var(--color-primary),#2563eb);
+}
+.hero-cta{
+  background: var(--color-accent);
+  color: #111827;
+  border-radius: 9999px;
+}
+.page-section{
+  background: var(--color-bg);
+}
+.card{
+  background: var(--color-surface);
+  box-shadow: var(--color-card-shadow);
+  border-radius: var(--radius-lg);
+}
+.badge{
+  background: var(--color-primary);
+  color: white;
+  padding: 0.25rem 1rem;
+  border-radius: 9999px;
+  font-weight: 600;
+}
+.accent-badge{
+  background: var(--color-accent);
+  color: #111827;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-weight: 600;
+}
+.btn{
+  background: var(--color-primary);
+  color: white;
+  padding: .5rem 1.25rem;
+  border-radius: 9999px;
+}
+.btn-outline{
+  background: transparent;
+  color: var(--color-primary);
+  border: 2px solid rgba(109,40,217,0.12);
+  padding: .5rem 1rem;
+  border-radius: 9999px;
+}
+.card-image-cover{
+  object-fit: cover;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+
+.post-content h1, .post-content h2 {
+  font-family: var(--font-heading);
+  line-height: 1.3;
+  font-weight: 700;
+  margin: 30px 0 15px;
+  transition: color 0.3s;
+}
+
+.post-content h1 {
+  font-size: 2.5rem;
+  border-bottom: 3px solid var(--color-highlight);
+  padding-bottom: 10px;
+  color: var(--color-link);
+}
+
+.post-content h2 {
+  font-size: 2rem;
+  color: var(--color-text-light);
+}
+
+.post-content h2:hover {
+  text-decoration: underline;
+  text-decoration-color: var(--color-link-hover);
+  transition: text-decoration-color 0.3s ease-in-out;
+}
+
+/* Bold and Italic Text */
+.post-content b {
+  font-weight: bold;
+  color: var(--color-link);
+}
+
+.post-content i {
+  font-style: italic;
+  color: #555;
+}
+
+/* Links */
+.post-content a {
+  color: var(--color-link);
+  text-decoration: none;
+  border-bottom: 2px dashed var(--color-link);
+}
+
+.post-content a:hover {
+  color: var(--color-link-hover);
+  border-bottom: 2px solid var(--color-link-hover);
+}
+
+/* Blockquote */
+.post-content blockquote {
+  background-color: var(--color-blockquote-bg);
+  border-left: 5px solid var(--color-blockquote-border);
+  padding: 15px 20px;
+  margin: 30px 0;
+  font-style: italic;
+  font-size: 1.1rem;
+  color: #666;
+}
+
+.post-content blockquote:hover {
+  background-color: #e8f4fb;
+  color: #444;
+}
+
+/* Important Content */
+.post-content .important {
+  background-color: var(--color-important-bg);
+  border: 2px solid var(--color-important-border);
+  padding: 15px;
+  margin: 20px 0;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: bold;
+}
+
+/* Underline */
+.post-content u {
+  text-decoration: none;
+  position: relative;
+  font-weight: bold;
+}
+
+.post-content u::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 3px;
+  bottom: -3px;
+  left: 0;
+  background: var(--color-underline);
+  transition: width 0.3s ease-in-out;
+  width: 0%;
+}
+
+.post-content u:hover::after {
+  width: 100%;
+}
+
+/* Images Between Text */
+.post-content img {
+  display: block;
+  max-width: 100%;
+  margin: 20px auto;
+  border: 3px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.post-content img:hover {
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Paragraphs */
+.post-content p {
+  font-size: 1.1rem;
+  margin-bottom: 20px;
+  color: var(--color-text-light);
+  line-height: 1.8;
+  text-align: justify;
+}
+
+/* Lists */
+.post-content ul, .post-content ol {
+  padding-left: 20px;
+  margin-bottom: 20px;
+}
+
+.post-content ul li, .post-content ol li {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--color-text-light);
+}
+
+/* Tables */
+.post-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+}
+
+.post-content table th, .post-content table td {
+  padding: 15px;
+  border: 1px solid #ddd;
+  text-align: left;
+}
+
+.post-content table th {
+  background-color: var(--color-link);
+  color: #fff;
+}
+
+.post-content table tr:nth-child(even) {
+  background-color: var(--color-bg-light);
+}
+
+/* Buttons */
+.post-content .button {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: var(--color-link);
+  color: #fff;
+  font-size: 1rem;
+  border-radius: 5px;
+  text-align: center;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+}
+
+.post-content .button:hover {
+  background-color: var(--color-link-hover);
+}
+/* Styling for the code block */ .codeblock { position: relative; background-color: #1e1e1e; /* VS Code dark background */ color: #dcdcdc; /* Default text color */ border-radius: 8px; overflow: hidden; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); font-family: 'Courier New', Courier, monospace; } .codeblock .line-numbers { position: absolute; top: 0; left: 0; bottom: 0; width: 3rem; background-color: #252526; /* Sidebar background */ color: #858585; /* Line number color */ text-align: right; padding-top: 1rem; padding-right: 0.5rem; font-size: 0.9rem; line-height: 1.5rem; user-select: none; border-right: 1px solid #333; } .codeblock .line-numbers span { display: block; } /* Apply blue color to the first and last line numbers */ .codeblock .line-numbers .blue-line-number { color: #1e90ff; /* Blue for first and last line numbers */ } /* Code content container */ .codeblock .code-content { margin-left: 3rem; padding: 1rem; position: relative; } .codeblock pre { margin: 0; padding: 0; overflow-x: auto; font-size: 0.9rem; line-height: 1.5rem; background: none; border: none; } /* Apply light blue color to the first and last code lines */ .codeblock .code-content .light-blue-code-line { color: #8cd8f1; /* Light blue for first and last code lines */ } /* Adjust the hover effect for all code lines */ .codeblock pre:hover { background-color: #333; /* Slight dark background on hover */ } /* Highlight for the first and last lines */ .codeblock .highlight { background-color: #5a9bd4; /* Light blue highlight */ color: #ffffff; /* White text for highlight */ font-weight: bold; } /* Copy Button Styling */ .copy-button { position: absolute; top: 0.5rem; right: 0.5rem; background-color: #007acc; /* Button color */ color: #ffffff; border: none; border-radius: 4px; padding: 0.5rem 1rem; cursor: pointer; font-size: 0.8rem; transition: background-color 0.2s; } .copy-button:hover { background-color: #005f99; /* Hover color */ }
+
+
+
+/* //For the select dropdown */
+.custom-select {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 6px 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  min-height: 40px;
+}
+
+.custom-select option {
+  padding: 8px;
+  font-size: 14px;
+}
+
+.custom-select:focus {
+  outline: none;
+  border-color: #68D391; /* Green focus color */
+}
+
+/* Styling for selected categories as tags */
+.custom-select option:checked {
+  background-color: #68D391;
+  color: white;
+  font-weight: bold;
+}
+
+.loader {
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #6366f1;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.6s ease-out forwards;
+}
+
+
+/* Constrain readable line-length for article text */
+.prose-max {
+  max-width: 65ch;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+

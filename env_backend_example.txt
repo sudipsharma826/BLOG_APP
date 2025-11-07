@@ -1,0 +1,14 @@
+PORT= port number 
+MONGODB_URI= databse url
+JWT_SECRET=your_secure_jwt_secret
+JWT_EXPIRES_IN=your_expiry_time
+CLIENT_URL=forent_url
+COOKIE_EXPIRES_IN=7
+EMAIL = your email name
+c=you email app password
+
+
+//Cloudinary
+CLOUDINARY_CLOUD_NAME=your-cloud-name
+CLOUDINARY_API_KEY=your-api-key
+CLOUDINARY_API_SECRET=your-api-secret
