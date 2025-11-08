@@ -3,7 +3,6 @@ import { Tag } from 'lucide-react';
 import axios from 'axios';
 import PostCard from '../components/homepage/PostCard';
 import CategoryCard from '../components/blog/CategoryCard';
-import AdSpaceContainer from '../components/blog/AdSpaceContainer';
 
 const CategoryList = () => {
   const [categories, setCategories] = useState([]);
@@ -47,7 +46,7 @@ const CategoryList = () => {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Hero Section */}
-      <div className="bg-gradient-to-br from-purple-600 to-blue-500 py-24 relative">
+      <div className="bg-gradient-to-br from-purple-600 to-blue-500 py-24 relative dark:from-gray-800 dark:to-gray-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <Tag className="h-12 w-12 mx-auto mb-6 text-white" />
           <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">
@@ -59,11 +58,11 @@ const CategoryList = () => {
         </div>
       </div>
 
-      <AdSpaceContainer /> {/* Ad space section */}
+  {/* Ad spaces removed per user request */}
 
       {/* Categories Grid */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-16">
-        <h2 className="text-3xl font-bold mb-8 dark:text-white">Categories</h2>
+  <h2 className="text-3xl font-bold mb-8 text-gray-900 dark:text-gray-100">Categories</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {Array.isArray(categories) && categories.map((category) => (
             <CategoryCard
@@ -93,7 +92,7 @@ const CategoryList = () => {
                 <PostCard key={post._id} post={post} /> // Ensure post._id is unique
               ))
             ) : (
-              <p className="text-gray-600 dark:text-gray-400 col-span-full text-center py-12">
+              <p className="text-gray-700 dark:text-gray-300 col-span-full text-center py-12">
                 No posts available for this category.
               </p>
             )}
@@ -101,7 +100,7 @@ const CategoryList = () => {
         )}
       </div>
 
-      <AdSpaceContainer /> {/* Another Ad space section */}
+  {/* Ad spaces removed per user request */}
     </div>
   );
 };

@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
-import AdSpaceContainer from '../components/blog/AdSpaceContainer';
 
 const SingleCategoryPage = () => {
   const { category: categorySlug } = useParams();
@@ -80,7 +79,7 @@ const SingleCategoryPage = () => {
         </div>
       </div>
 
-      <AdSpaceContainer />
+  {/* Ad spaces removed per user request */}
 
       {/* Posts Grid */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
@@ -120,7 +119,7 @@ const SingleCategoryPage = () => {
         )}
       </div>
 
-      <AdSpaceContainer />
+  {/* Ad spaces removed per user request */}
     </div>
   );
 };

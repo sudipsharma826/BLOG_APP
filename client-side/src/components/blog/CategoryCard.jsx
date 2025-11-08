@@ -4,7 +4,7 @@ const CategoryCard = ({ category, onClick, isActive }) => {
   return (
     <div
       onClick={onClick}
-      className={`cursor-pointer bg-white dark:bg-gray-700 p-6 rounded-xl shadow-md hover:shadow-xl transition-all duration-300 ${
+      className={`cursor-pointer bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md hover:shadow-xl transition-all duration-300 ${
         isActive ? 'ring-2 ring-purple-500' : ''
       }`}
     >
@@ -20,8 +20,8 @@ const CategoryCard = ({ category, onClick, isActive }) => {
           </div>
         </div>
         <div className="flex-1">
-          <h3 className="text-lg font-semibold dark:text-white">{category.name}</h3>
-          <p className="text-sm text-gray-600 dark:text-gray-300">{category.postCount} Posts</p>
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">{category.name}</h3>
+          <p className="text-sm text-gray-700 dark:text-gray-200">{category.postCount} Posts</p>
         </div>
       </div>
     </div>

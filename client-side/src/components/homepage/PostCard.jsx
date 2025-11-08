@@ -57,13 +57,13 @@ const PostCard = ({ post }) => {
 
         {/* Post subtitle */}
         <Link to={`/post/${post.slug}`}>
-          <h4 className="text-sm font-semibold mb-2 text-gray-600 dark:text-gray-400">
+          <h4 className="text-sm font-semibold mb-2 text-gray-700 dark:text-gray-200">
             {post.subtitle}
           </h4>
         </Link>
 
         {/* Post content */}
-        <p className="mt-2 text-gray-600 dark:text-gray-400 line-clamp-2">
+        <p className="mt-2 text-gray-700 dark:text-gray-200 line-clamp-2">
           {/* Remove HTML tags from post.content */}
           {typeof post.content === 'string'
             ? post.content.replace(/<[^>]*>/g, '')

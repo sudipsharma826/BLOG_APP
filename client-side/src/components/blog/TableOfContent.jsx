@@ -1,6 +1,5 @@
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import { useState, useEffect } from 'react';
-import AdSense from './AdSense';
 
 export default function TableOfContents({ content }) {
   const [isExpanded, setIsExpanded] = useState(true);
@@ -32,9 +31,9 @@ export default function TableOfContents({ content }) {
   }, [content]);
 
   return (
-    <div className="toc flex flex-col lg:flex-row gap-8 mb-10">
-      {/* TOC Section: 60% width */}
-      <div className="lg:w-3/5 w-full">
+    <div className="toc flex flex-col gap-8 mb-10">
+      {/* TOC Section: full width */}
+      <div className="w-full">
         <div className="bg-gradient-to-r from-gray-800 via-gray-700 to-gray-600 text-white p-6 rounded-lg shadow-lg">
           {/* Always visible title and toggle button */}
           <div
@@ -52,9 +51,7 @@ export default function TableOfContents({ content }) {
           </div>
 
           {/* Conditionally show the TOC content */}
-          <div
-            className={`transition-all duration-300 ${isExpanded ? 'block' : 'hidden'}`}
-          >
+          <div className={`transition-all duration-300 ${isExpanded ? 'block' : 'hidden'}`}>
             <ul className="space-y-3">
               {tocItems.map((item) => (
                 <li
@@ -65,10 +62,7 @@ export default function TableOfContents({ content }) {
                       : 'before:content-["-"] before:mr-2 before:text-yellow-400'
                   }`}
                 >
-                  <a
-                    href={`#${item.id}`}
-                    className="text-gray-300 hover:text-white transition-colors duration-200 ease-in-out"
-                  >
+                  <a href={`#${item.id}`} className="text-gray-300 hover:text-white transition-colors duration-200 ease-in-out">
                     {item.title}
                   </a>
                 </li>
@@ -77,31 +71,6 @@ export default function TableOfContents({ content }) {
           </div>
         </div>
       </div>
-
-      {/* Ad Section: 40% width */}
-      <div className="adsense lg:w-2/5 w-full flex items-center justify-center border border-gray-300 p-4 rounded-lg relative">
-  <p
-    className="text-sm font-semibold flex absolute top-2 right-2 px-2 py-1 rounded"
-    style={{
-      background: 'linear-gradient(to right, red, blue)', // Gradient background for the "Ad Space" label
-      color: 'white', // Text color for the label
-      // Dynamically adjust the text color for dark mode
-      ...(document.body.classList.contains('dark') ? {
-        background: 'linear-gradient(to right, #444, #888)', // Darker gradient for dark mode
-      } : {}),
-    }}
-  >
-    Ad Space
-  </p>
-  <AdSense
-    adClient={import.meta.env.VITE_ADSENSE_CLIENT}
-    adSlot={import.meta.env.VITE_ADSENSE_SLOT}
-    style={{ height: '250px' }}
-    adFormat="auto"
-    fullWidthResponsive={true}
-  />
-</div>
-
     </div>
   );
 }

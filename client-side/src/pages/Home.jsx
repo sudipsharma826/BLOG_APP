@@ -1,13 +1,11 @@
 import React, { useEffect } from 'react'
 import HeroSection from '../components/homepage/HeroSection'
-import AdSense from '../components/blog/AdSense';
 import FeaturedPosts from '../components/homepage/FeaturePosts';
 import axios from 'axios';
 import { useState } from 'react';
 import TechStack from '../components/homepage/TechStack';
 import CategoryList from '../components/homepage/Catrgories';
 import PostSlider from '../components/homepage/PostSlider';
-import AdSpaceContainer from '../components/blog/AdSpaceContainer';
 
 
 const Home = () => {
@@ -77,8 +75,7 @@ const Home = () => {
   return (
     <>
     {/* <SampleForm /> */}
-    <HeroSection />
-    <AdSpaceContainer />
+  <HeroSection />
 
 
     {/* //Featured Posts */}

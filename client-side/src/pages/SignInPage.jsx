@@ -6,7 +6,6 @@ import { Pen } from 'lucide-react';
 import axios from 'axios';
 import { signInStart, signInSuccess, signInFailure, resetError } from '../redux/user/authSlice';
 import { GoogleOuth } from '../components/GoogleOuth';
-import AdSpaceContainer from '../components/blog/AdSpaceContainer';
 
 const SignInPage = () => {
   const navigate = useNavigate();
@@ -167,7 +166,7 @@ const SignInPage = () => {
           </div>
         </div>
       </div>
-      <AdSpaceContainer />
+  {/* Ad spaces removed per user request */}
     </div>
   );
 };

@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { Search } from 'lucide-react';
 import PostCard from '../components/homepage/PostCard';
 import SearchBar from '../components/homepage/SearchBar';
-import AdSpaceContainer from '../components/blog/AdSpaceContainer';
 import axios from 'axios';
 
 const PostsPage = () => {
@@ -41,7 +40,7 @@ const PostsPage = () => {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Hero Section */}
-      <div className="bg-gradient-to-br from-blue-600 to-purple-500 py-24">
+      <div className="bg-gradient-to-br from-blue-600 to-purple-500 py-24 dark:from-gray-800 dark:to-gray-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <Search className="h-12 w-12 mx-auto mb-6 text-white" />
           <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">
@@ -51,17 +50,16 @@ const PostsPage = () => {
             <SearchBar value={searchQuery} onChange={setSearchQuery} />
           </div>
         </div>
-      </div>
-
-      <AdSpaceContainer />
+  </div>
 
       {/* Posts Grid */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div className="card p-6">
         <div className="flex justify-between items-center mb-8">
-          <h2 className="text-3xl font-bold dark:text-white">
+          <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
             {searchQuery ? 'Search Results' : 'All Posts'}
           </h2>
-          <p className="text-gray-600 dark:text-gray-400">
+          <p className="text-gray-700 dark:text-gray-300">
             {posts.length} {posts.length === 1 ? 'post' : 'posts'} found
           </p>
         </div>
@@ -75,15 +73,16 @@ const PostsPage = () => {
             {posts.length > 0 ? (
               posts.map((post) => <PostCard key={post._id} post={post} />)
             ) : (
-              <p className="text-gray-600 dark:text-gray-400 col-span-full text-center py-12">
+              <p className="text-gray-700 dark:text-gray-300 col-span-full text-center py-12">
                 No posts found. Try a different search term.
               </p>
             )}
           </div>
         )}
+        </div>
       </div>
 
-      <AdSpaceContainer />
+      {/* Ad spaces removed per user request */}
     </div>
   );
 };

@@ -37,24 +37,24 @@ const AboutPage = () => {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
-          <div className="bg-white p-8 rounded-lg shadow-md text-center dark:bg-gray-800 dark:text-white">
-            <Code className="h-12 w-12 text-purple-600 mx-auto mb-4 dark:text-purple-500" />
-            <h3 className="text-xl font-bold mb-2 dark:text-white">Technical Expertise</h3>
-            <p className="text-gray-600 dark:text-gray-300">
+          <div className="bg-white p-8 rounded-lg shadow-md text-center dark:bg-gray-800">
+            <Code className="h-12 w-12 text-purple-600 mx-auto mb-4 dark:text-purple-400" />
+            <h3 className="text-xl font-bold mb-2 text-gray-900 dark:text-gray-100">Technical Expertise</h3>
+            <p className="text-gray-700 dark:text-gray-200">
               Deep knowledge in various programming languages and frameworks
             </p>
           </div>
-          <div className="bg-white p-8 rounded-lg shadow-md text-center dark:bg-gray-800 dark:text-white">
-            <Coffee className="h-12 w-12 text-purple-600 mx-auto mb-4 dark:text-purple-500" />
-            <h3 className="text-xl font-bold mb-2 dark:text-white">Continuous Learning</h3>
-            <p className="text-gray-600 dark:text-gray-300">
+          <div className="bg-white p-8 rounded-lg shadow-md text-center dark:bg-gray-800">
+            <Coffee className="h-12 w-12 text-purple-600 mx-auto mb-4 dark:text-purple-400" />
+            <h3 className="text-xl font-bold mb-2 text-gray-900 dark:text-gray-100">Continuous Learning</h3>
+            <p className="text-gray-700 dark:text-gray-200">
               Always staying updated with the latest tech trends
             </p>
           </div>
-          <div className="bg-white p-8 rounded-lg shadow-md text-center dark:bg-gray-800 dark:text-white">
-            <Heart className="h-12 w-12 text-purple-600 mx-auto mb-4 dark:text-purple-500" />
-            <h3 className="text-xl font-bold mb-2 dark:text-white">Passion for Sharing</h3>
-            <p className="text-gray-600 dark:text-gray-300">
+          <div className="bg-white p-8 rounded-lg shadow-md text-center dark:bg-gray-800">
+            <Heart className="h-12 w-12 text-purple-600 mx-auto mb-4 dark:text-purple-400" />
+            <h3 className="text-xl font-bold mb-2 text-gray-900 dark:text-gray-100">Passion for Sharing</h3>
+            <p className="text-gray-700 dark:text-gray-200">
               Committed to helping others learn and grow
             </p>
           </div>

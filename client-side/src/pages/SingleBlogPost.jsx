@@ -12,9 +12,8 @@ import { Heart, ThumbsUp, Share2, Bookmark, Link, HelpingHand } from 'lucide-rea
 import { Bell, Clock, Hash, Sidebar } from 'react-feather';
 import NotFound from './NotFound';
 import RelatedPosts from '../components/RelatedPosts';
-import AdSense from '../components/blog/AdSense';
 import CommentSection from '../components/CommetnSection';
-import AdSpaceContainer from '../components/blog/AdSpaceContainer';
+/* Ad spaces removed */
 import LatestPosts from '../components/LatestPost';
 import SidebarCategories from '../components/SideBarCategories';
 
@@ -190,28 +189,13 @@ function SinglePostPage() {
         image={postData?.image}
       />
 
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-4 sm:py-6 lg:py-8 px-2 sm:px-4 lg:px-8">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-8 lg:grid-cols-12 gap-4 lg:gap-8">
+  <div className="min-h-screen page-section py-4 sm:py-6 lg:py-8 px-2 sm:px-4 lg:px-8">
+    <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-12 lg:grid-cols-12 gap-4 lg:gap-8">
           {/* Left Sidebar - Hidden on mobile, visible on large screens */}
-          <div className="hidden lg:block lg:col-span-2 space-y-6">
-            <div className="sticky top-8 rounded-lg p-4 shadow-lg relative bg-gray-200 dark:bg-gray-800">
-              <span className="absolute top-2 left-2 text-sm font-semibold text-white bg-black bg-opacity-50 px-2 py-1 rounded">
-                Ads Space
-              </span>
-              <div className="flex flex-col items-center space-y-4">
-                <AdSense
-                  adClient={import.meta.env.VITE_ADSENSE_CLIENT}
-                  adSlot={import.meta.env.VITE_ADSENSE_SLOT}
-                  adFormat="auto"
-                  style={{ width: '100%', height: 'auto' }}
-                  fullWidthResponsive={true}
-                />
-              </div>
-            </div>
-          </div>
+          {/* Left sidebar removed (no ads) */}
 
           {/* Main Content - Full width on mobile, adjusted for larger screens */}
-          <article className="col-span-1 md:col-span-8 lg:col-span-7 bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden">
+          <article className="col-span-1 md:col-span-9 lg:col-span-8 card rounded-2xl overflow-hidden">
             <div className="p-4 sm:p-6 lg:p-8">
               <PostHeader 
                 category={postData?.category}
@@ -231,7 +215,7 @@ function SinglePostPage() {
               )}
             </div>
 
-            <div className="w-full h-[200px] sm:h-[300px] lg:h-[400px]">
+            <div className="w-full h-[200px] sm:h-[300px] lg:h-[400px] bg-[var(--color-surface)]">
               <img
                 src={postData?.image}
                 alt="Post Visual"
@@ -247,10 +231,10 @@ function SinglePostPage() {
           </article>
 
           {/* Right Sidebar - Becomes row on medium screens, column on large screens */}
-          <div className="col-span-1 md:col-span-8 lg:col-span-3 space-y-4 lg:space-y-8">
+          <div className="col-span-1 md:col-span-3 lg:col-span-4 space-y-4 lg:space-y-8">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-4">
               {/* Latest Posts */}
-              <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-4 sm:p-6">
+              <div className="card rounded-lg p-4 sm:p-6">
                 <h3 className="text-lg sm:text-xl font-bold mb-4 flex items-center">
                   <Clock className="w-5 h-5 mr-2" />
                   Latest Posts
@@ -259,7 +243,7 @@ function SinglePostPage() {
               </div>
 
               {/* Categories */}
-              <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-4 sm:p-6">
+              <div className="card rounded-lg p-4 sm:p-6">
                 <h3 className="text-lg sm:text-xl font-bold mb-4 flex items-center">
                   <Hash className="w-5 h-5 mr-2" />
                   Categories
@@ -271,17 +255,13 @@ function SinglePostPage() {
         </div>
 
         {/* Bottom content */}
-        <div className="mt-4 sm:mt-6 lg:mt-8">
-          {/* Show ads container in a row on medium screens */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-4 mb-4">
-            <AdSpaceContainer />
+          <div className="mt-4 sm:mt-6 lg:mt-8">
+            {postData && <RelatedPosts categories={postData.category} />}
           </div>
-          {postData && <RelatedPosts categories={postData.category} />}
-        </div>
 
         {/* Floating action buttons - Responsive positioning */}
         {showFloatingIcons && (
-          <div className="fixed bottom-4 sm:bottom-6 left-1/2 transform -translate-x-1/2 bg-gray-200 dark:bg-gray-800 p-3 sm:p-4 rounded-full shadow-lg flex items-center space-x-3 sm:space-x-4 z-50">
+          <div className="fixed bottom-4 sm:bottom-6 left-1/2 transform -translate-x-1/2 card p-3 sm:p-4 rounded-full shadow-lg flex items-center space-x-3 sm:space-x-4 z-50">
             <button
               onClick={() => handleAction('like')}
               className={`p-2 rounded-full transition-colors ${

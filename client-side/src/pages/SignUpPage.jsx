@@ -5,7 +5,6 @@ import { useSelector } from 'react-redux';
 import { Pen } from 'lucide-react';
 import axios from 'axios';
 import { GoogleOuth } from '../components/GoogleOuth';
-import AdSpaceContainer from '../components/blog/AdSpaceContainer';
 
 const SignUpPage = () => {
   const navigate = useNavigate();
@@ -185,7 +184,7 @@ const SignUpPage = () => {
           </div>
         </div>
       </div>
-      <AdSpaceContainer />
+  {/* Ad spaces removed per user request */}
     </div>
   );
 };

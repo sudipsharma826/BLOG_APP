@@ -1,7 +1,6 @@
 import React from 'react';
-import AdSense from '../blog/AdSense';
 import { Link } from 'react-router-dom';
-import AdSpaceContainer from '../blog/AdSpaceContainer';
+// Ads removed per user request
 
 export default function FeaturedPosts({ posts }) {
   return (
@@ -64,8 +63,7 @@ export default function FeaturedPosts({ posts }) {
         )}
       </div>
 
-      {/* AdSense Horizontal */}
-      <AdSpaceContainer />
+  {/* Ad spaces removed per user request */}
     </section>
     </>
   );

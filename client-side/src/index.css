@@ -9,6 +9,40 @@
   --color-accent: #f59e0b; /* amber accent */
   --color-card-shadow: 0 8px 24px rgba(16,24,40,0.06);
   --radius-lg: 12px;
+  /* Post/content-specific variables */
+  --color-text-light: #374151; /* paragraph text */
+  --color-link: #4f46e5; /* link color */
+  --color-link-hover: #3730a3;
+  --color-highlight: #e9d5ff;
+  --color-blockquote-bg: #f1f5f9;
+  --color-blockquote-border: #c7d2fe;
+  --color-important-bg: #fff7ed;
+  --color-important-border: #ffe8c7;
+  --color-underline: #c7b3ff;
+  --color-bg-light: #f8fafc;
+}
+
+/* Dark theme variable overrides (activated when Tailwind's .dark class is present) */
+.dark {
+  --color-bg: #0b1220; /* page background in dark */
+  --color-surface: #0f1724; /* card / surface in dark */
+  --color-text: #e6eef8; /* primary text in dark */
+  --color-muted: #9aa4b2; /* muted text in dark */
+  --color-primary: #8b5cf6; /* slightly lighter purple for dark */
+  --color-accent: #f59e0b; /* keep accent */
+  --color-card-shadow: 0 10px 30px rgba(2,6,23,0.6);
+  --radius-lg: 12px;
+  /* Post/content-specific variables for dark */
+  --color-text-light: #cbd5e1; /* paragraph text */
+  --color-link: #a78bfa; /* link color */
+  --color-link-hover: #7c3aed;
+  --color-highlight: #2b2b3a;
+  --color-blockquote-bg: #071129;
+  --color-blockquote-border: #1f2937;
+  --color-important-bg: #111827;
+  --color-important-border: #1f2937;
+  --color-underline: #334155;
+  --color-bg-light: #071029;
 }
 
 @tailwind base;
@@ -31,6 +65,7 @@
   background: var(--color-surface);
   box-shadow: var(--color-card-shadow);
   border-radius: var(--radius-lg);
+  border: 1px solid rgba(15,23,42,0.04);
 }
 .badge{
   background: var(--color-primary);

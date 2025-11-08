@@ -8,7 +8,7 @@ import {
   Code,
   Cloud
 } from 'lucide-react';
-import AdSense from '../blog/AdSense';
+// AdSense removed per user request
 
 const technologies = [
   { icon: Database, name: 'Databases' },
@@ -39,34 +39,6 @@ const TechStack = () => {
               <h3 className="text-lg font-semibold text-gray-900">{name}</h3>
             </div>
           ))}
-        
-        {/* AdSense Box */}
-        <div className="relative w-full h-full bg-gray-200  rounded-lg flex items-center justify-center">
-          {/* Ad Space Label */}
-          <p
-            className="absolute top-2 right-2 text-sm font-semibold px-2 py-1 rounded"
-            style={{
-              background: 'linear-gradient(to right, red, blue)', // Gradient background
-              color: 'white', // Text color
-              ...(document.body.classList.contains('dark')
-                ? {
-                    background: 'linear-gradient(to right, #444, #888)' // Dark mode gradient
-                  }
-                : {})
-              }}
-              >
-            Ad Space
-          </p>
-          
-          {/* AdSense Component */}
-          <AdSense
-            adClient={import.meta.env.VITE_ADSENSE_CLIENT}
-            adSlot={import.meta.env.VITE_ADSENSE_SLOT}
-            style={{ display: 'block' }}
-            adFormat="auto"
-            fullWidthResponsive={true}
-          />
-            </div>
         </div>
       </div>
     </section>
