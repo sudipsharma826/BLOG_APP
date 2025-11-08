@@ -99,9 +99,14 @@ export const deleteUser = async (req, res, next) => {
     if (user.id === user._id) {
       await user.remove(); // Delete the user
       res
-        .clearCookie("accessToken") // Clear user's token
+        // Clear cookie with same options used to set it (important for cross-site cookies)
+        .clearCookie('accessToken', {
+          path: '/',
+          sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+          secure: process.env.NODE_ENV === 'production',
+        })
         .status(200)
-        .json({ message: "Your account has been deleted successfully." });
+        .json({ message: 'Your account has been deleted successfully.' });
     }
 
     // Case 2: Admin deletes the user
@@ -150,7 +155,12 @@ export const signout = async (req, res, next) => {
 
     await user.save();
 
-    res.clearCookie('accessToken').status(200).json({ message: 'Successfully signed out' });
+    // clear cookie with the same options used to set it (important for cross-site cookies)
+    res.clearCookie('accessToken', {
+      path: '/',
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+      secure: process.env.NODE_ENV === 'production',
+    }).status(200).json({ message: 'Successfully signed out' });
   } catch (error) {
     next(error);
   }

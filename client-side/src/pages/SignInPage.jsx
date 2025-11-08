@@ -49,7 +49,7 @@ const SignInPage = () => {
         {
           withCredentials: true,
           headers: {
-            Content: 'application/json',
+            'Content-Type': 'application/json',
           },
         }
       );

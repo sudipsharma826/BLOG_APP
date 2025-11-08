@@ -154,13 +154,15 @@ export const signin = async (req, res, next) => {
 
     const { password: pass, ...rest } = user._doc;
 
+    // Cookie options: for cross-site deployments (frontend on Netlify, backend on another domain)
+    // we need SameSite=None and secure=true so browsers accept the cookie in cross-site contexts.
     const cookieOptions = {
       httpOnly: true,
       expires: new Date(Date.now() + parseInt(process.env.COOKIE_EXPIRES_IN) * 24 * 60 * 60 * 1000),
       path: '/',
-      sameSite: 'lax',
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+      secure: process.env.NODE_ENV === 'production',
     };
-    if (process.env.NODE_ENV === 'production') cookieOptions.secure = true;
 
     res.status(200).cookie('accessToken', token, cookieOptions).json(rest);
   } catch (err) {
@@ -262,13 +264,15 @@ export const googleouth = async (req, res, next) => {
 
     const { password, ...rest } = user._doc;
 
+    // Cookie options: for cross-site deployments (frontend on Netlify, backend on another domain)
+    // we need SameSite=None and secure=true so browsers accept the cookie in cross-site contexts.
     const cookieOptions = {
       httpOnly: true,
       expires: new Date(Date.now() + parseInt(process.env.COOKIE_EXPIRES_IN) * 24 * 60 * 60 * 1000),
       path: '/',
-      sameSite: 'lax',
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+      secure: process.env.NODE_ENV === 'production',
     };
-    if (process.env.NODE_ENV === 'production') cookieOptions.secure = true;
 
     res.status(200).cookie('accessToken', token, cookieOptions).json(rest);
   } catch (error) {
