@@ -3,7 +3,7 @@ import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { Heart, Bookmark, MessageSquare, ThumbsUpIcon } from 'lucide-react';
 
-const RelatedPosts = ({ categories }) => {
+const RelatedPosts = ({ categories, currentPostId }) => {
   const [currentCategory, setCurrentCategory] = useState(null);
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -33,7 +33,9 @@ const RelatedPosts = ({ categories }) => {
     fetchPosts();
   }, [currentCategory, categories]);
 
-  const displayPosts = showMore ? posts : posts.slice(0, 4);
+  // Filter out the current post from related posts
+  const filteredPosts = posts.filter(post => post._id !== currentPostId);
+  const displayPosts = showMore ? filteredPosts : filteredPosts.slice(0, 4);
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">

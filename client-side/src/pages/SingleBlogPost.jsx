@@ -13,7 +13,7 @@ import { Bell, Clock, Hash, Sidebar } from 'react-feather';
 import NotFound from './NotFound';
 import RelatedPosts from '../components/RelatedPosts';
 import CommentSection from '../components/CommetnSection';
-/* Ad spaces removed */
+import AdSense from '../components/blog/AdSense';
 import LatestPosts from '../components/LatestPost';
 import SidebarCategories from '../components/SideBarCategories';
 
@@ -50,56 +50,26 @@ function SinglePostPage() {
           { withCredentials: true }
         );
         if (postRes.data && postRes.data.post) {
-          const post = postRes.data.post;
-          setPostData(post);
-
+          setPostData(postRes.data.post);
+          // Fetch author data if needed
           const authorRes = await axios.get(
-            `${import.meta.env.VITE_BACKEND_APP_BASE_URL}/user/getuser/${post.authorEmail}`,
+            `${import.meta.env.VITE_BACKEND_APP_BASE_URL}/user/getuser/${postRes.data.post.authorEmail}`,
             { withCredentials: true }
           );
           setAuthorData(authorRes.data);
-
-          const estimatedReadTime = calculateReadTime(post.content);
+          // Calculate read time
+          const estimatedReadTime = calculateReadTime(postRes.data.post.content);
           setReadTime(estimatedReadTime);
-          setLoading(false);
-        } else {
-          setLoading(false);
         }
+        setLoading(false);
       } catch (error) {
-        console.error('Error fetching post or author data:', error);
         setLoading(false);
       }
     };
-
     fetchData();
   }, [slug]);
 
-  useEffect(() => {
-    if (postData && currentUser) {
-      setIsLiked(postData.usersLikeList.includes(currentUser._id));
-      setIsLoved(postData.usersLoveList.includes(currentUser._id));
-      setIsSaved(postData.usersSaveList.includes(currentUser._id));
-    }
-    if (postData) {
-      setLikesCount(postData.usersLikeList.length);
-      setLovesCount(postData.usersLoveList.length);
-      setSavesCount(postData.usersSaveList.length);
-    }
-  }, [postData, currentUser]);
-
-  const calculateReadTime = (content) => {
-    const wordsPerMinute = 200;
-    const wordCount = content.split(/\s+/).length;
-    return `${Math.ceil(wordCount / wordsPerMinute)} min read`;
-  };
-
   const handleAction = async (actionType) => {
-    if (!currentUser) {
-      alert('You must login');
-      navigate('/signin');
-      return;
-    }
-
     const actionData = {
       postId: postData._id,
       userId: currentUser._id,
@@ -139,13 +109,13 @@ function SinglePostPage() {
       console.error('Error performing action:', error);
       if (actionType === 'like') {
         setIsLiked(!isLiked);
-        setLikesCount(isLiked ? likesCount + 1 : likesCount - 1);
+        setLikesCount(isLiked ? likesCount - 1 : likesCount + 1);
       } else if (actionType === 'love') {
         setIsLoved(!isLoved);
-        setLovesCount(isLoved ? lovesCount + 1 : lovesCount - 1);
+        setLovesCount(isLoved ? lovesCount - 1 : lovesCount + 1);
       } else if (actionType === 'save') {
         setIsSaved(!isSaved);
-        setSavesCount(isSaved ? savesCount + 1 : savesCount - 1);
+        setSavesCount(isSaved ? savesCount - 1 : savesCount + 1);
       }
     }
   };
@@ -180,24 +150,20 @@ function SinglePostPage() {
     return <NotFound />;
   }
 
-  return (
 
-<>
+  return (
+    <>
       <SEO
         title={postData?.title}
         description={postData?.description}
         image={postData?.image}
       />
-
-  <div className="min-h-screen page-section py-4 sm:py-6 lg:py-8 px-2 sm:px-4 lg:px-8">
-    <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-12 lg:grid-cols-12 gap-4 lg:gap-8">
-          {/* Left Sidebar - Hidden on mobile, visible on large screens */}
-          {/* Left sidebar removed (no ads) */}
-
-          {/* Main Content - Full width on mobile, adjusted for larger screens */}
+      <div className="min-h-screen page-section py-4 sm:py-6 lg:py-8 px-2 sm:px-4 lg:px-8">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-12 lg:grid-cols-12 gap-4 lg:gap-8">
+          {/* Main Content */}
           <article className="col-span-1 md:col-span-9 lg:col-span-8 card rounded-2xl overflow-hidden">
             <div className="p-4 sm:p-6 lg:p-8">
-              <PostHeader 
+              <PostHeader
                 category={postData?.category}
                 title={postData?.title}
                 subtitle={postData?.subtitle}
@@ -214,7 +180,16 @@ function SinglePostPage() {
                 />
               )}
             </div>
-
+            {/* AdSense Ad - Below Post Title */}
+              <div className="my-6 flex justify-center">
+                <AdSense
+                  adClient={import.meta.env.VITE_ADSENSE_CLIENT}
+                  adSlot={import.meta.env.VITE_ADSENSE_SLOT}
+                  adFormat="auto"
+                  style={{ display: 'block', minHeight: 90, maxWidth: 728, margin: '0 auto' }}
+                  fullWidthResponsive={true}
+                />
+              </div>
             <div className="w-full h-[200px] sm:h-[300px] lg:h-[400px] bg-[var(--color-surface)]">
               <img
                 src={postData?.image}
@@ -222,16 +197,34 @@ function SinglePostPage() {
                 className="w-full h-full object-cover"
               />
             </div>
-
             <div className="p-4 sm:p-6 lg:p-8">
               <TableOfContents content={postData.content} />
               <PostContent content={postData?.content} />
+                {/* AdSense Ad - After Content, Before Comments (horizontal, non-intrusive) */}
+                <div className="my-8 flex justify-center">
+                  <AdSense
+                    adClient={import.meta.env.VITE_ADSENSE_CLIENT}
+                    adSlot={import.meta.env.VITE_ADSENSE_SLOT}
+                    adFormat="auto"
+                    style={{ display: 'block', minHeight: 90, maxWidth: 728, margin: '0 auto' }}
+                    fullWidthResponsive={true}
+                  />
+                </div>
               <CommentSection postId={postData._id} />
             </div>
           </article>
-
-          {/* Right Sidebar - Becomes row on medium screens, column on large screens */}
+          {/* Right Sidebar */}
           <div className="col-span-1 md:col-span-3 lg:col-span-4 space-y-4 lg:space-y-8">
+            {/* AdSense Ad - Sidebar Sticky */}
+            <div className="sticky top-24 z-10">
+              <AdSense
+                adClient={import.meta.env.VITE_ADSENSE_CLIENT}
+                adSlot={import.meta.env.VITE_ADSENSE_SLOT}
+                adFormat="auto"
+                style={{ display: 'block', minHeight: 250, maxWidth: 300, margin: '0 auto' }}
+                fullWidthResponsive={true}
+              />
+            </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-4">
               {/* Latest Posts */}
               <div className="card rounded-lg p-4 sm:p-6">
@@ -241,7 +234,6 @@ function SinglePostPage() {
                 </h3>
                 <LatestPosts />
               </div>
-
               {/* Categories */}
               <div className="card rounded-lg p-4 sm:p-6">
                 <h3 className="text-lg sm:text-xl font-bold mb-4 flex items-center">
@@ -253,12 +245,20 @@ function SinglePostPage() {
             </div>
           </div>
         </div>
-
         {/* Bottom content */}
-          <div className="mt-4 sm:mt-6 lg:mt-8">
-            {postData && <RelatedPosts categories={postData.category} />}
-          </div>
-
+        <div className="mt-4 sm:mt-6 lg:mt-8">
+          {postData && <RelatedPosts categories={postData.category} currentPostId={postData._id} />}
+            {/* AdSense Ad - After Related Posts (bottom, non-intrusive) */}
+            <div className="my-8 flex justify-center">
+              <AdSense
+                adClient={import.meta.env.VITE_ADSENSE_CLIENT}
+                adSlot={import.meta.env.VITE_ADSENSE_SLOT}
+                adFormat="auto"
+                style={{ display: 'block', minHeight: 90, maxWidth: 728, margin: '0 auto' }}
+                fullWidthResponsive={true}
+              />
+            </div>
+        </div>
         {/* Floating action buttons - Responsive positioning */}
         {showFloatingIcons && (
           <div className="fixed bottom-4 sm:bottom-6 left-1/2 transform -translate-x-1/2 card p-3 sm:p-4 rounded-full shadow-lg flex items-center space-x-3 sm:space-x-4 z-50">
@@ -296,7 +296,7 @@ function SinglePostPage() {
         )}
       </div>
     </>
-);
+  );
 }
 
 export default SinglePostPage;

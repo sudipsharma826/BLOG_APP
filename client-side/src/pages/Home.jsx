@@ -12,6 +12,7 @@ const Home = () => {
   const [featuredPosts, setFeaturedPosts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [posts, setPosts] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   //Get Featured Posts
   useEffect(() => {
@@ -32,7 +33,6 @@ const Home = () => {
       }
     };
 
-
     //Get All Catories
     const fetchCategories = async () => {
       try {
@@ -44,7 +44,6 @@ const Home = () => {
         );
         if (res.status === 200) {
           setCategories(res.data.categories);
-          
         }
       } catch (error) {
         console.error('Error fetching categories:', error.message);
@@ -68,30 +67,33 @@ const Home = () => {
         console.error('Error fetching posts:', error.message);
       }
     };
-    fetchFeaturedPosts();
-    fetchCategories();
-    fetchPosts();
+
+    const fetchAll = async () => {
+      setLoading(true);
+      await Promise.all([fetchFeaturedPosts(), fetchCategories(), fetchPosts()]);
+      setLoading(false);
+    };
+    fetchAll();
   }, []);
-  return (
-    <>
-    {/* <SampleForm /> */}
-  <HeroSection />
-
-
-    {/* //Featured Posts */}
-    <FeaturedPosts  posts={featuredPosts}/>
-    <TechStack />
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-
-    {/* //Catrgores Section */}
-     <CategoryList/>
-    </div>
-
-  <PostSlider posts={(posts || []).slice(0, 40)} />
-    
-    </>
-    
-  )
+    return (
+      <div className="bg-gradient-to-br from-purple-100 via-yellow-50 to-blue-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 min-h-screen w-full">
+        <HeroSection />
+        <section className="relative z-20 -mt-24 max-w-7xl mx-auto px-2 sm:px-4 lg:px-8">
+          <div className="rounded-3xl shadow-2xl bg-white/80 dark:bg-gray-900/80 backdrop-blur-md p-8 md:p-12 mb-16 border border-purple-100 dark:border-gray-800">
+            <FeaturedPosts posts={featuredPosts} loading={loading} />
+          </div>
+          <div className="rounded-3xl shadow-xl bg-gradient-to-r from-blue-50 via-white to-purple-50 dark:from-gray-800 dark:via-gray-900 dark:to-gray-800 p-8 md:p-12 mb-16 border border-blue-100 dark:border-gray-800">
+            <PostSlider posts={(posts || []).slice(0, 40)} />
+          </div>
+          <div className="rounded-3xl shadow-xl bg-white/90 dark:bg-gray-900/90 p-8 md:p-12 mb-16 border border-yellow-100 dark:border-gray-800">
+            <CategoryList />
+          </div>
+          <div className="rounded-3xl shadow-xl bg-gradient-to-r from-purple-50 via-white to-blue-50 dark:from-gray-800 dark:via-gray-900 dark:to-gray-800 p-8 md:p-12 mb-16 border border-purple-100 dark:border-gray-800">
+            <TechStack />
+          </div>
+        </section>
+      </div>
+    );
 }
 
-export default Home
+export default Home;

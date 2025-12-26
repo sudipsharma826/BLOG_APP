@@ -5,21 +5,62 @@
   --color-surface: #ffffff; /* card / surface */
   --color-text: #0f172a; /* primary text */
   --color-muted: #6b7280; /* muted text */
-  --color-primary: #6d28d9; /* purple */
-  --color-accent: #f59e0b; /* amber accent */
+  --color-primary: #2563eb; /* blue-600 */
+  --color-accent: #3b82f6; /* blue-500 accent */
+  --color-secondary: #0ea5e9; /* sky-500 */
+  --color-info: #60a5fa; /* blue-400 */
+  --color-success: #22c55e; /* green */
+  --color-warning: #fbbf24; /* yellow */
+  --color-danger: #ef4444; /* red */
+  --color-pink: #38bdf8; /* blue-400 as pink accent */
+  --color-indigo: #1e40af; /* blue-800 accent */
   --color-card-shadow: 0 8px 24px rgba(16,24,40,0.06);
   --radius-lg: 12px;
   /* Post/content-specific variables */
   --color-text-light: #374151; /* paragraph text */
-  --color-link: #4f46e5; /* link color */
-  --color-link-hover: #3730a3;
-  --color-highlight: #e9d5ff;
-  --color-blockquote-bg: #f1f5f9;
-  --color-blockquote-border: #c7d2fe;
-  --color-important-bg: #fff7ed;
-  --color-important-border: #ffe8c7;
-  --color-underline: #c7b3ff;
+  --color-link: #2563eb; /* blue-600 link color */
+  --color-link-hover: #1d4ed8;
+  --color-highlight: #dbeafe;
+  --color-blockquote-bg: #eff6ff;
+  --color-blockquote-border: #93c5fd;
+  --color-important-bg: #dbeafe;
+  --color-important-border: #60a5fa;
+  --color-underline: #60a5fa;
   --color-bg-light: #f8fafc;
+/* Vibrant utility classes for blog accents */
+.text-gradient {
+  background: linear-gradient(90deg, var(--color-primary), var(--color-pink), var(--color-accent));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-fill-color: transparent;
+}
+.border-accent {
+  border-color: var(--color-accent) !important;
+}
+.bg-info {
+  background: var(--color-info) !important;
+  color: #fff !important;
+}
+.bg-success {
+  background: var(--color-success) !important;
+  color: #fff !important;
+}
+.bg-warning {
+  background: var(--color-warning) !important;
+  color: #fff !important;
+}
+.bg-danger {
+  background: var(--color-danger) !important;
+  color: #fff !important;
+}
+.bg-indigo {
+  background: var(--color-indigo) !important;
+  color: #fff !important;
+}
+.shadow-card-strong {
+  box-shadow: 0 8px 32px 0 rgba(109,40,217,0.15), 0 1.5px 4px 0 rgba(236,72,153,0.08);
+}
 }
 
 /* Dark theme variable overrides (activated when Tailwind's .dark class is present) */
@@ -28,20 +69,20 @@
   --color-surface: #0f1724; /* card / surface in dark */
   --color-text: #e6eef8; /* primary text in dark */
   --color-muted: #9aa4b2; /* muted text in dark */
-  --color-primary: #8b5cf6; /* slightly lighter purple for dark */
-  --color-accent: #f59e0b; /* keep accent */
+  --color-primary: #3b82f6; /* blue-500 for dark */
+  --color-accent: #2563eb; /* blue-600 accent for dark */
   --color-card-shadow: 0 10px 30px rgba(2,6,23,0.6);
   --radius-lg: 12px;
   /* Post/content-specific variables for dark */
   --color-text-light: #cbd5e1; /* paragraph text */
-  --color-link: #a78bfa; /* link color */
-  --color-link-hover: #7c3aed;
-  --color-highlight: #2b2b3a;
-  --color-blockquote-bg: #071129;
-  --color-blockquote-border: #1f2937;
-  --color-important-bg: #111827;
-  --color-important-border: #1f2937;
-  --color-underline: #334155;
+  --color-link: #60a5fa; /* blue-400 link color */
+  --color-link-hover: #2563eb;
+  --color-highlight: #1e293b;
+  --color-blockquote-bg: #1e293b;
+  --color-blockquote-border: #2563eb;
+  --color-important-bg: #1e293b;
+  --color-important-border: #2563eb;
+  --color-underline: #2563eb;
   --color-bg-light: #071029;
 }
 

@@ -45,10 +45,10 @@ const ContactPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <div className="bg-gradient-to-br from-purple-600 to-blue-500 py-20 dark:from-gray-800 dark:to-gray-900">
+    <div className="min-h-screen bg-blue-50 dark:bg-blue-950">
+      <div className="bg-gradient-to-br from-blue-600 to-blue-400 py-20 dark:from-blue-900 dark:to-blue-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-       <LucideContactRound  className="h-12 w-12 text-white inline -mt-7 mr-4  dark:text-blue-500" />
+          <LucideContactRound className="h-12 w-12 text-white inline -mt-7 mr-4 dark:text-blue-400" />
           <h1 className="text-4xl md:text-5xl font-bold text-white mb-4 inline">
             Get in Touch
           </h1>

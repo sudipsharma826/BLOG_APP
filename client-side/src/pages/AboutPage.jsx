@@ -22,14 +22,14 @@ const AboutPage = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <div className="bg-gradient-to-br from-purple-600 to-blue-500 py-20 dark:from-gray-800 dark:to-gray-900">
+    <div className="min-h-screen bg-blue-50 dark:bg-blue-950">
+      <div className="bg-gradient-to-br from-blue-600 to-blue-400 py-20 dark:from-blue-900 dark:to-blue-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <Pen className="h-12 w-12 text-blue-950 inline -mt-5 dark:text-blue-500" />
-          <h1 className=" ml-3 text-4xl md:text-5xl font-bold text-white mb-4 inline dark:text-white">
+          <Pen className="h-12 w-12 text-blue-200 inline -mt-5 dark:text-blue-400" />
+          <h1 className="ml-3 text-4xl md:text-5xl font-bold text-white mb-4 inline dark:text-white">
             About TechKnows
           </h1>
-          <p className="text-xl text-white/90 max-w-2xl mx-auto dark:text-gray-300">
+          <p className="text-xl text-white/90 max-w-2xl mx-auto dark:text-blue-100">
             Passionate about technology and dedicated to sharing knowledge through thoughtful writing.
           </p>
         </div>
@@ -37,24 +37,24 @@ const AboutPage = () => {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
-          <div className="bg-white p-8 rounded-lg shadow-md text-center dark:bg-gray-800">
-            <Code className="h-12 w-12 text-purple-600 mx-auto mb-4 dark:text-purple-400" />
-            <h3 className="text-xl font-bold mb-2 text-gray-900 dark:text-gray-100">Technical Expertise</h3>
-            <p className="text-gray-700 dark:text-gray-200">
+          <div className="bg-white p-8 rounded-lg shadow-md text-center dark:bg-blue-900">
+            <Code className="h-12 w-12 text-blue-600 mx-auto mb-4 dark:text-blue-300" />
+            <h3 className="text-xl font-bold mb-2 text-gray-900 dark:text-blue-100">Technical Expertise</h3>
+            <p className="text-gray-700 dark:text-blue-200">
               Deep knowledge in various programming languages and frameworks
             </p>
           </div>
-          <div className="bg-white p-8 rounded-lg shadow-md text-center dark:bg-gray-800">
-            <Coffee className="h-12 w-12 text-purple-600 mx-auto mb-4 dark:text-purple-400" />
-            <h3 className="text-xl font-bold mb-2 text-gray-900 dark:text-gray-100">Continuous Learning</h3>
-            <p className="text-gray-700 dark:text-gray-200">
+          <div className="bg-white p-8 rounded-lg shadow-md text-center dark:bg-blue-900">
+            <Coffee className="h-12 w-12 text-blue-600 mx-auto mb-4 dark:text-blue-300" />
+            <h3 className="text-xl font-bold mb-2 text-gray-900 dark:text-blue-100">Continuous Learning</h3>
+            <p className="text-gray-700 dark:text-blue-200">
               Always staying updated with the latest tech trends
             </p>
           </div>
-          <div className="bg-white p-8 rounded-lg shadow-md text-center dark:bg-gray-800">
-            <Heart className="h-12 w-12 text-purple-600 mx-auto mb-4 dark:text-purple-400" />
-            <h3 className="text-xl font-bold mb-2 text-gray-900 dark:text-gray-100">Passion for Sharing</h3>
-            <p className="text-gray-700 dark:text-gray-200">
+          <div className="bg-white p-8 rounded-lg shadow-md text-center dark:bg-blue-900">
+            <Heart className="h-12 w-12 text-blue-600 mx-auto mb-4 dark:text-blue-300" />
+            <h3 className="text-xl font-bold mb-2 text-gray-900 dark:text-blue-100">Passion for Sharing</h3>
+            <p className="text-gray-700 dark:text-blue-200">
               Committed to helping others learn and grow
             </p>
           </div>
