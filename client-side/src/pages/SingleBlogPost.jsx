@@ -17,6 +17,14 @@ import CommentSection from '../components/CommetnSection';
 import LatestPosts from '../components/LatestPost';
 import SidebarCategories from '../components/SideBarCategories';
 
+function calculateReadTime(content) {
+  // Average reading speed: 200 words per minute
+  if (!content) return 0;
+  const text = content.replace(/<[^>]+>/g, ''); // Remove HTML tags
+  const wordCount = text.trim().split(/\s+/).length;
+  return Math.max(1, Math.round(wordCount / 200));
+}
+
 function SinglePostPage() {
   const { theme } = useSelector((state) => state.theme);
   const { currentUser } = useSelector((state) => state.user);
@@ -65,7 +73,8 @@ function SinglePostPage() {
         setLoading(false);
       } catch (error) {
         setLoading(false);
-        setError("Unable to load content. Please check your connection or try again later.");
+        setError("Unable to load content. Please check your connection or try again later.\n" + (error?.message || ""));
+        console.error("SingleBlogPost fetch error:", error);
       }
     };
     fetchData();
@@ -183,7 +192,7 @@ function SinglePostPage() {
                 category={postData?.category}
                 title={postData?.title}
                 subtitle={postData?.subtitle}
-                readTime={readTime}
+                readTime={readTime + ' min'}
                 postViews={postData?.postViews}
                 postLikes={likesCount}
                 updatedAt={new Date(postData?.updatedAt).toLocaleDateString()}
