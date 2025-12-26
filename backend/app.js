@@ -55,6 +55,9 @@ app.use((err, req, res, next) => {
 
   res.status(statusCode).json(response);
 });
+app.get('/', (req, res) => {
+  res.send('API is running...');
+});
 
 // Start Server
 const Port= process.env.PORT

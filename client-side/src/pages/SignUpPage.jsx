@@ -70,6 +70,16 @@ const SignUpPage = () => {
     }
   }, [error]);
 
+        {/* AdSense Ad - Top of SignUp page */}
+        <div className="my-8 flex justify-center">
+          <AdSense
+            adClient={import.meta.env.VITE_ADSENSE_CLIENT}
+            adSlot={import.meta.env.VITE_ADSENSE_SLOT}
+            adFormat="auto"
+            style={{ display: 'block', minHeight: 90, maxWidth: 728, margin: '0 auto' }}
+            fullWidthResponsive={true}
+          />
+        </div>
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 pt-20">
       <div className="max-w-4xl mx-auto px-4">

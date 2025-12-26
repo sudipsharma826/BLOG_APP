@@ -53,6 +53,16 @@ const PostsPage = () => {
   </div>
 
       {/* Posts Grid */}
+        {/* AdSense Ad - Top of Posts page */}
+        <div className="my-8 flex justify-center">
+          <AdSense
+            adClient={import.meta.env.VITE_ADSENSE_CLIENT}
+            adSlot={import.meta.env.VITE_ADSENSE_SLOT}
+            adFormat="auto"
+            style={{ display: 'block', minHeight: 90, maxWidth: 728, margin: '0 auto' }}
+            fullWidthResponsive={true}
+          />
+        </div>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="card p-6">
         <div className="flex justify-between items-center mb-8">

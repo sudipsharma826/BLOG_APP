@@ -44,6 +44,16 @@ const ContactPage = () => {
     setTimeout(() => setStatusMessage(null), 6000);
   };
 
+        {/* AdSense Ad - Top of Contact page */}
+        <div className="my-8 flex justify-center">
+          <AdSense
+            adClient={import.meta.env.VITE_ADSENSE_CLIENT}
+            adSlot={import.meta.env.VITE_ADSENSE_SLOT}
+            adFormat="auto"
+            style={{ display: 'block', minHeight: 90, maxWidth: 728, margin: '0 auto' }}
+            fullWidthResponsive={true}
+          />
+        </div>
   return (
     <div className="min-h-screen bg-blue-50 dark:bg-blue-950">
       <div className="bg-gradient-to-br from-blue-600 to-blue-400 py-20 dark:from-blue-900 dark:to-blue-800">
