@@ -1,7 +1,8 @@
 import { Alert, Button, FileInput, TextInput } from "flowbite-react";
+import { useEffect, useState, useRef } from "react";
+import FullHtmlInput from "../components/FullHtmlInput";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
-import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useSelector } from "react-redux";
@@ -9,6 +10,8 @@ import { Multiselect } from "multiselect-react-dropdown";
 
 export default function CreatePost() {
   const [file, setFile] = useState(null);
+  const quillRef = useRef(null);
+  const [useHtmlInput, setUseHtmlInput] = useState(false);
   const [previewImage, setPreviewImage] = useState(null);
   const [formData, setFormData] = useState({});
   const [categories, setCategories] = useState([]);
@@ -48,6 +51,15 @@ export default function CreatePost() {
 
   const handleInput = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
+  // Handler for ReactQuill
+  const handleQuillChange = (value) => {
+    handleInput("content", value);
+  };
+  // Handler for FullHtmlInput
+  const handleFullHtmlChange = (html) => {
+    handleInput("content", html);
   };
 
   const handleFileChange = (e) => {
@@ -171,23 +183,44 @@ export default function CreatePost() {
             <img src={previewImage} alt={formData.title} className="rounded-md max-h-60" />
           </div>
         )}
-        <ReactQuill
-          theme="snow"
-          placeholder="Write something..."
-          className="h-72 mb-12 dark:text-white"
-          required
-          modules={{
-            toolbar: [
-              [{ header: [1, 2, false] }],
-              ["bold", "italic", "underline", "strike"],
-              [{ color: [] }, { background: [] }],
-              [{ list: "ordered" }, { list: "bullet" }],
-              ["blockquote", "code-block"],
-              ["link", "image"],
-            ],
-          }}
-          onChange={(value) => handleInput("content", value)}
-        />
+        <div className="mb-2 flex gap-2">
+          <Button
+            type="button"
+            color={useHtmlInput ? "purple" : "gray"}
+            onClick={() => setUseHtmlInput((prev) => !prev)}
+          >
+            {useHtmlInput ? "Switch to Quill Editor" : "Switch to Full HTML Input"}
+          </Button>
+        </div>
+        {useHtmlInput ? (
+          <FullHtmlInput
+            onChange={handleFullHtmlChange}
+            value={formData.content || ""}
+          />
+        ) : (
+          <div>
+            <label className="font-semibold mb-1">Post Content</label>
+            <ReactQuill
+              ref={quillRef}
+              theme="snow"
+              value={formData.content || ""}
+              onChange={handleQuillChange}
+              placeholder="Write something..."
+              className="h-72 mb-12 dark:text-white"
+              required
+              modules={{
+                toolbar: [
+                  [{ header: [1, 2, false] }],
+                  ["bold", "italic", "underline", "strike"],
+                  [{ color: [] }, { background: [] }],
+                  [{ list: "ordered" }, { list: "bullet" }],
+                  ["blockquote", "code-block"],
+                  ["link", "image"],
+                ],
+              }}
+            />
+          </div>
+        )}
         <div className="flex items-center gap-2">
           <input
             type="checkbox"

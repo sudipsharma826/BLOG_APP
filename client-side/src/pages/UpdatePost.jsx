@@ -1,7 +1,8 @@
 import { Alert, Button, FileInput, Label, TextInput } from 'flowbite-react';
+import { useEffect, useState, useRef } from 'react';
+import FullHtmlInput from '../components/FullHtmlInput';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
-import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
@@ -9,6 +10,8 @@ import 'tailwindcss/tailwind.css'; // Ensure Tailwind is imported
 
 export default function UpdatePost() {
   const currentUser = useSelector((state) => state.user);
+  const quillRef = useRef(null);
+  const [useHtmlInput, setUseHtmlInput] = useState(false);
   const [file, setFile] = useState(null);
   const [previewImage, setPreviewImage] = useState(null);
   const [formData, setFormData] = useState({
@@ -83,6 +86,15 @@ export default function UpdatePost() {
   // Handle text input changes
   const handleInput = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
+  // Handler for ReactQuill
+  const handleQuillChange = (value) => {
+    handleInput('content', value);
+  };
+  // Handler for FullHtmlInput
+  const handleFullHtmlChange = (html) => {
+    handleInput('content', html);
   };
 
   // Handle file changes
@@ -250,27 +262,44 @@ export default function UpdatePost() {
           </div>
         </div>
 
-        {/* Quill Editor */}
-        <div className="mt-4 dark:text-black">
-          <ReactQuill
-            value={formData.content || ''}
-            theme="snow"
-            placeholder="Write something..."
-            className="h-72 mb-12 dark:text-black"
-            required
-            modules={{
-              toolbar: [
-                [{ header: [1, 2, false] }],
-                ['bold', 'italic', 'underline', 'strike'],
-                [{ color: [] }, { background: [] }],
-                [{ list: 'ordered' }, { list: 'bullet' }],
-                ['blockquote', 'code-block'],
-                ['link', 'image'],
-              ],
-            }}
-            onChange={(value) => handleInput('content', value)}
-          />
+        <div className="mb-2 flex gap-2">
+          <Button
+            type="button"
+            color={useHtmlInput ? "purple" : "gray"}
+            onClick={() => setUseHtmlInput((prev) => !prev)}
+          >
+            {useHtmlInput ? "Switch to Quill Editor" : "Switch to Full HTML Input"}
+          </Button>
         </div>
+        {useHtmlInput ? (
+          <FullHtmlInput
+            onChange={handleFullHtmlChange}
+            value={formData.content || ''}
+          />
+        ) : (
+          <div>
+            <label className="font-semibold mb-1">Post Content</label>
+            <ReactQuill
+              ref={quillRef}
+              theme="snow"
+              value={formData.content || ''}
+              onChange={handleQuillChange}
+              placeholder="Write something..."
+              className="h-72 mb-12 dark:text-black"
+              required
+              modules={{
+                toolbar: [
+                  [{ header: [1, 2, false] }],
+                  ['bold', 'italic', 'underline', 'strike'],
+                  [{ color: [] }, { background: [] }],
+                  [{ list: 'ordered' }, { list: 'bullet' }],
+                  ['blockquote', 'code-block'],
+                  ['link', 'image'],
+                ],
+              }}
+            />
+          </div>
+        )}
 
         {/* Alert Message */}
         {alertMessage.message && <Alert color={alertMessage.type}>{alertMessage.message}</Alert>}

@@ -13,7 +13,7 @@ import { Bell, Clock, Hash, Sidebar } from 'react-feather';
 import NotFound from './NotFound';
 import RelatedPosts from '../components/RelatedPosts';
 import CommentSection from '../components/CommetnSection';
-import AdSense from '../components/blog/AdSense';
+// import AdSense from '../components/blog/AdSense';
 import LatestPosts from '../components/LatestPost';
 import SidebarCategories from '../components/SideBarCategories';
 
@@ -27,6 +27,7 @@ function SinglePostPage() {
   const [authorData, setAuthorData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [readTime, setReadTime] = useState(0);
+  const [error, setError] = useState("");
 
   const [isLiked, setIsLiked] = useState(false);
   const [isLoved, setIsLoved] = useState(false);
@@ -64,6 +65,7 @@ function SinglePostPage() {
         setLoading(false);
       } catch (error) {
         setLoading(false);
+        setError("Unable to load content. Please check your connection or try again later.");
       }
     };
     fetchData();
@@ -143,7 +145,21 @@ function SinglePostPage() {
   }, []);
 
   if (loading) {
-    return <AppStatus type="loading" />
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh]">
+        <AppStatus type="loading" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh]">
+        <div className="bg-red-100 border border-red-400 text-red-700 px-6 py-4 rounded-lg text-lg font-semibold shadow">
+          {error}
+        </div>
+      </div>
+    );
   }
 
   if (!postData) {
@@ -180,16 +196,7 @@ function SinglePostPage() {
                 />
               )}
             </div>
-            {/* AdSense Ad - Below Post Title */}
-              <div className="my-6 flex justify-center">
-                <AdSense
-                  adClient={import.meta.env.VITE_ADSENSE_CLIENT}
-                  adSlot={import.meta.env.VITE_ADSENSE_SLOT}
-                  adFormat="auto"
-                  style={{ display: 'block', minHeight: 90, maxWidth: 728, margin: '0 auto' }}
-                  fullWidthResponsive={true}
-                />
-              </div>
+            {/* No AdSense in Single Blog Post for better impression */}
             <div className="w-full h-[200px] sm:h-[300px] lg:h-[400px] bg-[var(--color-surface)]">
               <img
                 src={postData?.image}
@@ -200,31 +207,13 @@ function SinglePostPage() {
             <div className="p-4 sm:p-6 lg:p-8">
               <TableOfContents content={postData.content} />
               <PostContent content={postData?.content} />
-                {/* AdSense Ad - After Content, Before Comments (horizontal, non-intrusive) */}
-                <div className="my-8 flex justify-center">
-                  <AdSense
-                    adClient={import.meta.env.VITE_ADSENSE_CLIENT}
-                    adSlot={import.meta.env.VITE_ADSENSE_SLOT}
-                    adFormat="auto"
-                    style={{ display: 'block', minHeight: 90, maxWidth: 728, margin: '0 auto' }}
-                    fullWidthResponsive={true}
-                  />
-                </div>
+                {/* No AdSense after content in Single Blog Post */}
               <CommentSection postId={postData._id} />
             </div>
           </article>
           {/* Right Sidebar */}
           <div className="col-span-1 md:col-span-3 lg:col-span-4 space-y-4 lg:space-y-8">
-            {/* AdSense Ad - Sidebar Sticky */}
-            <div className="sticky top-24 z-10">
-              <AdSense
-                adClient={import.meta.env.VITE_ADSENSE_CLIENT}
-                adSlot={import.meta.env.VITE_ADSENSE_SLOT}
-                adFormat="auto"
-                style={{ display: 'block', minHeight: 250, maxWidth: 300, margin: '0 auto' }}
-                fullWidthResponsive={true}
-              />
-            </div>
+            {/* No AdSense in sidebar for Single Blog Post */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-4">
               {/* Latest Posts */}
               <div className="card rounded-lg p-4 sm:p-6">
@@ -248,16 +237,7 @@ function SinglePostPage() {
         {/* Bottom content */}
         <div className="mt-4 sm:mt-6 lg:mt-8">
           {postData && <RelatedPosts categories={postData.category} currentPostId={postData._id} />}
-            {/* AdSense Ad - After Related Posts (bottom, non-intrusive) */}
-            <div className="my-8 flex justify-center">
-              <AdSense
-                adClient={import.meta.env.VITE_ADSENSE_CLIENT}
-                adSlot={import.meta.env.VITE_ADSENSE_SLOT}
-                adFormat="auto"
-                style={{ display: 'block', minHeight: 90, maxWidth: 728, margin: '0 auto' }}
-                fullWidthResponsive={true}
-              />
-            </div>
+            {/* No AdSense after related posts in Single Blog Post */}
         </div>
         {/* Floating action buttons - Responsive positioning */}
         {showFloatingIcons && (
