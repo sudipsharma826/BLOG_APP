@@ -5,6 +5,7 @@ import { useSelector } from 'react-redux';
 import { Pen } from 'lucide-react';
 import axios from 'axios';
 import { GoogleOuth } from '../components/GoogleOuth';
+import AdSense from '../components/blog/AdSense';
 
 const SignUpPage = () => {
   const navigate = useNavigate();

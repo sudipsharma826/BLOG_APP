@@ -6,6 +6,7 @@ import { useState } from 'react';
 import TechStack from '../components/homepage/TechStack';
 import CategoryList from '../components/homepage/Catrgories';
 import PostSlider from '../components/homepage/PostSlider';
+import AdSense from '../components/blog/AdSense';
 
 
 const Home = () => {

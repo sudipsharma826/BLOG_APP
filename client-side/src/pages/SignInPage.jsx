@@ -6,6 +6,7 @@ import { Pen } from 'lucide-react';
 import axios from 'axios';
 import { signInStart, signInSuccess, signInFailure, resetError } from '../redux/user/authSlice';
 import { GoogleOuth } from '../components/GoogleOuth';
+import AdSense from '../components/blog/AdSense';
 
 const SignInPage = () => {
   const navigate = useNavigate();

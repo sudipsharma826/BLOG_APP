@@ -8,7 +8,7 @@ import {
   Code,
   Cloud
 } from 'lucide-react';
-// AdSense removed per user request
+
 
 const technologies = [
   { icon: Database, name: 'Databases' },

@@ -3,6 +3,7 @@ import { Search } from 'lucide-react';
 import PostCard from '../components/homepage/PostCard';
 import SearchBar from '../components/homepage/SearchBar';
 import axios from 'axios';
+import AdSense from '../components/blog/AdSense';
 
 const PostsPage = () => {
   const [searchQuery, setSearchQuery] = useState('');

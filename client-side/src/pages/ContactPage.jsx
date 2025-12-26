@@ -3,6 +3,7 @@ import { Mail, MessageSquare, MapPin, Contact2, Contact2Icon, LucideContactRound
 import axios from 'axios';
 import { useSelector } from 'react-redux';
 import { TextInput } from 'flowbite-react';
+import AdSense from '../components/blog/AdSense';
 
 const ContactPage = () => {
   const { currentUser } = useSelector((state) => state.user);

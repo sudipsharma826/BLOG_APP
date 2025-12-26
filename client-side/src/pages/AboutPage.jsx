@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Code, Coffee, Github, Heart, Pen } from 'lucide-react';
 import axios from 'axios';
 import { Facebook, Linkedin } from 'react-feather';
+import AdSense from '../components/blog/AdSense';
 
 const AboutPage = () => {
   const [admin, setAdmin] = useState({});
