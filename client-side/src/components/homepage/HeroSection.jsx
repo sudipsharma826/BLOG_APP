@@ -4,13 +4,14 @@ import { FaGithub, FaLinkedin } from 'react-icons/fa';
 
 export default function HeroSection() {
   return (
-    <div className="relative min-h-[70vh] md:min-h-[90vh] flex items-center justify-center overflow-hidden bg-gray-900">
+    <div className="relative w-full aspect-[2.2/1] md:aspect-[2.8/1] min-h-[60vw] md:min-h-[40vw] max-h-[90vh] flex items-center justify-center overflow-hidden bg-gray-900">
       {/* Banner Image - Large and Clear */}
       <img
         src="/images/image.png"
         alt="TechKnows Banner"
-        className="w-full h-full object-cover object-center absolute inset-0 z-0 opacity-95"
-        style={{ minHeight: '70vh', maxHeight: '100vh' }}
+        className="absolute inset-0 w-full h-full object-cover object-center z-0 opacity-95 select-none pointer-events-none"
+        style={{ minHeight: '100%', maxHeight: '100%', maxWidth: '100%' }}
+        draggable={false}
       />
       {/* Overlay for better text/button visibility */}
       <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/30 to-black/80 z-10"></div>
@@ -63,7 +64,7 @@ export function ExploreAndFollow() {
   return (
     <div className="w-full flex flex-col items-center justify-center mb-8">
       <a
-        href="#posts"
+        href="/posts"
         className="group flex items-center gap-3 px-8 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white text-lg font-semibold rounded-full shadow-lg hover:scale-105 transition-transform duration-200 mb-2"
         style={{backdropFilter: 'blur(2px)'}}
       >

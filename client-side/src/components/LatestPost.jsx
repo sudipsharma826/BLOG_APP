@@ -39,9 +39,8 @@ function PostCard({ post }) {
             />
           </div>
         )}
-        
         <div className="flex-1 min-w-0 overflow-hidden">
-          <h4 className="font-medium text-xl text-gray-900 dark:text-gray-100 group-hover:text-blue-600 transition-colors line-clamp-2">
+          <h4 className="font-medium text-xl text-gray-900 dark:text-gray-100 group-hover:text-blue-600 transition-colors truncate whitespace-nowrap overflow-ellipsis max-w-full" style={{overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}>
             {post.title}
           </h4>
           <p className="font-medium text-sm text-gray-500 dark:text-gray-100 group-hover:text-blue-600 transition-colors line-clamp-2">

@@ -3,12 +3,24 @@ import { errorHandler } from './errorHandler.js';
 import User from '../models/userModel.js'; 
 
 export const verifyToken = async (req, res, next) => {
-  const token = req.cookies.accessToken;
+  // Check for token in cookie or Authorization header
+  let token = req.cookies.accessToken;
+  if (!token && req.headers.authorization) {
+    const authHeader = req.headers.authorization;
+    if (authHeader.startsWith('Bearer ')) {
+      token = authHeader.split(' ')[1];
+    }
+  }
   
  
   // If no token is found
   if (!token) {
-    return next(errorHandler(401, 'Unauthorized: No token provided'));
+    return next(
+      errorHandler(
+        401,
+        'Authentication failed: No token was provided. This can happen if you are using a private browser mode, have cookies disabled, or your device/browser is blocking authentication. Please log in again, check your browser settings, or try a different browser.'
+      )
+    );
   }
 // Verify the token
   jwt.verify(token, process.env.JWT_SECRET, async (err, user) => {

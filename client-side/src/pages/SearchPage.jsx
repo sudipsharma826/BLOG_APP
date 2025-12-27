@@ -196,9 +196,11 @@ export default function Search() {
                   ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                       {posts.map((post) => (
-                        <div
+                        <a
                           key={post._id}
-                          className="bg-white dark:bg-gray-800 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition duration-200"
+                          href={`/post/${post.slug}`}
+                          className="block bg-white dark:bg-gray-800 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition duration-200 focus:ring-2 focus:ring-blue-500"
+                          tabIndex={0}
                         >
                           <img
                             src={post.image}
@@ -213,9 +215,9 @@ export default function Search() {
                               {post.title}
                             </h3>
                             <p className="mt-2 text-gray-600 line-clamp-2 text-xl dark:text-gray-300">
-                    {/* Remove HTML tags from post.content */}
-                    {typeof post.content === 'string' ? post.content.replace(/<[^>]*>/g, '') : 'No content available'}
-                  </p>
+                              {/* Remove HTML tags from post.content */}
+                              {typeof post.content === 'string' ? post.content.replace(/<[^>]*>/g, '') : 'No content available'}
+                            </p>
                             <div className="mt-4 flex items-center justify-between">
                               <div className="flex items-center space-x-2">
                                 <img
@@ -232,7 +234,7 @@ export default function Search() {
                               </span>
                             </div>
                           </div>
-                        </div>
+                        </a>
                       ))}
                     </div>
                   )}

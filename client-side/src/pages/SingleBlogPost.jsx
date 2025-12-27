@@ -7,11 +7,13 @@ import TableOfContents from '../components/blog/TableOfContent';
 import { PostContent } from '../components/blog/PostContent';
 import { SEO } from '../components/blog/SEO';
 import AppStatus from '../components/AppStatus';
+import SkeletonPostCard from '../components/homepage/SkeletonPostCard';
 import { useSelector } from 'react-redux';
 import { Heart, ThumbsUp, Share2, Bookmark, Link, HelpingHand } from 'lucide-react';
 import { Bell, Clock, Hash, Sidebar } from 'react-feather';
 import NotFound from './NotFound';
 import RelatedPosts from '../components/RelatedPosts';
+import AdSense from '../components/blog/AdSense';
 import CommentSection from '../components/CommetnSection';
 import LatestPosts from '../components/LatestPost';
 import SidebarCategories from '../components/SideBarCategories';
@@ -154,15 +156,19 @@ function SinglePostPage() {
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh]">
-        <AppStatus type="loading" />
+      <div className="flex flex-col items-center justify-center min-h-[60vh] w-full max-w-7xl mx-auto px-4 pt-20 md:pt-0">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 w-full">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <SkeletonPostCard key={i} />
+          ))}
+        </div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh]">
+      <div className="flex flex-col items-center justify-center min-h-[60vh] pt-20 md:pt-0">
         <div className="bg-red-100 border border-red-400 text-red-700 px-6 py-4 rounded-lg text-lg font-semibold shadow">
           {error}
         </div>
@@ -171,12 +177,12 @@ function SinglePostPage() {
   }
 
   if (!postData) {
-    return <NotFound />;
+    return <div className="pt-20 md:pt-0"><NotFound /></div>;
   }
 
 
   return (
-    <>
+    <div className="pt-20 md:pt-0">
       <SEO
         title={postData?.title}
         description={postData?.description}
@@ -237,6 +243,14 @@ function SinglePostPage() {
                   Categories
                 </h3>
                 <SidebarCategories />
+                {/* AdSense below categories, full width of card */}
+                <div className="mt-6 w-full flex justify-center">
+                  <AdSense
+                    adClient={import.meta.env.VITE_ADSENSE_CLIENT}
+                    adSlot={import.meta.env.VITE_ADSENSE_SLOT}
+                    style={{ width: '100%', minHeight: 90, display: 'block' }}
+                  />
+                </div>
               </div>
             </div>
           </div>
@@ -281,7 +295,7 @@ function SinglePostPage() {
           </div>
         )}
       </div>
-    </>
+    </div>
   );
 }
 

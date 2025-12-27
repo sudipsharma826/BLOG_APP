@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Search } from 'lucide-react';
 import PostCard from '../components/homepage/PostCard';
+import SkeletonPostCard from '../components/homepage/SkeletonPostCard';
 import SearchBar from '../components/homepage/SearchBar';
 import axios from 'axios';
 
@@ -70,9 +71,10 @@ const PostsPage = () => {
           </div>
 
           {loading ? (
-            <div className="flex flex-col items-center justify-center py-24">
-              <div className="animate-spin rounded-full h-20 w-20 border-t-4 border-purple-500 mb-6"></div>
-              <span className="text-xl text-gray-700 dark:text-gray-200 font-semibold">Loading posts...</span>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10">
+              {Array.from({ length: 8 }).map((_, i) => (
+                <SkeletonPostCard key={i} />
+              ))}
             </div>
           ) : posts.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-24">

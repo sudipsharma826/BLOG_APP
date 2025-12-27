@@ -93,6 +93,16 @@ const SignInPage = () => {
                   <p className="text-gray-100 mb-8">
                     "Technology is best when it brings people together. Join our community of tech enthusiasts and share your knowledge with the world."
                   </p>
+                  {/* AdSense Ad below welcome text */}
+                  <div className="my-8 flex justify-center">
+                    <AdSense
+                      adClient={import.meta.env.VITE_ADSENSE_CLIENT}
+                      adSlot={import.meta.env.VITE_ADSENSE_SLOT}
+                      adFormat="auto"
+                      style={{ display: 'block', minHeight: 90, maxWidth: 300, margin: '0 auto' }}
+                      fullWidthResponsive={true}
+                    />
+                  </div>
                 </div>
                 <div className="hidden md:block">
                   <p className="text-sm text-gray-200">

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import SkeletonPostCard from '../components/homepage/SkeletonPostCard';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 
@@ -38,8 +39,12 @@ const SingleCategoryPage = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-800 flex items-center justify-center">
-        <p className="text-xl text-gray-300">Loading...</p>
+      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 w-full max-w-7xl px-4">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <SkeletonPostCard key={i} />
+          ))}
+        </div>
       </div>
     );
   }

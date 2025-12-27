@@ -95,31 +95,37 @@ export default function Header() {
         className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 ${
           isNavbarVisible ? 'translate-y-0' : '-translate-y-full'
         }`}
-        style={{backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)'}}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16 bg-white/70 dark:bg-gray-900/70 rounded-b-2xl shadow-xl border border-gray-200 dark:border-gray-800">
+        style={{
+          backdropFilter: 'blur(24px)',
+          WebkitBackdropFilter: 'blur(24px)',
+          background: theme === 'dark' ? 'rgba(30,34,45,0.95)' : 'rgba(255,255,255,0.7)',
+          borderBottom: theme === 'dark' ? '1.5px solid rgba(60,60,80,0.5)' : '1.5px solid rgba(200,200,200,0.25)',
+          boxShadow: '0 8px 32px 0 rgba(31, 38, 135, 0.15)',
+          margin: 0,
+          padding: 0,
+        }}>
+        <div className="w-full px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-20 bg-transparent rounded-b-2xl m-0 p-0">
             {/* Logo */}
-            <Link to="/" className="flex items-center space-x-3 group" onClick={() => setIsMobileMenuOpen(false)}>
-              <img src="/images/logo.png" alt="TechKnow Logo" className="h-12 w-12 rounded-xl shadow-lg border-2 border-white dark:border-gray-800 group-hover:scale-105 transition-transform" />
-              <span className="text-2xl font-extrabold bg-gradient-to-r from-purple-600 to-blue-500 text-transparent bg-clip-text tracking-tight drop-shadow-lg">
-                TechKnow
-              </span>
+            <Link to="/" className="flex items-center space-x-3 group h-20 ml-2 md:ml-6" onClick={() => setIsMobileMenuOpen(false)}>
+              <img src="/images/logo.png" alt="TechKnow Logo" className="h-14 w-14 my-auto rounded-xl shadow-lg border-2 border-white dark:border-gray-800 group-hover:scale-105 transition-transform" />
+              <span className="text-3xl font-extrabold bg-gradient-to-r from-purple-600 to-blue-500 text-transparent bg-clip-text tracking-tight drop-shadow-lg flex items-center h-20">TechKnow</span>
             </Link>
 
             {/* Desktop Navigation */}
-            <div className="hidden md:flex items-center space-x-8">
+            <div className="hidden md:flex items-center space-x-8 h-20 pr-2 md:pr-6">
               {/* Search Bar (Desktop) */}
-              <form onSubmit={handleSubmit}>
-              <div className="relative w-96">
-                <input
-                  type="text"
-                  placeholder="Search..."
-                  className="w-full h-9 px-4 pr-12 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 focus:ring-2 focus:ring-purple-500"
-                  value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-                />
-                <Search className="absolute right-4 top-2 h-5 w-5 text-gray-400" />
-              </div>
+              <form onSubmit={handleSubmit} className="flex items-center h-20 ml-4 md:ml-8">
+                <div className="relative w-96 flex items-center h-12">
+                  <input
+                    type="text"
+                    placeholder="Search..."
+                    className={`w-full h-12 px-4 pr-12 rounded-lg border focus:ring-2 focus:ring-purple-500 text-base ${theme === 'dark' ? 'bg-[#232736] border-gray-700 text-white placeholder-gray-400' : 'bg-gray-50 border-gray-300'}`}
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                  />
+                  <Search className="absolute right-4 top-3 h-5 w-5 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-400'}" />
+                </div>
               </form>
 
               {/* Navigation Links */}
@@ -150,16 +156,20 @@ Categories              </Link>
 
               {/* Desktop User Section */}
               {currentUser ? (
-                <Dropdown
-                  inline
-                  label={
-                    <Avatar
-                      img={currentUser.photoURL || '/images/user.png'}
-                      alt="User avatar"
-                      rounded
-                    />
-                  }
-                >
+                  <Dropdown
+                    inline
+                    label={
+                      <div className="flex items-center">
+                        <Avatar
+                          img={currentUser.photoURL || '/images/user.png'}
+                          alt="User avatar"
+                          rounded
+                          className="mr-2 md:mr-4"
+                        />
+                      </div>
+                    }
+                    className="mr-2 md:mr-6"
+                  >
                   <Dropdown.Header>
                     <span className="block text-lg font-semibold">🙏 {currentUser.username}</span>
                     <span className="block text-sm font-medium truncate">{currentUser.email}</span>
@@ -194,7 +204,7 @@ Categories              </Link>
             </div>
 
             {/* Mobile Navigation */}
-            <div className="flex md:hidden items-center space-x-4">
+            <div className="flex md:hidden items-center space-x-4 pr-2">
               <button
                 onClick={() => setIsSearchVisible(!isSearchVisible)}
                 className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800"
@@ -259,14 +269,20 @@ Categories              </Link>
           {/* Mobile Search Bar */}
           {isSearchVisible && (
             <div className="md:hidden px-4 py-2 border-t border-gray-200 dark:border-gray-700">
-              <div className="relative">
-                <input
-                  type="text"
-                  placeholder="Search..."
-                  className="w-full h-9 px-4 pr-12 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 focus:ring-2 focus:ring-purple-500"
-                />
-                <Search className="absolute right-4 top-2 h-5 w-5 text-gray-400" />
-              </div>
+              <form onSubmit={handleSubmit}>
+                <div className="relative">
+                  <input
+                    type="text"
+                    placeholder="Search..."
+                    className="w-full h-9 px-4 pr-12 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 focus:ring-2 focus:ring-purple-500"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                  />
+                  <button type="submit" className="absolute right-4 top-2">
+                    <Search className="h-5 w-5 text-gray-400" />
+                  </button>
+                </div>
+              </form>
             </div>
           )}
 
@@ -314,7 +330,7 @@ Categories              </Link>
         </div>
       </nav>
       {/* Spacer to prevent content from being hidden under navbar */}
-      <div className="h-10 mb-2"></div>
+      <div className="h-10"></div>
     </>
   );
 }

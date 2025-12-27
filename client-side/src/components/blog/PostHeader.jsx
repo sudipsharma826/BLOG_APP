@@ -32,30 +32,33 @@ export function PostHeader({
     <div className="mb-8">
       {/* Post Info */}
       <div className="flex items-center justify-between mb-4">
-      <div className="flex flex-wrap gap-1"> {/* Added flex layout with smaller gap */}
-  {category.map((category, index) => (
-    <Link
-      key={index}
-      to={`/category/${category}`}  // Link to category page
-      className="text-blue-600 hover:no-underline focus:no-underline mr-1" // Removed underline on hover and focus
-    >
-      <span
-        className="category font-semibold px-3 py-1 rounded-full transition-all duration-200 ease-in-out bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 border border-blue-200 dark:border-blue-700"
-        style={{ cursor: 'pointer' }}
-      >
-        {category}
-      </span>
-    </Link>
-  ))}
-</div>
-
-      <div className="flex items-center space-x-4 text-gray-600">
-          <div className="flex items-center space-x-1 dark:text-gray-100">
-            <span>{viewsconversion(postViews)} views</span> {/* Corrected from postViwes */}
-          </div>
-          <div className="flex items-center space-x-1  dark:text-gray-50">
-            <span>{viewsconversion(postLikes)} likes</span>
-          </div>
+        <div className="flex flex-wrap gap-1">
+          {category.map((category, index) => (
+            <Link
+              key={index}
+              to={`/category/${category}`}
+              className="text-blue-600 hover:no-underline focus:no-underline mr-1"
+            >
+              <span
+                className="category font-semibold px-3 py-1 rounded-full transition-all duration-200 ease-in-out bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 border border-blue-200 dark:border-blue-700"
+                style={{ cursor: 'pointer' }}
+              >
+                {category}
+              </span>
+            </Link>
+          ))}
+        </div>
+        <div className="flex items-center space-x-4 text-gray-600">
+          {postViews > 100 && (
+            <div className="flex items-center space-x-1 dark:text-gray-100">
+              <span>{viewsconversion(postViews)} views</span>
+            </div>
+          )}
+          {postLikes > 5 && (
+            <div className="flex items-center space-x-1 dark:text-gray-50">
+              <span>{viewsconversion(postLikes)} likes</span>
+            </div>
+          )}
         </div>
       </div>
 

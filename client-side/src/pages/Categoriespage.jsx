@@ -2,13 +2,16 @@ import React, { useEffect, useState } from 'react';
 import { Tag } from 'lucide-react';
 import axios from 'axios';
 import PostCard from '../components/homepage/PostCard';
+import SkeletonPostCard from '../components/homepage/SkeletonPostCard';
 import CategoryCard from '../components/blog/CategoryCard';
 
+import { useRef } from 'react';
 const CategoryList = () => {
   const [categories, setCategories] = useState([]);
   const [posts, setPosts] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [loading, setLoading] = useState(true);
+  const postsSectionRef = useRef(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -68,7 +71,14 @@ const CategoryList = () => {
             <div
               key={category.name}
               className={`transition-all duration-200 bg-white dark:bg-gray-900 rounded-2xl shadow-md hover:shadow-2xl border border-gray-100 dark:border-gray-800 hover:-translate-y-1 cursor-pointer group ${selectedCategory === category.name ? 'ring-2 ring-purple-500' : ''}`}
-              onClick={() => setSelectedCategory(category.name)}
+              onClick={() => {
+                setSelectedCategory(category.name);
+                setTimeout(() => {
+                  if (postsSectionRef.current) {
+                    postsSectionRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                  }
+                }, 100);
+              }}
             >
               <CategoryCard
                 category={category}
@@ -80,14 +90,16 @@ const CategoryList = () => {
       </div>
 
       {/* Posts Section */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-16">
+      <div ref={postsSectionRef} className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-16">
         <h2 className="text-3xl font-bold mb-8 dark:text-white">
           {selectedCategory ? `Posts in "${selectedCategory}"` : 'Latest Posts'}
         </h2>
 
         {loading ? (
-          <div className="flex justify-center py-20">
-            <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-purple-500"></div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <SkeletonPostCard key={i} />
+            ))}
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
