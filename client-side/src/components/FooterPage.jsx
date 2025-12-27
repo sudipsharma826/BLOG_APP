@@ -4,7 +4,7 @@ import { Github, Twitter, Linkedin } from 'lucide-react';
 import { Facebook } from 'react-feather';
 import { Link } from 'react-router-dom';
 
-const APP_VERSION = '1.0.0'; // Define version constant
+const APP_VERSION = '1.2.0'; 
 
 const Footer = () => {
   return (
