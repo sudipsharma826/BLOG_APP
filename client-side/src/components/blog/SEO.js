@@ -22,7 +22,13 @@ export function updateMetaTags({ title, description, keywords, author, image, ty
 
   const keywordsMeta = document.querySelector('meta[name="keywords"]');
   if (keywordsMeta) {
-    keywordsMeta.setAttribute('content', keywords.join(', '));
+    if (Array.isArray(keywords)) {
+      keywordsMeta.setAttribute('content', keywords.join(', '));
+    } else if (typeof keywords === 'string') {
+      keywordsMeta.setAttribute('content', keywords);
+    } else {
+      keywordsMeta.setAttribute('content', '');
+    }
   }
 
   // Open Graph Tags

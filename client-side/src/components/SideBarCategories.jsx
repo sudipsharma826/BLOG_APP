@@ -33,14 +33,14 @@ export default function Categories() {
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6">
+    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
       
       <div className="grid grid-cols-2 gap-3">
         {displayedCategories.map((category) => (
           <Link 
             key={category._id} 
             to={`/category/${category.name}`}
-            className="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-50 transition-colors group"
+            className="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors group"
           >
             <div className="relative">
               <img 
@@ -48,11 +48,11 @@ export default function Categories() {
                 alt={category.name}
                 className="w-8 h-8 rounded-full object-cover"
               />
-              <span className="absolute -top-2 -right-2 bg-blue-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+              <span className="absolute -top-2 -right-2 bg-blue-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center border-2 border-white dark:border-gray-800">
                 {category.postCount}
               </span>
             </div>
-            <span className="text-sm font-medium group-hover:text-blue-600 transition-colors truncate">
+            <span className="text-sm font-medium group-hover:text-blue-600 dark:group-hover:text-yellow-400 transition-colors truncate">
               {category.name}
             </span>
           </Link>
@@ -61,7 +61,7 @@ export default function Categories() {
       {categories.length > 19 && (
         <Link
           to="/categories"
-          className="mt-4 w-full flex items-center justify-center gap-2 text-sm text-blue-600 hover:text-blue-700 py-2"
+          className="mt-4 w-full flex items-center justify-center gap-2 text-sm text-blue-600 dark:text-yellow-400 hover:text-blue-700 dark:hover:text-yellow-300 py-2"
         >
           Show More
           <ChevronDown size={16} />

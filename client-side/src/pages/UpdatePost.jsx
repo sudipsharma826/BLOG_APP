@@ -1,4 +1,5 @@
 import { Alert, Button, FileInput, Label, TextInput } from 'flowbite-react';
+import { Multiselect } from 'multiselect-react-dropdown';
 import { useEffect, useState, useRef } from 'react';
 import FullHtmlInput from '../components/FullHtmlInput';
 import ReactQuill from 'react-quill';
@@ -9,6 +10,7 @@ import { useSelector } from 'react-redux';
 import 'tailwindcss/tailwind.css'; // Ensure Tailwind is imported
 
 export default function UpdatePost() {
+  const [showPreview, setShowPreview] = useState(true); // Preview toggle
   const currentUser = useSelector((state) => state.user);
   const quillRef = useRef(null);
   const [useHtmlInput, setUseHtmlInput] = useState(false);
@@ -21,7 +23,7 @@ export default function UpdatePost() {
   });
   const [isFeatured, setIsFeatured] = useState(false);
   const [categories, setCategories] = useState([]);
-  const [newCategory, setNewCategory] = useState('');
+  const [manualCategory, setManualCategory] = useState("");
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [alertMessage, setAlertMessage] = useState({ message: '', type: '' });
   const navigate = useNavigate();
@@ -115,15 +117,15 @@ export default function UpdatePost() {
 
   // Add new category
   const addCategory = () => {
-    if (!newCategory.trim()) return;
-    if (categories.some((cat) => cat.name.toLowerCase() === newCategory.toLowerCase())) {
+    if (!manualCategory.trim()) return;
+    if (categories.some((cat) => cat.name.toLowerCase() === manualCategory.toLowerCase())) {
       showMessage('Category already exists.', 'failure');
       return;
     }
-    const newCategoryObj = { name: newCategory };
+    const newCategoryObj = { name: manualCategory };
     setCategories((prev) => [...prev, newCategoryObj]);
     setSelectedCategories((prev) => [...prev, newCategoryObj]);
-    setNewCategory('');
+    setManualCategory("");
     showMessage('Category added successfully.', 'success');
   };
 
@@ -164,7 +166,7 @@ export default function UpdatePost() {
   };
 
   return (
-    <div className="p-8 max-w-4xl mx-auto min-h-screen bg-gradient-to-r from-blue-50 via-white to-purple-50 shadow-xl rounded-xl dark:bg-gray-800 dark:text-white">
+    <div className="p-4 max-w-6xl mx-auto min-h-screen bg-gradient-to-r from-blue-50 via-white to-purple-50 shadow-xl rounded-xl dark:bg-gray-800 dark:text-white">
       <h1 className="text-center text-4xl font-bold mb-10 dark:text-gray-900">Update Post</h1>
       <form className="space-y-6" onSubmit={handleSubmit}>
         <TextInput
@@ -188,17 +190,25 @@ export default function UpdatePost() {
         <Label className="dark:text-gray-900">Subtitle</Label>
 
         {/* Feature Post Toggle */}
-        <div className="flex items-center gap-4">
-          <Label className="dark:text-gray-900">Feature this post</Label>
-          <button
-            type="button"
-            onClick={() => setIsFeatured((prev) => !prev)}
-            className={`p-2 rounded-lg ${
-              isFeatured ? 'bg-teal-600 text-white' : 'bg-gray-300 text-black'
-            }`}
+        <div className="flex flex-col md:flex-row gap-4 mt-6 items-center justify-end">
+          <div className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              id="isFeatured"
+              checked={isFeatured}
+              onChange={(e) => setIsFeatured(e.target.checked)}
+              className="accent-teal-600 w-5 h-5"
+            />
+            <label htmlFor="isFeatured" className="text-gray-700 font-semibold">
+              Featured
+            </label>
+          </div>
+          <Button
+            type="submit"
+            className="bg-teal-600 hover:bg-teal-700 text-white font-semibold px-8 py-3 rounded-lg shadow-lg dark:bg-teal-700 dark:hover:bg-teal-800"
           >
-            {isFeatured ? 'Yes' : 'No'}
-          </button>
+            Update Post
+          </Button>
         </div>
 
         {/* File Input */}
@@ -214,55 +224,38 @@ export default function UpdatePost() {
         {/* Categories Selection */}
         <div className="mt-6">
           <Label className="dark:text-gray-900">Categories</Label>
-          <div className="space-y-2 mt-2">
-            {/* Category Selector */}
-            <div className="flex flex-wrap gap-4">
-              {categories.map((category) => (
-                <div key={category.name} className="flex items-center dark:text-black">
-                  <input
-                    type="checkbox"
-                    id={category.name}
-                    checked={selectedCategories.some(
-                      (selectedCategory) => selectedCategory.name === category.name
-                    )}
-                    onChange={() => {
-                      if (selectedCategories.some((selectedCategory) => selectedCategory.name === category.name)) {
-                        setSelectedCategories((prev) =>
-                          prev.filter((selectedCategory) => selectedCategory.name !== category.name)
-                        );
-                      } else {
-                        setSelectedCategories((prev) => [...prev, category]);
-                      }
-                    }}
-                    className="mr-2"
-                  />
-                  <label htmlFor={category.name} className="text-sm">
-                    {category.name}
-                  </label>
-                </div>
-              ))}
-            </div>
-
-            {/* Manually Add Category */}
-            <div className="flex items-center mt-4">
+          <div className="flex flex-col gap-4 sm:flex-row justify-between dark:text-gray-200 mt-2">
+            <Multiselect
+              options={categories}
+              selectedValues={selectedCategories}
+              onSelect={(selectedList) => setSelectedCategories(selectedList)}
+              onRemove={(selectedList) => setSelectedCategories(selectedList)}
+              displayValue="name"
+              placeholder="Select categories"
+              style={{ chips: { background: '#14b8a6' } }}
+            />
+            <div className="flex items-center gap-2 mt-2 sm:mt-0">
               <TextInput
-                value={newCategory}
-                onChange={(e) => setNewCategory(e.target.value)}
+                type="text"
                 placeholder="Add new category"
+                value={manualCategory}
+                onChange={(e) => setManualCategory(e.target.value)}
                 className="dark:bg-gray-700 dark:text-white"
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    addCategory();
+                  }
+                }}
               />
-              <Button
-                type="button"
-                onClick={addCategory}
-                className="ml-2 bg-teal-600 hover:bg-teal-700 text-white"
-              >
-                Add
+              <Button type="button" onClick={addCategory} className="bg-teal-600 hover:bg-teal-700 text-white">
+                + Add
               </Button>
             </div>
           </div>
         </div>
 
-        <div className="mb-2 flex gap-2">
+        <div className="mb-2 flex gap-2 flex-wrap">
           <Button
             type="button"
             color={useHtmlInput ? "purple" : "gray"}
@@ -270,36 +263,63 @@ export default function UpdatePost() {
           >
             {useHtmlInput ? "Switch to Quill Editor" : "Switch to Full HTML Input"}
           </Button>
+          <Button
+            type="button"
+            color={showPreview ? "gray" : "purple"}
+            onClick={() => setShowPreview((prev) => !prev)}
+          >
+            {showPreview ? "Hide Preview" : "Show Preview"}
+          </Button>
         </div>
-        {useHtmlInput ? (
-          <FullHtmlInput
-            onChange={handleFullHtmlChange}
-            value={formData.content || ''}
-          />
-        ) : (
-          <div>
-            <label className="font-semibold mb-1">Post Content</label>
-            <ReactQuill
-              ref={quillRef}
-              theme="snow"
-              value={formData.content || ''}
-              onChange={handleQuillChange}
-              placeholder="Write something..."
-              className="h-72 mb-12 dark:text-black"
-              required
-              modules={{
-                toolbar: [
-                  [{ header: [1, 2, false] }],
-                  ['bold', 'italic', 'underline', 'strike'],
-                  [{ color: [] }, { background: [] }],
-                  [{ list: 'ordered' }, { list: 'bullet' }],
-                  ['blockquote', 'code-block'],
-                  ['link', 'image'],
-                ],
-              }}
-            />
-          </div>
-        )}
+        <div className={useHtmlInput ? (showPreview ? "flex flex-col lg:flex-row gap-6 w-full" : "w-full") : "flex flex-col lg:flex-row gap-6 w-full"}>
+          {/* In HTML mode, input is always visible; preview toggles side-by-side/full width */}
+          {useHtmlInput ? (
+            <div className={showPreview ? "flex-1 min-w-[350px] max-w-full" : "w-full"}>
+              <FullHtmlInput
+                onChange={handleFullHtmlChange}
+                value={formData.content || ''}
+              />
+            </div>
+          ) : (
+            !showPreview && (
+              <div className="flex-1 min-w-[350px] max-w-full">
+                <label className="font-semibold mb-1">Post Content</label>
+                <ReactQuill
+                  ref={quillRef}
+                  theme="snow"
+                  value={formData.content || ''}
+                  onChange={handleQuillChange}
+                  placeholder="Write something..."
+                  className="h-80 dark:text-black"
+                  required
+                  modules={{
+                    toolbar: [
+                      [{ header: [1, 2, false] }],
+                      ['bold', 'italic', 'underline', 'strike'],
+                      [{ color: [] }, { background: [] }],
+                      [{ list: 'ordered' }, { list: 'bullet' }],
+                      ['blockquote', 'code-block'],
+                      ['link', 'image'],
+                    ],
+                  }}
+                />
+              </div>
+            )
+          )}
+          {/* Only show main preview if not in HTML mode and preview is toggled on */}
+          {!useHtmlInput && showPreview && (
+            <div className="flex-1 min-w-[350px] max-w-full border p-4 bg-gray-50 rounded shadow overflow-auto">
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="font-semibold text-lg">Live Preview</h3>
+              </div>
+              <div
+                style={{ fontSize: '1.1rem', lineHeight: '1.7' }}
+                className="min-h-[100px] prose dark:prose-invert max-w-none"
+                dangerouslySetInnerHTML={{ __html: formData.content || '' }}
+              />
+            </div>
+          )}
+        </div>
 
         {/* Alert Message */}
         {alertMessage.message && <Alert color={alertMessage.type}>{alertMessage.message}</Alert>}

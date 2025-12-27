@@ -72,7 +72,7 @@ const RelatedPosts = ({ categories, currentPostId }) => {
           {displayPosts.map((post) => (
             <div
               key={post.id}
-              className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 overflow-hidden"
+              className="bg-white dark:bg-gray-800 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 overflow-hidden"
             >
               <Link to={`/post/${post.slug}`} className="block">
                 <div className="aspect-[16/9] overflow-hidden">
@@ -88,7 +88,7 @@ const RelatedPosts = ({ categories, currentPostId }) => {
               <div className="p-3">
                 {console.log(post.slug)}
                 <Link to={`/post/${post.slug}`}>
-                  <h3 className="text-base font-semibold text-gray-900 line-clamp-2 mb-2 hover:text-indigo-600 transition-colors">
+                  <h3 className="text-base font-semibold text-gray-900 dark:text-gray-100 line-clamp-2 mb-2 hover:text-indigo-600 dark:hover:text-yellow-400 transition-colors">
                     {post.title}
                   </h3>
                 </Link>
@@ -98,7 +98,7 @@ const RelatedPosts = ({ categories, currentPostId }) => {
                     {post.category.map((cat) => (
                       <span
                         key={cat}
-                        className="text-xs bg-gray-50 text-gray-600 px-2 py-0.5 rounded-full"
+                        className="text-xs bg-gray-50 dark:bg-blue-900 text-gray-600 dark:text-blue-200 px-2 py-0.5 rounded-full border border-blue-200 dark:border-blue-700"
                       >
                         {cat}
                       </span>

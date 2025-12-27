@@ -2,7 +2,7 @@ import { Alert, Button, Label, Spinner, TextInput } from 'flowbite-react';
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { Pen } from 'lucide-react';
+// Removed Pen icon, using logo image instead
 import axios from 'axios';
 import { GoogleOuth } from '../components/GoogleOuth';
 import AdSense from '../components/blog/AdSense';
@@ -91,7 +91,7 @@ const SignUpPage = () => {
               <div className="h-full flex flex-col justify-between">
                 <div>
                   <div className="flex items-center gap-2 mb-8">
-                    <Pen className="h-8 w-8" />
+                    <img src="/images/logo.png" alt="TechKnow Logo" className="h-10 w-10" />
                     <h1 className="text-3xl font-bold">TechKnow</h1>
                   </div>
                   <p className="text-xl font-semibold mb-4">Start Your Journey!</p>

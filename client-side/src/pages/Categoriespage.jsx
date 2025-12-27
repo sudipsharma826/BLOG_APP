@@ -62,15 +62,19 @@ const CategoryList = () => {
 
       {/* Categories Grid */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-16">
-  <h2 className="text-3xl font-bold mb-8 text-gray-900 dark:text-gray-100">Categories</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <h2 className="text-3xl font-bold mb-8 text-gray-900 dark:text-gray-100">Categories</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
           {Array.isArray(categories) && categories.map((category) => (
-            <CategoryCard
-              key={category.name} // Ensure category.name is unique
-              category={category}
+            <div
+              key={category.name}
+              className={`transition-all duration-200 bg-white dark:bg-gray-900 rounded-2xl shadow-md hover:shadow-2xl border border-gray-100 dark:border-gray-800 hover:-translate-y-1 cursor-pointer group ${selectedCategory === category.name ? 'ring-2 ring-purple-500' : ''}`}
               onClick={() => setSelectedCategory(category.name)}
-              isActive={selectedCategory === category.name}
-            />
+            >
+              <CategoryCard
+                category={category}
+                isActive={selectedCategory === category.name}
+              />
+            </div>
           ))}
         </div>
       </div>
@@ -86,10 +90,15 @@ const CategoryList = () => {
             <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-purple-500"></div>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
             {filteredPosts.length > 0 ? (
               filteredPosts.map((post) => (
-                <PostCard key={post._id} post={post} /> // Ensure post._id is unique
+                <div
+                  key={post._id}
+                  className="transition-all duration-200 bg-white dark:bg-gray-900 rounded-2xl shadow-md hover:shadow-2xl border border-gray-100 dark:border-gray-800 hover:-translate-y-1 cursor-pointer group"
+                >
+                  <PostCard post={post} />
+                </div>
               ))
             ) : (
               <p className="text-gray-700 dark:text-gray-300 col-span-full text-center py-12">
@@ -99,8 +108,6 @@ const CategoryList = () => {
           </div>
         )}
       </div>
-
-  {/* Ad spaces removed per user request */}
     </div>
   );
 };

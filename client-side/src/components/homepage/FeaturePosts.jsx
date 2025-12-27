@@ -1,11 +1,13 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import SkeletonPostCard from './SkeletonPostCard';
-// Ads removed per user request
+import { ExploreAndFollow } from './HeroSection';
+
 
 export default function FeaturedPosts({ posts, loading }) {
   return (
     <>
+      <ExploreAndFollow />
       <section className="py-16 page-section">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="ml-10 text-4xl font-bold mb-8" style={{ color: 'var(--color-text)' }}>Featured Posts</h2>

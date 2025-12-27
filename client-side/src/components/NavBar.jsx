@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback ,} from 'react';
 import { Link, useLocation,useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { Search, Menu, Moon, Sun, Pen } from 'lucide-react';
+import { Search, Menu, Moon, Sun } from 'lucide-react';
 import { toggleTheme } from '../redux/theme/themeSlice';
 import { signoutSuccess } from '../redux/user/authSlice';
 import axios from 'axios';
@@ -92,17 +92,17 @@ export default function Header() {
   return (
     <>
       <nav
-        className={`fixed top-0 left-0 w-full z-50 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 transition-all duration-500 ${
+        className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 ${
           isNavbarVisible ? 'translate-y-0' : '-translate-y-full'
         }`}
-      >
+        style={{backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)'}}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-14">
+          <div className="flex items-center justify-between h-16 bg-white/70 dark:bg-gray-900/70 rounded-b-2xl shadow-xl border border-gray-200 dark:border-gray-800">
             {/* Logo */}
-            <Link to="/" className="flex items-center space-x-2" onClick={() => setIsMobileMenuOpen(false)}>
-              <Pen className="h-6 w-6 text-purple-600" />
-              <span className="text-xl font-bold bg-gradient-to-r from-purple-600 to-blue-500 text-transparent bg-clip-text">
-                TechKnows
+            <Link to="/" className="flex items-center space-x-3 group" onClick={() => setIsMobileMenuOpen(false)}>
+              <img src="/images/logo.png" alt="TechKnow Logo" className="h-12 w-12 rounded-xl shadow-lg border-2 border-white dark:border-gray-800 group-hover:scale-105 transition-transform" />
+              <span className="text-2xl font-extrabold bg-gradient-to-r from-purple-600 to-blue-500 text-transparent bg-clip-text tracking-tight drop-shadow-lg">
+                TechKnow
               </span>
             </Link>
 

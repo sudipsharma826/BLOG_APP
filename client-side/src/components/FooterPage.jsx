@@ -1,6 +1,6 @@
 // components/footer/Footer.jsx
 import React from 'react';
-import { Github, Twitter, Linkedin, Pen } from 'lucide-react';
+import { Github, Twitter, Linkedin } from 'lucide-react';
 import { Facebook } from 'react-feather';
 import { Link } from 'react-router-dom';
 
@@ -11,15 +11,15 @@ const Footer = () => {
     <>
       <div className="h-[2px] bg-gray-300 dark:bg-gray-700 my-6" />
 
-      <footer className="bg-gray-100 text-gray-900 dark:bg-gray-900 dark:text-gray-100">
+      <footer className="bg-white/70 dark:bg-gray-900/70 text-gray-900 dark:text-gray-100 rounded-t-2xl shadow-2xl border-t border-gray-200 dark:border-gray-800 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             {/* TechKnows Section */}
             <div>
-              <div className="flex items-center">
-                <Pen className="h-8 w-8 text-purple-600" />
-                <span className="ml-2 text-2xl font-bold bg-gradient-to-r from-purple-600 to-blue-500 text-transparent bg-clip-text dark:from-purple-400 dark:to-blue-500">
-                  TechKnows
+              <div className="flex items-center space-x-3">
+                <img src="/images/logo.png" alt="TechKnow Logo" className="h-14 w-14 rounded-xl shadow-lg border-2 border-white dark:border-gray-800" />
+                <span className="text-3xl font-extrabold bg-gradient-to-r from-purple-600 to-blue-500 text-transparent bg-clip-text dark:from-purple-400 dark:to-blue-500 tracking-tight drop-shadow-lg">
+                  TechKnow
                 </span>
               </div>
               <p className="text-gray-600 dark:text-gray-400 mt-4">

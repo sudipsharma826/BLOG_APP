@@ -6,14 +6,13 @@ import { AuthorInfo } from '../components/blog/AuthorInfo';
 import TableOfContents from '../components/blog/TableOfContent';
 import { PostContent } from '../components/blog/PostContent';
 import { SEO } from '../components/blog/SEO';
-import  AppStatus  from '../components/AppStatus';
+import AppStatus from '../components/AppStatus';
 import { useSelector } from 'react-redux';
 import { Heart, ThumbsUp, Share2, Bookmark, Link, HelpingHand } from 'lucide-react';
 import { Bell, Clock, Hash, Sidebar } from 'react-feather';
 import NotFound from './NotFound';
 import RelatedPosts from '../components/RelatedPosts';
 import CommentSection from '../components/CommetnSection';
-// import AdSense from '../components/blog/AdSense';
 import LatestPosts from '../components/LatestPost';
 import SidebarCategories from '../components/SideBarCategories';
 
@@ -186,8 +185,8 @@ function SinglePostPage() {
       <div className="min-h-screen page-section py-4 sm:py-6 lg:py-8 px-2 sm:px-4 lg:px-8">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-12 lg:grid-cols-12 gap-4 lg:gap-8">
           {/* Main Content */}
-          <article className="col-span-1 md:col-span-9 lg:col-span-8 card rounded-2xl overflow-hidden">
-            <div className="p-4 sm:p-6 lg:p-8">
+          <article className="col-span-1 md:col-span-9 lg:col-span-8 bg-white dark:bg-gray-900 shadow-2xl rounded-3xl overflow-hidden border border-gray-100 dark:border-gray-800 transition-all hover:shadow-3xl">
+            <div className="p-4 sm:p-8 lg:p-12">
               <PostHeader
                 category={postData?.category}
                 title={postData?.title}
@@ -205,27 +204,26 @@ function SinglePostPage() {
                 />
               )}
             </div>
-            {/* No AdSense in Single Blog Post for better impression */}
-            <div className="w-full h-[200px] sm:h-[300px] lg:h-[400px] bg-[var(--color-surface)]">
+            <div className="w-full h-[220px] sm:h-[340px] lg:h-[440px] bg-gradient-to-br from-purple-100 via-blue-100 to-white dark:from-gray-800 dark:via-gray-900 dark:to-gray-800 flex items-center justify-center overflow-hidden relative">
               <img
                 src={postData?.image}
                 alt="Post Visual"
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover rounded-2xl shadow-lg border-4 border-white dark:border-gray-900 transition-transform duration-300 hover:scale-105"
+                style={{ maxHeight: '100%', maxWidth: '100%' }}
               />
+              <div className="absolute bottom-2 right-2 bg-white/80 dark:bg-gray-900/80 px-3 py-1 rounded text-xs font-semibold text-gray-700 dark:text-gray-200 shadow">Featured Image</div>
             </div>
-            <div className="p-4 sm:p-6 lg:p-8">
+            <div className="p-4 sm:p-8 lg:p-12">
               <TableOfContents content={postData.content} />
               <PostContent content={postData?.content} />
-                {/* No AdSense after content in Single Blog Post */}
               <CommentSection postId={postData._id} />
             </div>
           </article>
           {/* Right Sidebar */}
           <div className="col-span-1 md:col-span-3 lg:col-span-4 space-y-4 lg:space-y-8">
-            {/* No AdSense in sidebar for Single Blog Post */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-4">
               {/* Latest Posts */}
-              <div className="card rounded-lg p-4 sm:p-6">
+              <div className="card rounded-lg p-4 sm:p-6 bg-white dark:bg-gray-900 shadow-md">
                 <h3 className="text-lg sm:text-xl font-bold mb-4 flex items-center">
                   <Clock className="w-5 h-5 mr-2" />
                   Latest Posts
@@ -233,7 +231,7 @@ function SinglePostPage() {
                 <LatestPosts />
               </div>
               {/* Categories */}
-              <div className="card rounded-lg p-4 sm:p-6">
+              <div className="card rounded-lg p-4 sm:p-6 bg-white dark:bg-gray-900 shadow-md">
                 <h3 className="text-lg sm:text-xl font-bold mb-4 flex items-center">
                   <Hash className="w-5 h-5 mr-2" />
                   Categories
@@ -246,7 +244,6 @@ function SinglePostPage() {
         {/* Bottom content */}
         <div className="mt-4 sm:mt-6 lg:mt-8">
           {postData && <RelatedPosts categories={postData.category} currentPostId={postData._id} />}
-            {/* No AdSense after related posts in Single Blog Post */}
         </div>
         {/* Floating action buttons - Responsive positioning */}
         {showFloatingIcons && (

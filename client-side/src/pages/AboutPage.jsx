@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Code, Coffee, Github, Heart, Pen } from 'lucide-react';
+import { Code, Coffee, Github, Heart } from 'lucide-react';
 import axios from 'axios';
 import { Facebook, Linkedin } from 'react-feather';
-import AdSense from '../components/blog/AdSense';
 
 const AboutPage = () => {
   const [admin, setAdmin] = useState({});
@@ -22,23 +21,13 @@ const AboutPage = () => {
     fetchAdmin();
   }, []);
 
-        {/* AdSense Ad - Top of About page */}
-        <div className="my-8 flex justify-center">
-          <AdSense
-            adClient={import.meta.env.VITE_ADSENSE_CLIENT}
-            adSlot={import.meta.env.VITE_ADSENSE_SLOT}
-            adFormat="auto"
-            style={{ display: 'block', minHeight: 90, maxWidth: 728, margin: '0 auto' }}
-            fullWidthResponsive={true}
-          />
-        </div>
   return (
     <div className="min-h-screen bg-blue-50 dark:bg-blue-950">
       <div className="bg-gradient-to-br from-blue-600 to-blue-400 py-20 dark:from-blue-900 dark:to-blue-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <Pen className="h-12 w-12 text-blue-200 inline -mt-5 dark:text-blue-400" />
-          <h1 className="ml-3 text-4xl md:text-5xl font-bold text-white mb-4 inline dark:text-white">
-            About TechKnows
+          <img src="/images/logo.png" alt="TechKnow Logo" className="h-14 w-14 inline -mt-5 align-middle" />
+          <h1 className="ml-3 text-4xl md:text-5xl font-bold text-white mb-4 inline dark:text-white align-middle">
+            About TechKnow
           </h1>
           <p className="text-xl text-white/90 max-w-2xl mx-auto dark:text-blue-100">
             Passionate about technology and dedicated to sharing knowledge through thoughtful writing.

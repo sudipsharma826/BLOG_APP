@@ -40,11 +40,10 @@ export function PostHeader({
       className="text-blue-600 hover:no-underline focus:no-underline mr-1" // Removed underline on hover and focus
     >
       <span
-        className="category bg-blue-100 text-blue-800  font-semibold px-3 py-1 rounded-full transition-all duration-200 ease-in-out" // Increased font size and transition effect
-        onMouseEnter={(e) => (e.target.style.backgroundColor = "#b8dfff")}
-        onMouseLeave={(e) => (e.target.style.backgroundColor = "#cfe8fc")}
+        className="category font-semibold px-3 py-1 rounded-full transition-all duration-200 ease-in-out bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 border border-blue-200 dark:border-blue-700"
+        style={{ cursor: 'pointer' }}
       >
-        {category} {/* Display category identifier as text */}
+        {category}
       </span>
     </Link>
   ))}

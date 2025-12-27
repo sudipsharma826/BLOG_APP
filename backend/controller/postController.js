@@ -196,9 +196,9 @@ export const updatePost = async (req, res) => {
         return res.status(400).json({ error: 'All fields are required and categories must be an array' });
     }
 
-    // Normalize category names
+    // Normalize category names (preserve case)
     categories = categories.map(category =>
-        typeof category === 'string' ? category.trim().toLowerCase() : category.name.trim().toLowerCase()
+        typeof category === 'string' ? category.trim() : category.name.trim()
     );
 
     try {
@@ -253,9 +253,14 @@ export const updatePost = async (req, res) => {
         // Handle new categories
         await Promise.all(
             categories.map(async category => {
-                const existingCategory = await Category.findOne({ name: category });
+                // Find category case-insensitively
+                const existingCategory = await Category.findOne({ name: { $regex: `^${category}$`, $options: 'i' } });
                 if (existingCategory) {
                     existingCategory.postCount += 1;
+                    // Optionally update name to match latest case
+                    if (existingCategory.name !== category) {
+                        existingCategory.name = category;
+                    }
                     await existingCategory.save();
                 } else {
                     // Create new category

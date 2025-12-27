@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
-import { Mail, MessageSquare, MapPin, Contact2, Contact2Icon, LucideContactRound } from 'lucide-react';
+import { Mail, MessageSquare, MapPin } from 'lucide-react';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
 import { TextInput } from 'flowbite-react';
-import AdSense from '../components/blog/AdSense';
 
 const ContactPage = () => {
   const { currentUser } = useSelector((state) => state.user);
@@ -45,22 +44,13 @@ const ContactPage = () => {
     setTimeout(() => setStatusMessage(null), 6000);
   };
 
-        {/* AdSense Ad - Top of Contact page */}
-        <div className="my-8 flex justify-center">
-          <AdSense
-            adClient={import.meta.env.VITE_ADSENSE_CLIENT}
-            adSlot={import.meta.env.VITE_ADSENSE_SLOT}
-            adFormat="auto"
-            style={{ display: 'block', minHeight: 90, maxWidth: 728, margin: '0 auto' }}
-            fullWidthResponsive={true}
-          />
-        </div>
+        
   return (
     <div className="min-h-screen bg-blue-50 dark:bg-blue-950">
       <div className="bg-gradient-to-br from-blue-600 to-blue-400 py-20 dark:from-blue-900 dark:to-blue-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <LucideContactRound className="h-12 w-12 text-white inline -mt-7 mr-4 dark:text-blue-400" />
-          <h1 className="text-4xl md:text-5xl font-bold text-white mb-4 inline">
+          <img src="/images/logo.png" alt="TechKnow Logo" className="h-14 w-14 inline -mt-7 mr-4 align-middle" />
+          <h1 className="text-4xl md:text-5xl font-bold text-white mb-4 inline align-middle">
             Get in Touch
           </h1>
           <p className="text-xl text-white/90 max-w-2xl mx-auto">

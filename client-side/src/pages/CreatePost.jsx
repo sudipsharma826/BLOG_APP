@@ -19,6 +19,7 @@ export default function CreatePost() {
   const [manualCategory, setManualCategory] = useState("");
   const [isFeatured, setIsFeatured] = useState(false); // New state for feature post
   const [handleMessage, setHandleMessage] = useState({ message: "", type: "" });
+  const [showPreview, setShowPreview] = useState(true); // Preview toggle
   const navigate = useNavigate();
   const { currentUser } = useSelector((state) => state.user);
 
@@ -128,7 +129,7 @@ export default function CreatePost() {
   };
 
   return (
-    <div className="p-3 max-w-3xl mx-auto min-h-screen">
+    <div className="p-4 max-w-6xl mx-auto min-h-screen">
       <h1 className="text-center text-3xl my-7 font-semibold">Create a Post</h1>
       <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
         <TextInput
@@ -183,7 +184,7 @@ export default function CreatePost() {
             <img src={previewImage} alt={formData.title} className="rounded-md max-h-60" />
           </div>
         )}
-        <div className="mb-2 flex gap-2">
+        <div className="mb-2 flex gap-2 flex-wrap">
           <Button
             type="button"
             color={useHtmlInput ? "purple" : "gray"}
@@ -191,54 +192,84 @@ export default function CreatePost() {
           >
             {useHtmlInput ? "Switch to Quill Editor" : "Switch to Full HTML Input"}
           </Button>
+          <Button
+            type="button"
+            color={showPreview ? "gray" : "purple"}
+            onClick={() => setShowPreview((prev) => !prev)}
+          >
+            {showPreview ? "Hide Preview" : "Show Preview"}
+          </Button>
         </div>
-        {useHtmlInput ? (
-          <FullHtmlInput
-            onChange={handleFullHtmlChange}
-            value={formData.content || ""}
-          />
-        ) : (
-          <div>
-            <label className="font-semibold mb-1">Post Content</label>
-            <ReactQuill
-              ref={quillRef}
-              theme="snow"
-              value={formData.content || ""}
-              onChange={handleQuillChange}
-              placeholder="Write something..."
-              className="h-72 mb-12 dark:text-white"
-              required
-              modules={{
-                toolbar: [
-                  [{ header: [1, 2, false] }],
-                  ["bold", "italic", "underline", "strike"],
-                  [{ color: [] }, { background: [] }],
-                  [{ list: "ordered" }, { list: "bullet" }],
-                  ["blockquote", "code-block"],
-                  ["link", "image"],
-                ],
-              }}
+        <div className={useHtmlInput ? (showPreview ? "flex flex-col lg:flex-row gap-6 w-full" : "w-full") : "flex flex-col lg:flex-row gap-6 w-full"}>
+          {/* In HTML mode, input is always visible; preview toggles side-by-side/full width */}
+          {useHtmlInput ? (
+            <div className={showPreview ? "flex-1 min-w-[350px] max-w-full" : "w-full"}>
+              <FullHtmlInput
+                onChange={handleFullHtmlChange}
+                value={formData.content || ''}
+              />
+            </div>
+          ) : (
+            !showPreview && (
+              <div className="flex-1 min-w-[350px] max-w-full">
+                <label className="font-semibold mb-1">Post Content</label>
+                <ReactQuill
+                  ref={quillRef}
+                  theme="snow"
+                  value={formData.content || ''}
+                  onChange={handleQuillChange}
+                  placeholder="Write something..."
+                  className="h-80 dark:text-white"
+                  required
+                  modules={{
+                    toolbar: [
+                      [{ header: [1, 2, false] }],
+                      ['bold', 'italic', 'underline', 'strike'],
+                      [{ color: [] }, { background: [] }],
+                      [{ list: 'ordered' }, { list: 'bullet' }],
+                      ['blockquote', 'code-block'],
+                      ['link', 'image'],
+                    ],
+                  }}
+                />
+              </div>
+            )
+          )}
+          {/* Only show main preview if not in HTML mode and preview is toggled on */}
+          {!useHtmlInput && showPreview && (
+            <div className="flex-1 min-w-[350px] max-w-full border p-4 bg-gray-50 rounded shadow overflow-auto">
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="font-semibold text-lg">Live Preview</h3>
+              </div>
+              <div
+                style={{ fontSize: '1.1rem', lineHeight: '1.7' }}
+                className="min-h-[100px] prose dark:prose-invert max-w-none"
+                dangerouslySetInnerHTML={{ __html: formData.content || '' }}
+              />
+            </div>
+          )}
+        </div>
+        <div className="flex flex-col md:flex-row gap-4 mt-6 items-center justify-end">
+          <div className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              id="isFeatured"
+              checked={isFeatured}
+              onChange={(e) => setIsFeatured(e.target.checked)}
+              className="accent-teal-600 w-5 h-5"
             />
+            <label htmlFor="isFeatured" className="text-gray-700 font-semibold">
+              Featured
+            </label>
           </div>
-        )}
-        <div className="flex items-center gap-2">
-          <input
-            type="checkbox"
-            id="isFeatured"
-            checked={isFeatured}
-            onChange={(e) => setIsFeatured(e.target.checked)}
-          />
-          <label htmlFor="isFeatured" className="text-gray-700">
-            Want to feature the post?
-          </label>
+          <Button
+            type="submit"
+            gradientDuoTone="purpleToPink"
+            className="hover:scale-105 transition-transform px-8 py-3 font-semibold rounded-lg shadow-lg"
+          >
+            Publish
+          </Button>
         </div>
-        <Button
-          type="submit"
-          gradientDuoTone="purpleToPink"
-          className="hover:scale-105 transition-transform"
-        >
-          Publish
-        </Button>
         {handleMessage.message && (
           <Alert
             className="mt-5 flex items-center gap-2"
