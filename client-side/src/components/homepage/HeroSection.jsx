@@ -26,7 +26,7 @@ export function HeroSectionWithFooter() {
       <div className="w-full flex flex-col items-center justify-center mt-[-3rem] md:mt-[-4rem] z-30 relative">
         {/* Explore Blog Article Button */}
         <a
-          href="#posts"
+          href="/posts"
           className="group flex items-center gap-3 px-8 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white text-lg font-semibold rounded-full shadow-lg hover:scale-105 transition-transform duration-200 mb-4"
           style={{backdropFilter: 'blur(2px)'}}
         >
