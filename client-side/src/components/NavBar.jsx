@@ -109,8 +109,10 @@ export default function Header() {
             {/* Logo */}
             <Link to="/" className="flex items-center space-x-2 sm:space-x-3 group h-16 ml-1 md:ml-6 min-w-0" onClick={() => setIsMobileMenuOpen(false)}>
               <img src="/images/logo.png" alt="TechKnows Logo" className="h-12 w-12 sm:h-14 sm:w-14 my-auto rounded-xl shadow-lg border-2 border-white dark:border-gray-800 group-hover:scale-105 transition-transform flex-shrink-0" />
+              {/* Mobile logo text */}
               <span className="inline md:hidden text-xs font-semibold bg-gradient-to-r from-purple-600 to-blue-500 text-transparent bg-clip-text tracking-tight flex items-center h-12 max-w-[70px] whitespace-nowrap overflow-hidden text-ellipsis ml-1">TechKnows</span>
-              <span className="hidden md:inline text-2xl sm:text-3xl font-extrabold bg-gradient-to-r from-purple-600 to-blue-500 text-transparent bg-clip-text tracking-tight drop-shadow-lg flex items-center h-120 max-w-[180px] sm:max-w-[240px] md:max-w-[320px] whitespace-nowrap overflow-hidden text-ellipsis">TechKnows</span>
+              {/* Desktop logo text - improved for single line and better fit */}
+              <span className="hidden md:inline text-2xl sm:text-3xl font-extrabold bg-gradient-to-r from-purple-600 to-blue-500 text-transparent bg-clip-text tracking-tight drop-shadow-lg flex items-center h-12 max-w-[180px] sm:max-w-[220px] md:max-w-[260px] whitespace-nowrap overflow-hidden text-ellipsis leading-tight" style={{fontSize: 'clamp(1.5rem, 2.5vw, 2.2rem)'}}>TechKnows</span>
             </Link>
 
             {/* Desktop Navigation */}
@@ -225,12 +227,14 @@ Categories              </Link>
                 <Dropdown
                   inline
                   label={
-                    <Avatar
-                      img={currentUser.photoURL || '/images/user.png'}
-                      alt="User avatar"
-                      rounded
-                      size="sm"
-                    />
+                    <div className="flex items-center">
+                      <Avatar
+                        img={currentUser.photoURL || '/images/user.png'}
+                        alt="User avatar"
+                        rounded
+                        className="w-8 h-8 sm:w-9 sm:h-9 border-2 border-white dark:border-gray-800 shadow"
+                      />
+                    </div>
                   }
                 >
                   <Dropdown.Header>

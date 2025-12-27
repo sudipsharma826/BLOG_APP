@@ -96,22 +96,27 @@ export function Subscribe() {
     <div className="flex items-center space-x-2 relative">
       {/* Always visible Subscribe Button */}
       <button
-  onClick={handleSubscribe}
-  className={`px-4 py-2 rounded-lg font-semibold transition-all duration-300 shadow-md ${
-    isSubscribed
-      ? "bg-white text-black cursor-not-allowed"
-      : "bg-red-900 text-white hover:bg-gray-600 hover:shadow-lg active:bg-red-700"
-  } ${buttonEffect ? "animate-ping bg-yellow-500 text-black" : ""}`}
-  disabled={isSubscribed}
->
-  {isSubscribed ? "You're Subscribed 👍" : "Subscribe 🔔"}
-</button>
+        onClick={handleSubscribe}
+        className={`px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg font-semibold transition-all duration-300 shadow-md whitespace-nowrap text-xs sm:text-base max-w-full overflow-hidden text-ellipsis ${
+          isSubscribed
+            ? "bg-white text-black cursor-not-allowed"
+            : "bg-red-900 text-white hover:bg-gray-600 hover:shadow-lg active:bg-red-700"
+        } ${buttonEffect ? "animate-ping bg-yellow-500 text-black" : ""}`}
+        disabled={isSubscribed}
+        style={{lineHeight: 1.2, minWidth: '110px'}}
+      >
+        {isSubscribed ? (
+          <span className="truncate block">Subscribed <span role="img" aria-label="thumbs up">👍</span></span>
+        ) : (
+          <span className="truncate block">Subscribe <span role="img" aria-label="bell">🔔</span></span>
+        )}
+      </button>
 
       {/* Logo beside button */}
       <img
         src="/images/logo.png"
         alt="Logo"
-        className={`w-12 h-auto object-cover rounded-full ${buttonEffect ? "w-8 h-8" : ""}`}
+        className={`w-8 h-8 sm:w-12 sm:h-auto object-cover rounded-full ${buttonEffect ? "w-7 h-7" : ""}`}
       />
       {/* Modal for non-logged-in users */}
       {showModal && (
