@@ -1,5 +1,6 @@
+
 import React, { useState, useEffect } from 'react';
-import { ChevronLeft, ChevronRight, MousePointerSquareDashedIcon, PoundSterling, Tag } from 'lucide-react';
+import { ChevronLeft, ChevronRight, MousePointerSquareDashedIcon } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const PostSlider = ({ posts }) => {
@@ -8,7 +9,7 @@ const PostSlider = ({ posts }) => {
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % posts.length);
-    }, 9000);
+    }, 8000);
     return () => clearInterval(timer);
   }, [posts.length]);
 
@@ -16,72 +17,78 @@ const PostSlider = ({ posts }) => {
   const prevSlide = () => setCurrentIndex((prev) => (prev - 1 + posts.length) % posts.length);
 
   return (
-    <>
-    <h2 className="ml-10 text-4xl font-bold mb-4 flex items-center" style={{color: 'var(--color-text)'}}>
-      <MousePointerSquareDashedIcon className="mr-3 text-3xl" style={{color: 'var(--color-primary)'}} />
-        Latest Posts
-      </h2>
-    <section className="relative h-[400px]">
-      {posts.map((post, index) => (
-        <div
-          key={post.id}
-          className={`absolute inset-0 transition-opacity duration-500 ease-in-out ${
-            index === currentIndex ? 'opacity-100' : 'opacity-0'
-          }`}
-        >
-          <div className="absolute inset-0">
+    <div className="w-full max-w-4xl mx-auto">
+      <div className="flex items-center justify-between mb-4 px-2">
+        <h2 className="text-2xl sm:text-3xl font-bold flex items-center gap-2 text-gray-900 dark:text-white">
+          <MousePointerSquareDashedIcon className="text-blue-600 dark:text-blue-400 w-7 h-7" />
+          Latest Posts
+        </h2>
+        <div className="flex gap-2">
+          <button
+            onClick={prevSlide}
+            className="bg-gray-200 dark:bg-gray-700 p-2 rounded-full text-gray-700 dark:text-gray-200 hover:bg-blue-500 hover:text-white transition"
+            aria-label="Previous"
+          >
+            <ChevronLeft className="w-5 h-5" />
+          </button>
+          <button
+            onClick={nextSlide}
+            className="bg-gray-200 dark:bg-gray-700 p-2 rounded-full text-gray-700 dark:text-gray-200 hover:bg-blue-500 hover:text-white transition"
+            aria-label="Next"
+          >
+            <ChevronRight className="w-5 h-5" />
+          </button>
+        </div>
+      </div>
+      <div className="relative h-[340px] sm:h-[400px] rounded-xl overflow-hidden shadow-lg">
+        {posts.map((post, index) => (
+          <div
+            key={post.id || post._id || index}
+            className={`absolute inset-0 transition-opacity duration-700 ease-in-out flex flex-col items-center justify-center ${
+              index === currentIndex ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'
+            }`}
+          >
             <img
               src={post.image}
               alt={post.title}
-              className="w-full h-full object-cover opacity-60"
+              className="absolute inset-0 w-full h-full object-cover object-center opacity-60"
             />
-          </div>
-          <div className="relative h-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-center">
-            <div className="absolute inset-0 bg-black bg-opacity-50" /> {/* Dark overlay */}
-            <div className="relative z-10 text-center text-white px-6 py-12">
-              <h2 className="text-4xl font-bold mb-4 drop-shadow-lg" style={{color: 'var(--color-surface)'}}>{post.title}</h2>
-              <p className="text-xl font-semibold mb-4 drop-shadow-lg" style={{color: 'rgba(255,255,255,0.9)'}}>{post.subtitle}</p>
-              {post.category.map((category, index) => (
-    <Link to={`/category/${category}`}>
-  <span
-    key={index}  // Use index or unique identifier if available
-    className="inline-block bg-blue-400 text-gray-800 text-sm px-6 py-1 rounded-full mr-2 mb-2"  // Add margin right (mr-2) to space them
-  >
-    {category}
-  </span>
-  </Link>
-))}
-
-
-              <p className="text-lg text-gray-200 mb-6 line-clamp-3 drop-shadow-lg mt-3">
-                {/* Remove HTML tags from post.content */}
-                {/* {typeof post.content === 'string' ? post.content.replace(/<[^>]*>/g, '') : 'No content available'} */}
-              </p>
-              
-              <Link to={`/post/${post.slug}`}>
-                <button className="btn hover:brightness-95">
-                  Read More
-                </button>
-              </Link>
+            <div className="relative z-10 w-full h-full flex flex-col items-center justify-center px-4 py-8 bg-gradient-to-t from-black/80 via-black/40 to-transparent">
+              <div className="bg-white/90 dark:bg-gray-900/90 rounded-xl p-6 max-w-xl w-full mx-auto shadow-lg flex flex-col items-center">
+                <h3 className="text-lg sm:text-2xl font-bold text-center text-gray-900 dark:text-white mb-2 line-clamp-2" style={{display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', textOverflow: 'ellipsis', wordBreak: 'break-word'}}>
+                  {post.title}
+                </h3>
+                <p className="text-sm sm:text-base text-gray-700 dark:text-gray-300 text-center mb-3 line-clamp-2" style={{display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', textOverflow: 'ellipsis', wordBreak: 'break-word'}}>
+                  {post.subtitle}
+                </p>
+                <div className="flex flex-wrap justify-center gap-2 mb-3">
+                  {post.category && post.category.slice(0, 2).map((cat, i) => (
+                    <span key={i} className="bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 text-xs px-3 py-1 rounded-full">
+                      {cat}
+                    </span>
+                  ))}
+                </div>
+                <Link to={`/post/${post.slug}`} className="mt-2">
+                  <button className="btn px-6 py-2 text-base font-semibold rounded-full bg-blue-600 text-white hover:bg-blue-700 transition">
+                    Read More
+                  </button>
+                </Link>
+              </div>
             </div>
           </div>
-        </div>
-      ))}
-      
-      <button
-        onClick={prevSlide}
-        className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 p-2 rounded-full text-white hover:bg-black/75"
-      >
-        <ChevronLeft className="w-6 h-6" />
-      </button>
-      <button
-        onClick={nextSlide}
-        className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 p-2 rounded-full text-white hover:bg-black/75"
-      >
-        <ChevronRight className="w-6 h-6" />
-      </button>
-    </section>
-    </>
+        ))}
+      </div>
+      <div className="flex justify-center mt-4 gap-2">
+        {posts.map((_, idx) => (
+          <button
+            key={idx}
+            onClick={() => setCurrentIndex(idx)}
+            className={`w-3 h-3 rounded-full transition-all duration-200 ${currentIndex === idx ? 'bg-blue-600 dark:bg-blue-400 scale-125' : 'bg-gray-300 dark:bg-gray-700'}`}
+            aria-label={`Go to slide ${idx + 1}`}
+          />
+        ))}
+      </div>
+    </div>
   );
 };
 

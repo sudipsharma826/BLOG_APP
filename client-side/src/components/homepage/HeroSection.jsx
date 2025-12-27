@@ -4,7 +4,7 @@ import { FaGithub, FaLinkedin } from 'react-icons/fa';
 
 export default function HeroSection() {
   return (
-    <div className="relative w-full min-h-[260px] sm:min-h-[320px] md:min-h-[40vw] max-h-[90vh] flex items-center justify-center overflow-hidden bg-gray-900">
+    <div className="relative w-full min-h-[260px] sm:relative min-h-[280px] md:min-h-[40vw] max-h-[90vh] flex items-center justify-center overflow-hidden bg-gray-900">
       {/* Banner Image - Large and Clear */}
       <img
         src="/images/image.png"

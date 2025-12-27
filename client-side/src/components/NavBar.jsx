@@ -108,8 +108,9 @@ export default function Header() {
           <div className="flex items-center justify-between h-20 bg-transparent rounded-b-2xl m-0 p-0">
             {/* Logo */}
             <Link to="/" className="flex items-center space-x-2 sm:space-x-3 group h-16 ml-1 md:ml-6 min-w-0" onClick={() => setIsMobileMenuOpen(false)}>
-              <img src="/images/logo.png" alt="TechKnows Logo" className="h-10 w-10 sm:h-14 sm:w-14 my-auto rounded-xl shadow-lg border-2 border-white dark:border-gray-800 group-hover:scale-105 transition-transform flex-shrink-0" />
-              <span className="text-2xl sm:text-3xl font-extrabold bg-gradient-to-r from-purple-600 to-blue-500 text-transparent bg-clip-text tracking-tight drop-shadow-lg flex items-center h-16 truncate max-w-[110px] sm:max-w-xs">TechKnows</span>
+              <img src="/images/logo.png" alt="TechKnows Logo" className="h-12 w-12 sm:h-14 sm:w-14 my-auto rounded-xl shadow-lg border-2 border-white dark:border-gray-800 group-hover:scale-105 transition-transform flex-shrink-0" />
+              <span className="inline md:hidden text-xs font-semibold bg-gradient-to-r from-purple-600 to-blue-500 text-transparent bg-clip-text tracking-tight flex items-center h-12 max-w-[70px] whitespace-nowrap overflow-hidden text-ellipsis ml-1">TechKnows</span>
+              <span className="hidden md:inline text-2xl sm:text-3xl font-extrabold bg-gradient-to-r from-purple-600 to-blue-500 text-transparent bg-clip-text tracking-tight drop-shadow-lg flex items-center h-120 max-w-[180px] sm:max-w-[240px] md:max-w-[320px] whitespace-nowrap overflow-hidden text-ellipsis">TechKnows</span>
             </Link>
 
             {/* Desktop Navigation */}
