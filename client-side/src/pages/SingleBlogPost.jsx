@@ -61,6 +61,14 @@ function SinglePostPage() {
         );
         if (postRes.data && postRes.data.post) {
           setPostData(postRes.data.post);
+          // Set like/love/save state based on DB
+          const userId = currentUser?._id;
+          setIsLiked(postRes.data.post.usersLikeList?.includes(userId));
+          setIsLoved(postRes.data.post.usersLoveList?.includes(userId));
+          setIsSaved(postRes.data.post.usersSaveList?.includes(userId));
+          setLikesCount(postRes.data.post.usersLikeList?.length || 0);
+          setLovesCount(postRes.data.post.usersLoveList?.length || 0);
+          setSavesCount(postRes.data.post.usersSaveList?.length || 0);
           // Fetch author data if needed
           const authorRes = await axios.get(
             `${import.meta.env.VITE_BACKEND_APP_BASE_URL}/user/getuser/${postRes.data.post.authorEmail}`,
@@ -79,7 +87,7 @@ function SinglePostPage() {
       }
     };
     fetchData();
-  }, [slug]);
+  }, [slug, currentUser?._id]);
 
   const handleAction = async (actionType) => {
     const actionData = {
@@ -202,6 +210,7 @@ function SinglePostPage() {
                 postLikes={likesCount}
                 updatedAt={new Date(postData?.updatedAt).toLocaleDateString()}
               />
+              
               {authorData && (
                 <AuthorInfo
                   name={authorData?.username}
@@ -234,7 +243,7 @@ function SinglePostPage() {
                   <Clock className="w-5 h-5 mr-2" />
                   Latest Posts
                 </h3>
-                <LatestPosts />
+                <LatestPosts excludePostId={postData._id} />
               </div>
               {/* Categories */}
               <div className="card rounded-lg p-4 sm:p-6 bg-white dark:bg-gray-900 shadow-md">

@@ -65,7 +65,7 @@ function PostCard({ post }) {
   );
 }
 
-export default function LatestPosts() {
+export default function LatestPosts({ excludePostId }) {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -79,7 +79,11 @@ export default function LatestPosts() {
             withCredentials: true 
           }
         );
-        setPosts(response.data.posts.slice(0, 6));
+        let filteredPosts = response.data.posts;
+        if (excludePostId) {
+          filteredPosts = filteredPosts.filter(post => post._id !== excludePostId);
+        }
+        setPosts(filteredPosts.slice(0, 6));
         setLoading(false);
       } catch (error) {
         console.error('Error fetching posts:', error);
@@ -88,7 +92,7 @@ export default function LatestPosts() {
     };
 
     fetchPosts();
-  }, []);
+  }, [excludePostId]);
 
   if (loading) {
     return (
