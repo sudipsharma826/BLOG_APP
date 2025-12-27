@@ -112,7 +112,7 @@ export default function Header() {
               {/* Mobile logo text */}
               <span className="inline md:hidden text-xs font-semibold bg-gradient-to-r from-purple-600 to-blue-500 text-transparent bg-clip-text tracking-tight flex items-center h-12 max-w-[70px] whitespace-nowrap overflow-hidden text-ellipsis ml-1">TechKnows</span>
               {/* Desktop logo text - improved for single line and better fit */}
-              <span className="hidden md:inline text-2xl sm:text-3xl font-extrabold bg-gradient-to-r from-purple-600 to-blue-500 text-transparent bg-clip-text tracking-tight drop-shadow-lg flex items-center h-12 max-w-[180px] sm:max-w-[220px] md:max-w-[260px] whitespace-nowrap overflow-hidden text-ellipsis leading-tight" style={{fontSize: 'clamp(1.5rem, 2.5vw, 2.2rem)'}}>TechKnows</span>
+              <span className="hidden md:inline text-2xl sm:text-3xl font-extrabold bg-gradient-to-r from-purple-600 to-blue-500 text-transparent bg-clip-text tracking-tight drop-shadow-lg flex items-center h-12 max-w-[220px] sm:max-w-[260px] md:max-w-[320px] whitespace-nowrap overflow-hidden leading-tight" style={{fontSize: 'clamp(1.5rem, 2.5vw, 2.2rem)'}}>TechKnows</span>
             </Link>
 
             {/* Desktop Navigation */}

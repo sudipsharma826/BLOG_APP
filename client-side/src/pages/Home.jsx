@@ -80,7 +80,7 @@ const Home = () => {
       <div className="bg-gradient-to-br from-purple-100 via-yellow-50 to-blue-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 min-h-screen w-full">
         <HeroSection />
         
-        <section className="relative z-20 -mt-24 max-w-7xl mx-auto px-2 sm:px-4 lg:px-8">
+        <section className="relative z-20 -mt-24 max-w-7xl mx-auto px-2 sm:px-4 -mt-10 lg:px-8">
           <div className="rounded-3xl shadow-2xl bg-white/80 dark:bg-gray-900/80 backdrop-blur-md p-8 md:p-12 mb-16 border border-purple-100 dark:border-gray-800">
             <FeaturedPosts posts={featuredPosts} loading={loading} />
           </div>

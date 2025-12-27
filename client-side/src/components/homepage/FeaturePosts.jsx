@@ -10,7 +10,7 @@ export default function FeaturedPosts({ posts, loading }) {
    
       <ExploreAndFollow />
       
-      <section className="py-30 page-section">
+      <section className="py-30 page-section bg-white dark:bg-gray-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-10 lg:px-8">
           <h2 className="ml-10 text-4xl font-bold mb-8" style={{ color: 'var(--color-text)' }}>Featured Posts</h2>
           {loading ? (
