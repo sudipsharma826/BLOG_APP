@@ -19,7 +19,7 @@ const sendMail = async ({ email = null, subject, message, html = null, bcc, atta
     };
 
     const mailOptions = {
-      from: 'Sudip Sharma <info@sudipsharma.com.np>',
+      from: 'Sudip Sharma <sudeepsharma826@gmail.com>',
       to: email || process.env.EMAIL, // Default to your email if `email` is null
       bcc: Array.isArray(bcc) ? bcc.join(',') : bcc || process.env.EMAIL, // Handles BCC properly
       subject: subject,

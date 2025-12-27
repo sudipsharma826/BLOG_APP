@@ -22,7 +22,7 @@ const AboutPage = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-blue-50 dark:bg-blue-950">
+    <div className="min-h-screen bg-blue-50 dark:bg-blue-950 pt-20">
       <div className="bg-gradient-to-br from-blue-600 to-blue-400 py-20 dark:from-blue-900 dark:to-blue-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <img src="/images/logo.png" alt="TechKnow Logo" className="h-14 w-14 inline -mt-5 align-middle" />

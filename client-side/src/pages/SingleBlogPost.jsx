@@ -182,7 +182,7 @@ function SinglePostPage() {
 
 
   return (
-    <div className="pt-20 md:pt-0">
+    <div className="pt-20">
       <SEO
         title={postData?.title}
         description={postData?.description}

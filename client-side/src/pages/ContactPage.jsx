@@ -46,7 +46,7 @@ const ContactPage = () => {
 
         
   return (
-    <div className="min-h-screen bg-blue-50 dark:bg-blue-950">
+    <div className="min-h-screen bg-blue-50 dark:bg-blue-950 pt-20">
       <div className="bg-gradient-to-br from-blue-600 to-blue-400 py-20 dark:from-blue-900 dark:to-blue-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <img src="/images/logo.png" alt="TechKnow Logo" className="h-14 w-14 inline -mt-7 mr-4 align-middle" />
@@ -68,7 +68,7 @@ const ContactPage = () => {
                 <Mail className="h-6 w-6 text-purple-600 dark:text-purple-400 mt-1" />
                 <div className="ml-4">
                   <h3 className="text-lg font-semibold dark:text-gray-100">Email</h3>
-                  <p className="text-gray-600 dark:text-gray-300">info@sudipsharma.com.np</p>
+                  <p className="text-gray-600 dark:text-gray-300">sudeepsharma826@gmail.com</p>
                 </div>
               </div>
               <div className="flex items-start">

@@ -40,7 +40,7 @@ const PostsPage = () => {
   }, [searchQuery]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-white dark:from-gray-900 dark:to-gray-800">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-white dark:from-gray-900 dark:to-gray-800 pt-20">
       {/* Hero Section */}
       <div className="relative bg-gradient-to-br from-blue-700 to-purple-700 py-24 dark:from-gray-800 dark:to-gray-900 overflow-hidden shadow-lg rounded-b-3xl">
         <div className="absolute inset-0 opacity-20 bg-[url('https://www.toptal.com/designers/subtlepatterns/patterns/memphis-mini.png')]" />

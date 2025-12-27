@@ -107,9 +107,9 @@ export default function Header() {
         <div className="w-full px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-20 bg-transparent rounded-b-2xl m-0 p-0">
             {/* Logo */}
-            <Link to="/" className="flex items-center space-x-3 group h-20 ml-2 md:ml-6" onClick={() => setIsMobileMenuOpen(false)}>
-              <img src="/images/logo.png" alt="TechKnow Logo" className="h-14 w-14 my-auto rounded-xl shadow-lg border-2 border-white dark:border-gray-800 group-hover:scale-105 transition-transform" />
-              <span className="text-3xl font-extrabold bg-gradient-to-r from-purple-600 to-blue-500 text-transparent bg-clip-text tracking-tight drop-shadow-lg flex items-center h-20">TechKnow</span>
+            <Link to="/" className="flex items-center space-x-2 sm:space-x-3 group h-16 ml-1 md:ml-6 min-w-0" onClick={() => setIsMobileMenuOpen(false)}>
+              <img src="/images/logo.png" alt="TechKnow Logo" className="h-10 w-10 sm:h-14 sm:w-14 my-auto rounded-xl shadow-lg border-2 border-white dark:border-gray-800 group-hover:scale-105 transition-transform flex-shrink-0" />
+              <span className="text-2xl sm:text-3xl font-extrabold bg-gradient-to-r from-purple-600 to-blue-500 text-transparent bg-clip-text tracking-tight drop-shadow-lg flex items-center h-16 truncate max-w-[110px] sm:max-w-xs">TechKnow</span>
             </Link>
 
             {/* Desktop Navigation */}
@@ -204,7 +204,7 @@ Categories              </Link>
             </div>
 
             {/* Mobile Navigation */}
-            <div className="flex md:hidden items-center space-x-4 pr-2">
+            <div className="flex md:hidden items-center space-x-2 sm:space-x-4 pr-2">
               <button
                 onClick={() => setIsSearchVisible(!isSearchVisible)}
                 className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800"

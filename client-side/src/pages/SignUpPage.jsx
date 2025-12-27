@@ -141,7 +141,7 @@ const SignUpPage = () => {
                   <TextInput
                     type="email"
                     id="email"
-                    placeholder="info@sudipsharma.com.np"
+                    placeholder="sudeepsharma826@gmail.com"
                     onChange={handleChange}
                     className="mt-1"
                   />

@@ -99,7 +99,7 @@ export const createPost = async (req, res) => {
               </div>
               <p style="font-size: 16px; line-height: 1.5; margin-top: 30px;">For assistance, feel free to reach out to us:</p>
               <ul style="font-size: 16px; line-height: 1.5; padding-left: 20px;">
-                <li><strong>Email:</strong> <a href="mailto:info@sudipsharma.com.np" style="color: #007BFF;">info@sudipsharma.com.np</a></li>
+                <li><strong>Email:</strong> <a href="mailto:sudeepsharma826@gmail.com" style="color: #007BFF;">sudeepsharma826@gmail.com</a></li>
                 <li><strong>Mobile:</strong>977 + 9816662624</li>
               </ul>
               <p style="font-size: 16px; line-height: 1.5;">Connect with us on social media:</p>

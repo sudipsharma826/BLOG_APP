@@ -66,7 +66,7 @@ const SingleCategoryPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white">
+    <div className="min-h-screen bg-gray-900 text-white pt-20">
       {/* Category Hero with background image and improved overlay */}
       <div
         className="text-center text-white bg-cover bg-center relative shadow-lg rounded-b-3xl overflow-hidden"
