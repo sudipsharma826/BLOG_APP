@@ -106,7 +106,7 @@ const SignInPage = () => {
                 </div>
                 <div className="hidden md:block">
                   <p className="text-sm text-gray-200">
-                    New to TechKnow?{' '}
+                    New to TechKnows?{' '}
                     <Link to="/signup" className="font-medium hover:underline">
                       Create an account
                     </Link>
@@ -171,7 +171,7 @@ const SignInPage = () => {
 
               <div className="mt-6 text-center md:hidden">
                 <p className="text-sm text-gray-600 dark:text-gray-400">
-                  New to TechKnow?{' '}
+                  New to TechKnows?{' '}
                   <Link to="/signup" className="text-blue-600 hover:underline">
                     Create an account
                   </Link>

@@ -92,7 +92,7 @@ const SignUpPage = () => {
                 <div>
                   <div className="flex items-center gap-2 mb-8">
                     <img src="/images/logo.png" alt="TechKnow Logo" className="h-10 w-10" />
-                    <h1 className="text-3xl font-bold">TechKnow</h1>
+                    <h1 className="text-3xl font-bold">TechKnows</h1>
                   </div>
                   <p className="text-xl font-semibold mb-4">Start Your Journey!</p>
                   <p className="text-gray-100 mb-8">

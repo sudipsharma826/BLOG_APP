@@ -27,7 +27,7 @@ const AboutPage = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <img src="/images/logo.png" alt="TechKnow Logo" className="h-14 w-14 inline -mt-5 align-middle" />
           <h1 className="ml-3 text-4xl md:text-5xl font-bold text-white mb-4 inline dark:text-white align-middle">
-            About TechKnow
+            About TechKnows
           </h1>
           <p className="text-xl text-white/90 max-w-2xl mx-auto dark:text-blue-100">
             Passionate about technology and dedicated to sharing knowledge through thoughtful writing.

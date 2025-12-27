@@ -16,9 +16,9 @@ const Footer = () => {
             {/* TechKnows Section */}
             <div className="md:col-span-2">
               <div className="flex items-center space-x-3">
-                <img src="/images/logo.png" alt="TechKnow Logo" className="h-14 w-14 rounded-xl shadow-lg border-2 border-white dark:border-gray-800" />
+                <img src="/images/logo.png" alt="TechKnows Logo" className="h-14 w-14 rounded-xl shadow-lg border-2 border-white dark:border-gray-800" />
                 <span className="text-3xl font-extrabold bg-gradient-to-r from-purple-600 to-blue-500 text-transparent bg-clip-text dark:from-purple-400 dark:to-blue-500 tracking-tight drop-shadow-lg">
-                  TechKnow
+                  TechKnows
                 </span>
               </div>
               <p className="text-gray-600 dark:text-gray-400 mt-4">
