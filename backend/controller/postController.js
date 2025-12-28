@@ -601,24 +601,12 @@ export const unSavePost = async (req, res) => {
 //Get Featured Posts
 export const getFeaturedPosts = async (req, res) => {
         try {
-            // Fetch posts that are either featured or just the latest (created/updated), sorted by updatedAt/createdAt desc
-            // We'll fetch all featured posts, and also the latest posts (not necessarily featured), then merge and sort them
-            // To avoid duplicates, use a Set by _id
-            const featuredPosts = await Post.find({ isFeatured: true });
-            const latestPosts = await Post.find({})
-                .sort({ updatedAt: -1, createdAt: -1 })
-                .limit(10); // adjust limit as needed
-
-            // Merge and deduplicate
-            const allPostsMap = new Map();
-            [...featuredPosts, ...latestPosts].forEach(post => {
-                allPostsMap.set(post._id.toString(), post);
-            });
-            const posts = Array.from(allPostsMap.values())
-                .sort((a, b) => new Date(b.updatedAt || b.createdAt) - new Date(a.updatedAt || a.createdAt));
+            // Fetch only featured posts
+            const featuredPosts = await Post.find({ isFeatured: true })
+                .sort({ updatedAt: -1, createdAt: -1 });
 
             // Collect all unique author emails from the posts
-            const authorEmails = [...new Set(posts.map((post) => post.authorEmail))];
+            const authorEmails = [...new Set(featuredPosts.map((post) => post.authorEmail))];
 
             // Fetch corresponding author details
             const authors = await User.find({ email: { $in: authorEmails } }).select('email username photoURL');
@@ -630,7 +618,7 @@ export const getFeaturedPosts = async (req, res) => {
             }, {});
 
             // Enrich posts with author details
-            const enrichedPosts = posts.map((post) => ({
+            const enrichedPosts = featuredPosts.map((post) => ({
                 ...post._doc,
                 author: authorMap[post.authorEmail] || {},
             }));
