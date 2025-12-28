@@ -11,29 +11,43 @@ export default function CommentSection({ postId }) {
   const [comment, setComment] = useState('');
   const [commentError, setCommentError] = useState(null);
   const [comments, setComments] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [fetchError, setFetchError] = useState(null);
 
   // Fetch comments
   const getComments = async () => {
+    setLoading(true);
+    setFetchError(null);
     try {
+      if (!postId) {
+        setComments([]);
+        setLoading(false);
+        setFetchError('No post selected.');
+        return;
+      }
       const res = await axios.get(
         `${import.meta.env.VITE_BACKEND_APP_BASE_URL}/comment/getPostComments/${postId}`,
         {
           withCredentials: true,
         }
       );
-
       if (res.status === 200) {
         setComments(res.data); // Set fetched comments
+      } else {
+        setFetchError('Failed to fetch comments.');
       }
     } catch (error) {
-      console.error('Error fetching comments:', error.message);
+      setFetchError(error.message || 'Error fetching comments.');
+      setComments([]);
+    } finally {
+      setLoading(false);
     }
   };
 
   // Fetch comments on component mount or when postId changes
   useEffect(() => {
     getComments();
-  }, [postId]);
+  }, [postId, currentUser?._id]);
 
   // Handle comment submission
   const handleSubmit = async (e) => {
@@ -148,7 +162,11 @@ export default function CommentSection({ postId }) {
         </form>
       )}
 
-      {comments.length === 0 ? (
+      {loading ? (
+        <p className="text-sm my-5">Loading comments...</p>
+      ) : fetchError ? (
+        <Alert color="failure" className="my-5">{fetchError}</Alert>
+      ) : comments.length === 0 ? (
         <p className="text-sm my-5">No comments yet!</p>
       ) : (
         <>
@@ -158,7 +176,6 @@ export default function CommentSection({ postId }) {
               <p>{comments.length}</p>
             </div>
           </div>
-
           {comments.map((comment) => (
             <Comment
               key={comment._id}

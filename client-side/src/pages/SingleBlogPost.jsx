@@ -61,14 +61,26 @@ function SinglePostPage() {
         );
         if (postRes.data && postRes.data.post) {
           setPostData(postRes.data.post);
-          // Set like/love/save state based on DB
-          const userId = currentUser?._id;
-          setIsLiked(postRes.data.post.usersLikeList?.includes(userId));
-          setIsLoved(postRes.data.post.usersLoveList?.includes(userId));
-          setIsSaved(postRes.data.post.usersSaveList?.includes(userId));
-          setLikesCount(postRes.data.post.usersLikeList?.length || 0);
-          setLovesCount(postRes.data.post.usersLoveList?.length || 0);
-          setSavesCount(postRes.data.post.usersSaveList?.length || 0);
+          // Wait for currentUser to be loaded
+          let userId = currentUser?._id;
+          // Always use string for comparison
+          userId = userId ? String(userId) : null;
+          const likeList = Array.isArray(postRes.data.post.usersLikeList) ? postRes.data.post.usersLikeList.map(String) : [];
+          const loveList = Array.isArray(postRes.data.post.usersLoveList) ? postRes.data.post.usersLoveList.map(String) : [];
+          const saveList = Array.isArray(postRes.data.post.usersSaveList) ? postRes.data.post.usersSaveList.map(String) : [];
+          // Only set state if userId is available
+          if (userId) {
+            setIsLiked(likeList.includes(userId));
+            setIsLoved(loveList.includes(userId));
+            setIsSaved(saveList.includes(userId));
+          } else {
+            setIsLiked(false);
+            setIsLoved(false);
+            setIsSaved(false);
+          }
+          setLikesCount(likeList.length);
+          setLovesCount(loveList.length);
+          setSavesCount(saveList.length);
           // Fetch author data if needed
           const authorRes = await axios.get(
             `${import.meta.env.VITE_BACKEND_APP_BASE_URL}/user/getuser/${postRes.data.post.authorEmail}`,
@@ -86,8 +98,11 @@ function SinglePostPage() {
         console.error("SingleBlogPost fetch error:", error);
       }
     };
-    fetchData();
-  }, [slug, currentUser?._id]);
+    // Only fetch if currentUser is loaded (prevents all-true bug on mobile)
+    if (typeof currentUser !== 'undefined') {
+      fetchData();
+    }
+  }, [slug, currentUser]);
 
   const handleAction = async (actionType) => {
     const actionData = {

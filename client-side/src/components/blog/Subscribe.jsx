@@ -41,9 +41,7 @@ export function Subscribe() {
       try {
         const response = await axios.post(
           `${import.meta.env.VITE_BACKEND_APP_BASE_URL}/user/getSubscribed`,
-          { email: currentUser.email ,
-            userId: currentUser._id
-          },
+          { email: currentUser.email , userId: currentUser._id },
           {
             headers: {
               Authorization: `Bearer ${currentUser.token}`,
@@ -55,9 +53,17 @@ export function Subscribe() {
           setIsSubscribed(true);
           alert(`Subscribed successfully with: ${currentUser.email}`);
           triggerButtonEffect();
+        } else if (response.status === 400 && response.data?.message?.includes('already subscribed')) {
+          setIsSubscribed(true);
+          alert('You are already subscribed.');
         }
       } catch (error) {
-        console.error("Error subscribing:", error);
+        if (error.response && error.response.data && error.response.data.message?.includes('already subscribed')) {
+          setIsSubscribed(true);
+          alert('You are already subscribed.');
+        } else {
+          console.error("Error subscribing:", error);
+        }
       }
     } else {
       // If the user is not logged in, show the modal
@@ -93,7 +99,7 @@ export function Subscribe() {
   };
 
   return (
-    <div className="flex items-center space-x-2 relative">
+    <div className="flex flex-col sm:flex-row  sm:space-x-2 relative">
       {/* Always visible Subscribe Button */}
       <button
         onClick={handleSubscribe}
@@ -106,18 +112,19 @@ export function Subscribe() {
         style={{lineHeight: 1.2, minWidth: '110px'}}
       >
         {isSubscribed ? (
-          <span className="truncate block">Subscribed <span role="img" aria-label="thumbs up">👍</span></span>
+          <span className="truncate flex items-center gap-1">
+            Subscribed
+            <img
+              src="/images/logo.png"
+              alt="Logo"
+              className="inline w-5 h-5 sm:w-6 sm:h-6 object-cover rounded-full ml-1 align-middle"
+              style={{ display: 'inline-block', verticalAlign: 'middle' }}
+            />
+          </span>
         ) : (
           <span className="truncate block">Subscribe <span role="img" aria-label="bell">🔔</span></span>
         )}
       </button>
-
-      {/* Logo beside button */}
-      <img
-        src="/images/logo.png"
-        alt="Logo"
-        className={`w-8 h-8 sm:w-12 sm:h-auto object-cover rounded-full ${buttonEffect ? "w-7 h-7" : ""}`}
-      />
       {/* Modal for non-logged-in users */}
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 ">
