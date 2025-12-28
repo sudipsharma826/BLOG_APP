@@ -15,9 +15,9 @@ const app = express();
 // Middleware
   // Allow CORS for the frontend origin (important: browsers enforce this; Postman does not)
   const clientOrigin = process.env.CLIENT_URL;
-  app.use(cors({ origin: clientOrigin, credentials: true }));
+  app.use(cors({ origin: [clientOrigin,"https://sudipsharma.info.np"], credentials: true }));
   // Ensure preflight OPTIONS requests are handled
-  app.options('*', cors({ origin: clientOrigin, credentials: true }));
+  app.options('*', cors({ origin: [clientOrigin,"https://sudipsharma.info.np"], credentials: true }));
     
   // Middleware
   app.use(cookieParser()); // To set the cookies

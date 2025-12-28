@@ -101,30 +101,33 @@ export function Subscribe() {
   return (
     <div className="flex flex-col sm:flex-row  sm:space-x-2 relative">
       {/* Always visible Subscribe Button */}
-      <button
-        onClick={handleSubscribe}
-        className={`px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg font-semibold transition-all duration-300 shadow-md whitespace-nowrap text-xs sm:text-base max-w-full overflow-hidden text-ellipsis ${
-          isSubscribed
-            ? "bg-white text-black cursor-not-allowed"
-            : "bg-red-900 text-white hover:bg-gray-600 hover:shadow-lg active:bg-red-700"
-        } ${buttonEffect ? "animate-ping bg-yellow-500 text-black" : ""}`}
-        disabled={isSubscribed}
-        style={{lineHeight: 1.2, minWidth: '110px'}}
-      >
-        {isSubscribed ? (
-          <span className="truncate flex items-center gap-1">
-            Subscribed
-            <img
-              src="/images/logo.png"
-              alt="Logo"
-              className="inline w-5 h-5 sm:w-6 sm:h-6 object-cover rounded-full ml-1 align-middle"
-              style={{ display: 'inline-block', verticalAlign: 'middle' }}
-            />
-          </span>
-        ) : (
-          <span className="truncate block">Subscribe <span role="img" aria-label="bell">🔔</span></span>
-        )}
-      </button>
+      {typeof currentUser !== 'undefined' && (
+        <button
+          onClick={handleSubscribe}
+          onTouchStart={handleSubscribe}
+          className={`px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg font-semibold transition-all duration-300 shadow-md whitespace-nowrap text-xs sm:text-base max-w-full overflow-hidden text-ellipsis ${
+            isSubscribed
+              ? "bg-white text-black cursor-not-allowed"
+              : "bg-red-900 text-white hover:bg-gray-600 hover:shadow-lg active:bg-red-700"
+          } ${buttonEffect ? "animate-ping bg-yellow-500 text-black" : ""}`}
+          disabled={isSubscribed}
+          style={{lineHeight: 1.2, minWidth: '110px'}}
+        >
+          {isSubscribed ? (
+            <span className="truncate flex items-center gap-1">
+              Subscribed
+              <img
+                src="/images/logo.png"
+                alt="Logo"
+                className="inline w-5 h-5 sm:w-6 sm:h-6 object-cover rounded-full ml-1 align-middle"
+                style={{ display: 'inline-block', verticalAlign: 'middle' }}
+              />
+            </span>
+          ) : (
+            <span className="truncate block">Subscribe <span role="img" aria-label="bell">🔔</span></span>
+          )}
+        </button>
+      )}
       {/* Modal for non-logged-in users */}
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 ">

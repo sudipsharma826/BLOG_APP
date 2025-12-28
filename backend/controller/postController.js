@@ -600,35 +600,47 @@ export const unSavePost = async (req, res) => {
 
 //Get Featured Posts
 export const getFeaturedPosts = async (req, res) => {
-    try {
-      // Fetch featured posts
-      const featuredPosts = await Post.find({ isFeatured: true });
-  
-      // Collect all unique author emails from the posts
-      const authorEmails = [...new Set(featuredPosts.map((post) => post.authorEmail))];
-  
-      // Fetch corresponding author details
-      const authors = await User.find({ email: { $in: authorEmails } }).select('email username photoURL');
-      // Check the email array in UserModel and select the email, name, and photoURL. all featured are fectch together with the author details
-  
-      // Map author details to their email for easy lookup
-      const authorMap = authors.reduce((acc, author) => {
-        acc[author.email] = { username: author.username, avatar: author.photoURL };
-        return acc;
-      }, {});
-  
-      // Enrich posts with author details ( in th posts aray the author details are added)
-      const enrichedPosts = featuredPosts.map((post) => ({
-        ...post._doc, // Include all existing post fields
-        author: authorMap[post.authorEmail] || {}, // Add author details
-      }));
-  
-      res.status(200).json({ posts: enrichedPosts });
-    } catch (error) {
-      console.error('Error fetching featured posts:', error.message);
-      res.status(500).json({ error: 'Failed to fetch featured posts' });
-    }
-  };
+        try {
+            // Fetch posts that are either featured or just the latest (created/updated), sorted by updatedAt/createdAt desc
+            // We'll fetch all featured posts, and also the latest posts (not necessarily featured), then merge and sort them
+            // To avoid duplicates, use a Set by _id
+            const featuredPosts = await Post.find({ isFeatured: true });
+            const latestPosts = await Post.find({})
+                .sort({ updatedAt: -1, createdAt: -1 })
+                .limit(10); // adjust limit as needed
+
+            // Merge and deduplicate
+            const allPostsMap = new Map();
+            [...featuredPosts, ...latestPosts].forEach(post => {
+                allPostsMap.set(post._id.toString(), post);
+            });
+            const posts = Array.from(allPostsMap.values())
+                .sort((a, b) => new Date(b.updatedAt || b.createdAt) - new Date(a.updatedAt || a.createdAt));
+
+            // Collect all unique author emails from the posts
+            const authorEmails = [...new Set(posts.map((post) => post.authorEmail))];
+
+            // Fetch corresponding author details
+            const authors = await User.find({ email: { $in: authorEmails } }).select('email username photoURL');
+
+            // Map author details to their email for easy lookup
+            const authorMap = authors.reduce((acc, author) => {
+                acc[author.email] = { username: author.username, avatar: author.photoURL };
+                return acc;
+            }, {});
+
+            // Enrich posts with author details
+            const enrichedPosts = posts.map((post) => ({
+                ...post._doc,
+                author: authorMap[post.authorEmail] || {},
+            }));
+
+            res.status(200).json({ posts: enrichedPosts });
+        } catch (error) {
+            console.error('Error fetching featured posts:', error.message);
+            res.status(500).json({ error: 'Failed to fetch featured posts' });
+        }
+    };
 
 
 //Add Category

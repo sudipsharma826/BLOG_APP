@@ -284,10 +284,11 @@ function SinglePostPage() {
           {postData && <RelatedPosts categories={postData.category} currentPostId={postData._id} />}
         </div>
         {/* Floating action buttons - Responsive positioning */}
-        {showFloatingIcons && (
+        {showFloatingIcons && currentUser && (
           <div className="fixed bottom-4 sm:bottom-6 left-1/2 transform -translate-x-1/2 card p-3 sm:p-4 rounded-full shadow-lg flex items-center space-x-3 sm:space-x-4 z-50">
             <button
               onClick={() => handleAction('like')}
+              onTouchStart={() => handleAction('like')}
               className={`p-2 rounded-full transition-colors ${
                 isLiked ? 'bg-blue-500 text-white' : 'hover:bg-gray-300 dark:hover:bg-gray-700'
               }`}
@@ -296,6 +297,7 @@ function SinglePostPage() {
             </button>
             <button
               onClick={() => handleAction('love')}
+              onTouchStart={() => handleAction('love')}
               className={`p-2 rounded-full transition-colors ${
                 isLoved ? 'bg-red-500 text-white' : 'hover:bg-gray-300 dark:hover:bg-gray-700'
               }`}
@@ -304,6 +306,7 @@ function SinglePostPage() {
             </button>
             <button
               onClick={() => handleAction('save')}
+              onTouchStart={() => handleAction('save')}
               className={`p-2 rounded-full transition-colors ${
                 isSaved ? 'bg-green-500 text-white' : 'hover:bg-gray-300 dark:hover:bg-gray-700'
               }`}
@@ -312,6 +315,7 @@ function SinglePostPage() {
             </button>
             <button
               onClick={handleCopyLink}
+              onTouchStart={handleCopyLink}
               className="p-2 rounded-full hover:bg-gray-300 dark:hover:bg-gray-700 transition-colors"
             >
               <Share2 className="w-5 h-5" />
