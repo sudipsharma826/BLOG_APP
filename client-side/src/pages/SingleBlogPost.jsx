@@ -103,34 +103,60 @@ function SinglePostPage() {
     return () => { isMounted = false; };
   }, [slug, currentUser]);
 
+  const [reactionLoading, setReactionLoading] = useState({ like: false, love: false, save: false });
+
   const handleAction = async (actionType) => {
+    if (reactionLoading[actionType]) return;
+    setReactionLoading((prev) => ({ ...prev, [actionType]: true }));
     const actionData = {
       postId: postData._id,
       userId: currentUser._id,
     };
 
     let apiUrl = '';
+    let optimisticUpdate = () => {};
+    let revertUpdate = () => {};
 
     switch (actionType) {
       case 'like':
         apiUrl = isLiked ? 'unLikePost' : 'likePost';
-        setIsLiked(!isLiked);
-        setLikesCount(isLiked ? likesCount - 1 : likesCount + 1);
+        optimisticUpdate = () => {
+          setIsLiked(!isLiked);
+          setLikesCount(isLiked ? likesCount - 1 : likesCount + 1);
+        };
+        revertUpdate = () => {
+          setIsLiked(isLiked);
+          setLikesCount(likesCount);
+        };
         break;
       case 'love':
         apiUrl = isLoved ? 'unLovePost' : 'lovePost';
-        setIsLoved(!isLoved);
-        setLovesCount(isLoved ? lovesCount - 1 : lovesCount + 1);
+        optimisticUpdate = () => {
+          setIsLoved(!isLoved);
+          setLovesCount(isLoved ? lovesCount - 1 : lovesCount + 1);
+        };
+        revertUpdate = () => {
+          setIsLoved(isLoved);
+          setLovesCount(lovesCount);
+        };
         break;
       case 'save':
         apiUrl = isSaved ? 'unSavePost' : 'savePost';
-        setIsSaved(!isSaved);
-        setSavesCount(isSaved ? savesCount - 1 : savesCount + 1);
+        optimisticUpdate = () => {
+          setIsSaved(!isSaved);
+          setSavesCount(isSaved ? savesCount - 1 : savesCount + 1);
+        };
+        revertUpdate = () => {
+          setIsSaved(isSaved);
+          setSavesCount(savesCount);
+        };
         break;
       default:
+        setReactionLoading((prev) => ({ ...prev, [actionType]: false }));
         return;
     }
 
+    optimisticUpdate();
     try {
       await axios.put(`${import.meta.env.VITE_BACKEND_APP_BASE_URL}/post/${apiUrl}`, actionData, {
         withCredentials: true,
@@ -141,17 +167,9 @@ function SinglePostPage() {
       });
     } catch (error) {
       console.error('Error performing action:', error);
-      if (actionType === 'like') {
-        setIsLiked(!isLiked);
-        setLikesCount(isLiked ? likesCount - 1 : likesCount + 1);
-      } else if (actionType === 'love') {
-        setIsLoved(!isLoved);
-        setLovesCount(isLoved ? lovesCount - 1 : lovesCount + 1);
-      } else if (actionType === 'save') {
-        setIsSaved(!isSaved);
-        setSavesCount(isSaved ? savesCount - 1 : savesCount + 1);
-      }
+      revertUpdate();
     }
+    setReactionLoading((prev) => ({ ...prev, [actionType]: false }));
   };
 
   const handleCopyLink = () => {
@@ -290,30 +308,42 @@ function SinglePostPage() {
           >
             <button
               onClick={(e) => { e.preventDefault(); handleAction('like'); }}
-              onTouchStart={(e) => { e.preventDefault(); handleAction('like'); }}
+              disabled={reactionLoading.like}
               className={`p-2 rounded-full transition-colors ${
                 isLiked ? 'bg-blue-500 text-white' : 'hover:bg-gray-300 dark:hover:bg-gray-700'
-              }`}
+              } ${reactionLoading.like ? 'opacity-60 cursor-not-allowed' : ''}`}
             >
-              <ThumbsUp className="w-5 h-5" />
+              {reactionLoading.like ? (
+                <span className="loader w-5 h-5" />
+              ) : (
+                <ThumbsUp className="w-5 h-5" />
+              )}
             </button>
             <button
               onClick={(e) => { e.preventDefault(); handleAction('love'); }}
-              onTouchStart={(e) => { e.preventDefault(); handleAction('love'); }}
+              disabled={reactionLoading.love}
               className={`p-2 rounded-full transition-colors ${
                 isLoved ? 'bg-red-500 text-white' : 'hover:bg-gray-300 dark:hover:bg-gray-700'
-              }`}
+              } ${reactionLoading.love ? 'opacity-60 cursor-not-allowed' : ''}`}
             >
-              <Heart className="w-5 h-5" />
+              {reactionLoading.love ? (
+                <span className="loader w-5 h-5" />
+              ) : (
+                <Heart className="w-5 h-5" />
+              )}
             </button>
             <button
               onClick={(e) => { e.preventDefault(); handleAction('save'); }}
-              onTouchStart={(e) => { e.preventDefault(); handleAction('save'); }}
+              disabled={reactionLoading.save}
               className={`p-2 rounded-full transition-colors ${
                 isSaved ? 'bg-green-500 text-white' : 'hover:bg-gray-300 dark:hover:bg-gray-700'
-              }`}
+              } ${reactionLoading.save ? 'opacity-60 cursor-not-allowed' : ''}`}
             >
-              <Bookmark className="w-5 h-5" />
+              {reactionLoading.save ? (
+                <span className="loader w-5 h-5" />
+              ) : (
+                <Bookmark className="w-5 h-5" />
+              )}
             </button>
             <button
               onClick={(e) => { e.preventDefault(); handleCopyLink(); }}
