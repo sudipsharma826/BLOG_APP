@@ -11,11 +11,12 @@ const ContactPage = () => {
   const [formData, setFormData] = useState({
     name: currentUser ? currentUser.username : '',
     email: currentUser ? currentUser.email : '',
-    subject: 'For Feedback/Query',
+    subject: '',
     message: '',
   });
 
   const [statusMessage, setStatusMessage] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Handle form input changes
   const handleChange = (e) => {
@@ -25,6 +26,20 @@ const ContactPage = () => {
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (isSubmitting) return;
+    // Basic email format validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      setStatusMessage({ type: 'error', text: 'Please enter a valid email address.' });
+      setTimeout(() => setStatusMessage(null), 6000);
+      return;
+    }
+    if (!formData.subject || !formData.message || !formData.name || !formData.email) {
+      setStatusMessage({ type: 'error', text: 'All fields are required.' });
+      setTimeout(() => setStatusMessage(null), 6000);
+      return;
+    }
+    setIsSubmitting(true);
     try {
       const response = await axios.post(
         `${import.meta.env.VITE_BACKEND_APP_BASE_URL}/user/sendEmail`,
@@ -33,14 +48,14 @@ const ContactPage = () => {
       );
       if (response.status === 200) {
         setStatusMessage({ type: 'success', text: 'Email sent successfully!' });
-        setFormData({ name: '', email: '', subject: 'For Feedback/Query', message: '' });
+        setFormData({ name: '', email: '', subject: '', message: '' });
       } else {
         setStatusMessage({ type: 'error', text: 'Failed to send email.' });
       }
     } catch (error) {
       setStatusMessage({ type: 'error', text: 'An error occurred while sending the email.' });
     }
-    // Clear the message after 6 seconds
+    setIsSubmitting(false);
     setTimeout(() => setStatusMessage(null), 6000);
   };
 
@@ -123,6 +138,22 @@ const ContactPage = () => {
               </div>
               <div>
                 <label
+                  htmlFor="subject"
+                  className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                >
+                  Subject
+                </label>
+                <TextInput
+                  type="text"
+                  id="subject"
+                  value={formData.subject}
+                  onChange={handleChange}
+                  required
+                  className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:border-purple-500 focus:ring-purple-500"
+                />
+              </div>
+              <div>
+                <label
                   htmlFor="email"
                   className="block text-sm font-medium text-gray-700 dark:text-gray-300"
                 >
@@ -155,9 +186,10 @@ const ContactPage = () => {
               </div>
               <button
                 type="submit"
-                className="w-full bg-purple-600 text-white py-2 px-4 rounded-md hover:bg-purple-700 transition-colors"
+                className={`w-full bg-purple-600 text-white py-2 px-4 rounded-md hover:bg-purple-700 transition-colors ${isSubmitting ? 'opacity-60 cursor-not-allowed' : ''}`}
+                disabled={isSubmitting}
               >
-                Send Message
+                {isSubmitting ? 'Sending...' : 'Send Message'}
               </button>
             </form>
 

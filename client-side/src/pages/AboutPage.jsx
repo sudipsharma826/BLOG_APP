@@ -82,14 +82,17 @@ const AboutPage = () => {
               </p>
               <div className="flex gap-4">
               <a href="https://www.linkedin.com/in/sudipsharmanp/" target="_blank" rel="noopener noreferrer">
-    <Linkedin className="h-6 w-6 text-purple-600 dark:text-purple-500" />
-  </a>
-  <a href="https://github.com/sudipsharma826" target="_blank" rel="noopener noreferrer">
-    <Github className="h-6 w-6 text-purple-600 dark:text-purple-500" />
-  </a>
-  <a href="https://www.facebook.com/sudipsharma.np/" target="_blank" rel="noopener noreferrer">
-    <Facebook className="h-6 w-6 text-purple-600 dark:text-purple-500" />
-  </a>
+                <Linkedin className="h-6 w-6 text-purple-600 dark:text-purple-500" />
+              </a>
+              <a href="https://github.com/sudipsharma826" target="_blank" rel="noopener noreferrer">
+                <Github className="h-6 w-6 text-purple-600 dark:text-purple-500" />
+              </a>
+              <a href="https://www.facebook.com/sudipsharma.np/" target="_blank" rel="noopener noreferrer">
+                <Facebook className="h-6 w-6 text-purple-600 dark:text-purple-500" />
+              </a>
+              <a href="https://sudipsharma.info.np" target="_blank" rel="noopener noreferrer">
+                <span className="inline-block px-2 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-semibold hover:bg-blue-200 transition-colors">Personal Profile</span>
+              </a>
               </div>
             </div>
           </div>

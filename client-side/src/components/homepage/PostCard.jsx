@@ -71,14 +71,18 @@ const PostCard = ({ post }) => {
         </p>
 
         {/* Post categories */}
-        <div className="flex flex-wrap mt-2">
-          {post.category.map((category, index) => (
-            <Link key={index} to={`/category/${category}`}>
-              <span className="badge mr-2 mb-2 text-sm px-4 py-1">
-                {category}
-              </span>
-            </Link>
-          ))}
+        <div className="flex flex-wrap mt-2 gap-2">
+          {Array.isArray(post.category) && post.category.length > 0 ? (
+            post.category.map((category, index) => (
+              <Link key={index} to={`/category/${category}`}>
+                <span className="inline-block bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300 rounded-full px-3 py-1 text-xs font-semibold shadow-sm hover:bg-blue-200 dark:hover:bg-blue-800 transition-colors">
+                  {category}
+                </span>
+              </Link>
+            ))
+          ) : (
+            <span className="text-gray-400 text-xs">No categories</span>
+          )}
         </div>
       </div>
     </div>

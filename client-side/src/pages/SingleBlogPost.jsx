@@ -53,43 +53,42 @@ function SinglePostPage() {
   }, [theme]);
 
   useEffect(() => {
+    let isMounted = true;
     const fetchData = async () => {
       try {
-        const postRes = await axios.get(
-          `${import.meta.env.VITE_BACKEND_APP_BASE_URL}/post/getPost/${slug}`,
-          { withCredentials: true }
-        );
-        if (postRes.data && postRes.data.post) {
-          setPostData(postRes.data.post);
-          // Wait for currentUser to be loaded
-          let userId = currentUser?._id;
-          // Always use string for comparison
-          userId = userId ? String(userId) : null;
-          const likeList = Array.isArray(postRes.data.post.usersLikeList) ? postRes.data.post.usersLikeList.map(String) : [];
-          const loveList = Array.isArray(postRes.data.post.usersLoveList) ? postRes.data.post.usersLoveList.map(String) : [];
-          const saveList = Array.isArray(postRes.data.post.usersSaveList) ? postRes.data.post.usersSaveList.map(String) : [];
-          // Only set state if userId is available
-          if (userId) {
-            setIsLiked(likeList.includes(userId));
-            setIsLoved(loveList.includes(userId));
-            setIsSaved(saveList.includes(userId));
-          } else {
-            setIsLiked(false);
-            setIsLoved(false);
-            setIsSaved(false);
+        // Only fetch if not already loaded for this slug
+        if (!postData || postData.slug !== slug) {
+          const postRes = await axios.get(
+            `${import.meta.env.VITE_BACKEND_APP_BASE_URL}/post/getPost/${slug}`,
+            { withCredentials: true }
+          );
+          if (isMounted && postRes.data && postRes.data.post) {
+            setPostData(postRes.data.post);
+            // Calculate read time
+            setReadTime(calculateReadTime(postRes.data.post.content));
+            // Fetch author only if not already loaded or changed
+            if (!authorData || authorData.email !== postRes.data.post.authorEmail) {
+              const authorRes = await axios.get(
+                `${import.meta.env.VITE_BACKEND_APP_BASE_URL}/user/getuser/${postRes.data.post.authorEmail}`,
+                { withCredentials: true }
+              );
+              if (isMounted) setAuthorData(authorRes.data);
+            }
           }
+        }
+        // Set reactions only if user is loaded
+        let userId = currentUser?._id;
+        userId = userId ? String(userId) : null;
+        if (postData && userId) {
+          const likeList = Array.isArray(postData.usersLikeList) ? postData.usersLikeList.map(String) : [];
+          const loveList = Array.isArray(postData.usersLoveList) ? postData.usersLoveList.map(String) : [];
+          const saveList = Array.isArray(postData.usersSaveList) ? postData.usersSaveList.map(String) : [];
+          setIsLiked(likeList.includes(userId));
+          setIsLoved(loveList.includes(userId));
+          setIsSaved(saveList.includes(userId));
           setLikesCount(likeList.length);
           setLovesCount(loveList.length);
           setSavesCount(saveList.length);
-          // Fetch author data if needed
-          const authorRes = await axios.get(
-            `${import.meta.env.VITE_BACKEND_APP_BASE_URL}/user/getuser/${postRes.data.post.authorEmail}`,
-            { withCredentials: true }
-          );
-          setAuthorData(authorRes.data);
-          // Calculate read time
-          const estimatedReadTime = calculateReadTime(postRes.data.post.content);
-          setReadTime(estimatedReadTime);
         }
         setLoading(false);
       } catch (error) {
@@ -98,10 +97,10 @@ function SinglePostPage() {
         console.error("SingleBlogPost fetch error:", error);
       }
     };
-    // Only fetch if currentUser is loaded (prevents all-true bug on mobile)
     if (typeof currentUser !== 'undefined') {
       fetchData();
     }
+    return () => { isMounted = false; };
   }, [slug, currentUser]);
 
   const handleAction = async (actionType) => {
@@ -284,11 +283,14 @@ function SinglePostPage() {
           {postData && <RelatedPosts categories={postData.category} currentPostId={postData._id} />}
         </div>
         {/* Floating action buttons - Responsive positioning */}
-        {showFloatingIcons && currentUser && (
-          <div className="fixed bottom-4 sm:bottom-6 left-1/2 transform -translate-x-1/2 card p-3 sm:p-4 rounded-full shadow-lg flex items-center space-x-3 sm:space-x-4 z-50">
+        {currentUser && (
+          <div
+            className="fixed bottom-4 sm:bottom-6 left-1/2 transform -translate-x-1/2 card p-3 sm:p-4 rounded-full shadow-lg flex items-center space-x-3 sm:space-x-4 z-50"
+            style={{ display: 'flex' }}
+          >
             <button
-              onClick={() => handleAction('like')}
-              onTouchStart={() => handleAction('like')}
+              onClick={(e) => { e.preventDefault(); handleAction('like'); }}
+              onTouchStart={(e) => { e.preventDefault(); handleAction('like'); }}
               className={`p-2 rounded-full transition-colors ${
                 isLiked ? 'bg-blue-500 text-white' : 'hover:bg-gray-300 dark:hover:bg-gray-700'
               }`}
@@ -296,8 +298,8 @@ function SinglePostPage() {
               <ThumbsUp className="w-5 h-5" />
             </button>
             <button
-              onClick={() => handleAction('love')}
-              onTouchStart={() => handleAction('love')}
+              onClick={(e) => { e.preventDefault(); handleAction('love'); }}
+              onTouchStart={(e) => { e.preventDefault(); handleAction('love'); }}
               className={`p-2 rounded-full transition-colors ${
                 isLoved ? 'bg-red-500 text-white' : 'hover:bg-gray-300 dark:hover:bg-gray-700'
               }`}
@@ -305,8 +307,8 @@ function SinglePostPage() {
               <Heart className="w-5 h-5" />
             </button>
             <button
-              onClick={() => handleAction('save')}
-              onTouchStart={() => handleAction('save')}
+              onClick={(e) => { e.preventDefault(); handleAction('save'); }}
+              onTouchStart={(e) => { e.preventDefault(); handleAction('save'); }}
               className={`p-2 rounded-full transition-colors ${
                 isSaved ? 'bg-green-500 text-white' : 'hover:bg-gray-300 dark:hover:bg-gray-700'
               }`}
@@ -314,8 +316,8 @@ function SinglePostPage() {
               <Bookmark className="w-5 h-5" />
             </button>
             <button
-              onClick={handleCopyLink}
-              onTouchStart={handleCopyLink}
+              onClick={(e) => { e.preventDefault(); handleCopyLink(); }}
+              onTouchStart={(e) => { e.preventDefault(); handleCopyLink(); }}
               className="p-2 rounded-full hover:bg-gray-300 dark:hover:bg-gray-700 transition-colors"
             >
               <Share2 className="w-5 h-5" />
