@@ -2,8 +2,29 @@
   command = "npm run build"
   publish = "dist"
 
+[[plugins]]
+  package = "@netlify/plugin-sitemap"
+
+[build.environment]
+  NODE_VERSION = "18"
+
+# Enable pre-rendering for better SEO
+[[plugins]]
+  package = "netlify-plugin-prerender"
+
+  [plugins.inputs]
+    publicPath = "/dist"
+
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
-  force = true
+  force = false
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "no-referrer"
+    Permissions-Policy = "geolocation=(), microphone=(), camera=()"

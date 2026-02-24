@@ -2,8 +2,9 @@ import Post from '../models/postModel.js';
 import Category from '../models/categoryModel.js';
 import { deleteFromCloudinary, uploadToCloudinary } from '../utils/cloudinary.js';
 import User from '../models/userModel.js';
-import sendMail from '../utils/nodemailer.js';
+import sendMail from '../utils/resend.js';
 import Subscribe from '../models/subscribeModel.js';
+import { deleteCachePattern } from '../utils/redis.js';
 
 // Create a new post
 export const createPost = async (req, res) => {
@@ -134,6 +135,9 @@ export const createPost = async (req, res) => {
                 await newCategory.save();
             }
         }
+
+        // Invalidate all post-related caches after creating a new post
+        await deleteCachePattern('cache:*');
 
         res.status(201).json({ message: 'Post created successfully', post: newPost });
     } catch (error) {
@@ -270,6 +274,9 @@ export const updatePost = async (req, res) => {
             })
         );
 
+        // Invalidate all post-related caches after updating
+        await deleteCachePattern('cache:*');
+
         res.status(200).json({ message: 'Post updated successfully', post });
     } catch (error) {
         console.error('Error updating post:', error.message);
@@ -357,6 +364,9 @@ export const deletePost = async (req, res) => {
         ];
 
         await Promise.all(userUpdatePromises);
+
+        // Invalidate all post-related caches after deletion
+        await deleteCachePattern('cache:*');
 
         res.status(200).json({ message: "Post deleted successfully and removed from all related data." });
     } catch (error) {
@@ -454,6 +464,9 @@ export const deleteCategory = async (req, res) => {
         }
 
         await category.deleteOne();
+
+        // Invalidate all post-related caches after category deletion
+        await deleteCachePattern('cache:*');
 
         res.status(200).json({ message: 'Category and associated posts deleted successfully' });
     } catch (error) {
@@ -660,6 +673,9 @@ export const addCategory = async (req, res) => {
          });
         await newCategory.save();
 
+        // Invalidate category caches after adding new category
+        await deleteCachePattern('cache:*');
+
         res.status(200).json({ message: 'Category added successfully', category: newCategory });
     } catch (error) {
         console.error('Error adding category:', error.message);
@@ -709,6 +725,9 @@ export const updateCategory = async (req, res) => {
         category.catrgoryImage = image;  // Set to new image if updated, else retain old one
         category.updatedAt = new Date();
         await category.save();
+
+        // Invalidate category caches after update
+        await deleteCachePattern('cache:*');
 
         res.status(200).json({ message: 'Category updated successfully', category });
     } catch (error) {

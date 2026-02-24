@@ -4,7 +4,7 @@ import axios from 'axios';
 import PostCard from '../components/homepage/PostCard';
 import SkeletonPostCard from '../components/homepage/SkeletonPostCard';
 import CategoryCard from '../components/blog/CategoryCard';
-
+import SEOHead from '../components/SEOHead';
 import { useRef } from 'react';
 const CategoryList = () => {
   const [categories, setCategories] = useState([]);
@@ -47,7 +47,15 @@ const CategoryList = () => {
     : posts;
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-20">
+    <>
+      <SEOHead
+        title="Categories | TechKnows"
+        description="Browse all technology and programming categories at TechKnows. Find articles on your favorite topics including JavaScript, Python, Web Development, and more."
+        keywords="tech categories, programming topics, technology articles, web development, coding categories"
+        url="/categories"
+        type="website"
+      />
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-20">
       {/* Hero Section */}
       <div className="bg-gradient-to-br from-purple-600 to-blue-500 py-24 relative dark:from-gray-800 dark:to-gray-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -121,6 +129,7 @@ const CategoryList = () => {
         )}
       </div>
     </div>
+    </>
   );
 };
 

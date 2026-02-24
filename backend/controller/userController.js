@@ -5,7 +5,7 @@ import Post from '../models/postModel.js';
 import { uploadToCloudinary, deleteFromCloudinary } from '../utils/cloudinary.js';
 import { getDeviceType, getOperatingSystem, getBrowser } from '../utils/deviceUtils.js'; // Device utilities
 import Subscribe from '../models/subscribeModel.js';
-import sendMail from '../utils/nodemailer.js';
+import sendMail from '../utils/resend.js';
 
 // Function to track device details
 const trackDevice = async (req, userId) => {

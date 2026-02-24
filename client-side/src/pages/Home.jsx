@@ -6,6 +6,7 @@ import { useState } from 'react';
 import TechStack from '../components/homepage/TechStack';
 import CategoryList from '../components/homepage/Catrgories';
 import PostSlider from '../components/homepage/PostSlider';
+import SEOHead from '../components/SEOHead';
 
 
 
@@ -77,7 +78,15 @@ const Home = () => {
     fetchAll();
   }, []);
     return (
-      <div className="bg-gradient-to-br from-purple-100 via-yellow-50 to-blue-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 min-h-screen w-full">
+      <>
+        <SEOHead
+          title="TechKnows | Technology & Programming Blog | Sudip Sharma"
+          description="Explore in-depth tech articles, programming guides, tutorials, and creative ideas at TechKnows. Your platform for learning and sharing technology."
+          keywords="TechKnows, technology blog, programming, coding, tutorials, software development, tech articles, guides, JavaScript, Python, web development, Sudip Sharma"
+          url="/"
+          type="website"
+        />
+        <div className="bg-gradient-to-br from-purple-100 via-yellow-50 to-blue-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 min-h-screen w-full">
         <HeroSection />
         
         <section className="relative z-20 -mt-24 max-w-7xl mx-auto px-2 py-10 sm:px-4 -mt-10 lg:px-8 py-1">
@@ -95,6 +104,7 @@ const Home = () => {
           </div>
         </section>
       </div>
+      </>
     );
 }
 

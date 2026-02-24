@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+Disallow: /dashboard
+Disallow: /dashboard/*
+Disallow: /create-post
+Disallow: /updatepost/*
+Disallow: /signin
+Disallow: /signup
+
+Sitemap: https://sudipsharma.com.np/sitemap.xml

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Code, Coffee, Github, Heart } from 'lucide-react';
 import axios from 'axios';
 import { Facebook, Linkedin } from 'react-feather';
+import SEOHead from '../components/SEOHead';
 
 const AboutPage = () => {
   const [admin, setAdmin] = useState({});
@@ -22,7 +23,15 @@ const AboutPage = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-blue-50 dark:bg-blue-950 pt-20">
+    <>
+      <SEOHead
+        title="About TechKnows | Sudip Sharma"
+        description="Learn more about TechKnows, a technology and programming blog dedicated to sharing knowledge through thoughtful writing and expert technical content."
+        keywords="about techknows, sudip sharma, technology blog, programming expertise, tech blogger"
+        url="/about"
+        type="website"
+      />
+      <div className="min-h-screen bg-blue-50 dark:bg-blue-950 pt-20">
       <div className="bg-gradient-to-br from-blue-600 to-blue-400 py-20 dark:from-blue-900 dark:to-blue-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <img src="/images/logo.png" alt="TechKnow Logo" className="h-14 w-14 inline -mt-5 align-middle" />
@@ -99,6 +108,7 @@ const AboutPage = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 

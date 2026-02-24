@@ -3,6 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import cookieParser from 'cookie-parser';
+import './utils/redis.js'; // Initialize Redis connection
 
 // Load environment variables
 dotenv.config();
@@ -11,13 +12,11 @@ dotenv.config();
 const app = express();
 
 
-
 // Middleware
   // Allow CORS for the frontend origin (important: browsers enforce this; Postman does not)
   const clientOrigin = process.env.CLIENT_URL;
   app.use(cors({ origin: [clientOrigin,"https://sudipsharma.info.np"], credentials: true }));
-  // Ensure preflight OPTIONS requests are handled
-  app.options('*', cors({ origin: [clientOrigin,"https://sudipsharma.info.np"], credentials: true }));
+  // Preflight OPTIONS requests are handled by app.use(cors(...)) in Express v5+
     
   // Middleware
   app.use(cookieParser()); // To set the cookies

@@ -3,6 +3,7 @@ import { Mail, MessageSquare, MapPin } from 'lucide-react';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
 import { TextInput } from 'flowbite-react';
+import SEOHead from '../components/SEOHead';
 
 const ContactPage = () => {
   const { currentUser } = useSelector((state) => state.user);
@@ -61,7 +62,15 @@ const ContactPage = () => {
 
         
   return (
-    <div className="min-h-screen bg-blue-50 dark:bg-blue-950 pt-20">
+    <>
+      <SEOHead
+        title="Contact Us | TechKnows"
+        description="Get in touch with TechKnows. Have questions or suggestions? We'd love to hear from you."
+        keywords="contact techknows, get in touch, tech blog contact, sudip sharma contact"
+        url="/contact"
+        type="website"
+      />
+      <div className="min-h-screen bg-blue-50 dark:bg-blue-950 pt-20">
       <div className="bg-gradient-to-br from-blue-600 to-blue-400 py-20 dark:from-blue-900 dark:to-blue-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <img src="/images/logo.png" alt="TechKnow Logo" className="h-14 w-14 inline -mt-7 mr-4 align-middle" />
@@ -208,6 +217,7 @@ const ContactPage = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 

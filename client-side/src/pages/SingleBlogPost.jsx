@@ -5,7 +5,7 @@ import { PostHeader } from '../components/blog/PostHeader';
 import { AuthorInfo } from '../components/blog/AuthorInfo';
 import TableOfContents from '../components/blog/TableOfContent';
 import { PostContent } from '../components/blog/PostContent';
-import { SEO } from '../components/blog/SEO';
+import { SEO } from '../components/blog/SEO.jsx';
 import AppStatus from '../components/AppStatus';
 import SkeletonPostCard from '../components/homepage/SkeletonPostCard';
 import { useSelector } from 'react-redux';
@@ -224,9 +224,17 @@ function SinglePostPage() {
   return (
     <div className="pt-20">
       <SEO
-        title={postData?.title}
-        description={postData?.description}
+        title={`${postData?.title} | TechKnows`}
+        description={postData?.description || postData?.subtitle}
         image={postData?.image}
+        url={`/post/${postData?.slug}`}
+        type="article"
+        keywords={postData?.tags || postData?.category}
+        author={authorData?.username || 'Sudip Sharma'}
+        publishedTime={postData?.createdAt}
+        modifiedTime={postData?.updatedAt}
+        section={Array.isArray(postData?.category) ? postData.category[0] : postData?.category}
+        tags={postData?.tags || postData?.category}
       />
       <div className="min-h-screen page-section py-4 sm:py-6 lg:py-8 px-2 sm:px-4 lg:px-8">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-12 lg:grid-cols-12 gap-4 lg:gap-8">

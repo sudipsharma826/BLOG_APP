@@ -5,21 +5,24 @@ import App from './App.jsx';
 import { store, persistor } from './redux/store.js';
 import { PersistGate } from 'redux-persist/integration/react';
 import ThemeProvider from './components/ThemeProvider.jsx';
-import { BrowserRouter as Router } from 'react-router-dom';  // Import BrowserRouter
+import { BrowserRouter as Router } from 'react-router-dom';
+import { HelmetProvider } from 'react-helmet-async';
 import axios from 'axios';
 
 // Ensure axios sends cookies for cross-site requests
 axios.defaults.withCredentials = true;
 
-// Correct render tree: Provider must wrap PersistGate so PersistGate can access the store via context
+// Correct render tree with HelmetProvider for SEO
 createRoot(document.getElementById('root')).render(
   <Provider store={store}>
     <PersistGate persistor={persistor}>
-      <ThemeProvider>
-        <Router>
-          <App />
-        </Router>
-      </ThemeProvider>
+      <HelmetProvider>
+        <ThemeProvider>
+          <Router>
+            <App />
+          </Router>
+        </ThemeProvider>
+      </HelmetProvider>
     </PersistGate>
   </Provider>
 );

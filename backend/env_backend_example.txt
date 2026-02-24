@@ -4,9 +4,13 @@ JWT_SECRET=your_secure_jwt_secret
 JWT_EXPIRES_IN=your_expiry_time
 CLIENT_URL=forent_url
 COOKIE_EXPIRES_IN=7
-EMAIL = your email name
-c=you email app password
 
+// Email Configuration (using Resend)
+RESEND_API_KEY=your_resend_api_key_here
+FALLBACK_EMAIL=info@sudipsharma.com.np
+
+// Redis Configuration (for caching)
+REDIS_URL=redis://localhost:6379
 
 //Cloudinary
 CLOUDINARY_CLOUD_NAME=your-cloud-name

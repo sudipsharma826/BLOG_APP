@@ -5,7 +5,7 @@ import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 dotenv.config();
 import { getDeviceType, getOperatingSystem, getBrowser } from '../utils/deviceUtils.js';
-import sendMail from '../utils/nodemailer.js';
+import sendMail from '../utils/resend.js';
 import Subscribe from '../models/subscribeModel.js';
 
 // Helper function to validate inputs
