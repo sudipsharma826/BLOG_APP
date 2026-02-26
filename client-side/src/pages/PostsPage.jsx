@@ -4,6 +4,7 @@ import PostCard from '../components/homepage/PostCard';
 import SkeletonPostCard from '../components/homepage/SkeletonPostCard';
 import SearchBar from '../components/homepage/SearchBar';
 import axios from 'axios';
+import SEOHead from '../components/SEOHead';
 
 
 const PostsPage = () => {
@@ -40,6 +41,21 @@ const PostsPage = () => {
   }, [searchQuery]);
 
   return (
+    <>
+      <SEOHead
+        title={searchQuery ? `Search Results for "${searchQuery}" | TechKnows` : "All Posts | TechKnows - Technology & Programming Articles"}
+        description={searchQuery ? `Find articles related to "${searchQuery}" on TechKnows. Browse ${posts.length} results.` : "Browse all technology and programming articles on TechKnows. Find tutorials, guides, and insights on JavaScript, Python, React, Node.js, and more."}
+        keywords={`tech articles, programming posts, ${searchQuery || 'technology blog'}, tutorials, coding guides`}
+        url="/posts"
+        type="website"
+        structuredData={{
+          "@context": "https://schema.org",
+          "@type": "Blog",
+          "name": "TechKnows Articles",
+          "description": "Technology and programming articles",
+          "url": "https://sudipsharma.com.np/posts"
+        }}
+      />
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-white dark:from-gray-900 dark:to-gray-800 pt-20">
       {/* Hero Section */}
       <div className="relative bg-gradient-to-br from-blue-700 to-purple-700 py-24 dark:from-gray-800 dark:to-gray-900 overflow-hidden shadow-lg rounded-b-3xl">
@@ -96,6 +112,7 @@ const PostsPage = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 

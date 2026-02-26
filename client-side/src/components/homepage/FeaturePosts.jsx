@@ -26,13 +26,15 @@ export default function FeaturedPosts({ posts, loading }) {
                   key={post.id}
                   className="card overflow-hidden hover:shadow-xl transition-shadow"
                 >
-                  <Link to={`/post/${post.slug}`}>
-                    <img
-                      src={post.image}
-                      alt={post.title}
-                      className="w-full h-48 object-cover"
-                    />
-                  </Link>
+                  <div className="aspect-video relative overflow-hidden">
+                    <Link to={`/post/${post.slug}`}>
+                      <img
+                        src={post.image}
+                        alt={post.title}
+                        className="w-full h-full object-cover"
+                      />
+                    </Link>
+                  </div>
                   <div className="p-6">
                     <span className=" text-purple-600  font-semibold text-lg dark:text-yellow-400">
                       {post.category.map((cat, index) => (

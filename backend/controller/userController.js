@@ -6,6 +6,7 @@ import { uploadToCloudinary, deleteFromCloudinary } from '../utils/cloudinary.js
 import { getDeviceType, getOperatingSystem, getBrowser } from '../utils/deviceUtils.js'; // Device utilities
 import Subscribe from '../models/subscribeModel.js';
 import sendMail from '../utils/resend.js';
+import { deleteCachePattern } from '../utils/redis.js';
 
 // Function to track device details
 const trackDevice = async (req, userId) => {
@@ -365,11 +366,15 @@ export const removeSavedPost = async (req, res) => {
       return res.status(400).json({ error: "User's savedPosts is not valid" });
     }
 
-    // Remove the postId from user's savedPosts
-    const postIndex = user.savedPosts.indexOf(postId);
-    if (postIndex > -1) {
-      user.savedPosts.splice(postIndex, 1);
-    } else {
+    // Convert IDs to strings for consistent comparison
+    const postIdString = postId.toString();
+    const userIdString = userId.toString();
+
+    // Remove the postId from user's savedPosts using filter for consistency
+    const initialLength = user.savedPosts.length;
+    user.savedPosts = user.savedPosts.filter(id => id.toString() !== postIdString);
+    
+    if (user.savedPosts.length === initialLength) {
       return res
         .status(404)
         .json({ error: "Post not found in user's savedPosts list" });
@@ -390,11 +395,11 @@ export const removeSavedPost = async (req, res) => {
         .json({ error: "Post's usersSavedList is not valid" });
     }
 
-    // Remove the userId from post's usersSavedList
-    const userIndex = post.usersSaveList.indexOf(userId);
-    if (userIndex > -1) {
-      post.usersSaveList.splice(userIndex, 1);
-    } else {
+    // Remove the userId from post's usersSavedList using filter for consistency
+    const initialPostLength = post.usersSaveList.length;
+    post.usersSaveList = post.usersSaveList.filter(id => id.toString() !== userIdString);
+    
+    if (post.usersSaveList.length === initialPostLength) {
       return res
         .status(404)
         .json({ error: "User not found in post's usersSavedList" });
@@ -402,6 +407,10 @@ export const removeSavedPost = async (req, res) => {
 
     // Save the updated post document
     await post.save();
+
+    // Invalidate cache for this post so users see updated reactions immediately
+    await deleteCachePattern(`cache:/post/getPost/${post.slug}*`);
+    await deleteCachePattern(`cache:/post/getPosts*`);
 
     // Success response
     return res.status(200).json({

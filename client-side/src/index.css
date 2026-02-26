@@ -289,18 +289,42 @@ html {
   width: 100%;
 }
 
-/* Images Between Text */
-.post-content img {
+/* ===== Blog Content Images - Fixed Size Styling ===== */
+.post-content img,
+.post-content .blog-content-img {
   display: block;
-  max-width: 100%;
-  margin: 20px auto;
-  border: 3px solid #ddd;
+  width: 100%;
+  height: 400px; /* Fixed height for consistency */
+  margin: 2.5rem auto;
   border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease-in-out;
+  object-fit: cover; /* Crop/zoom images to fit */
+  object-position: center;
+  cursor: pointer;
+  background: var(--color-bg-light);
+  border: 1px solid var(--color-highlight);
 }
 
-.post-content img:hover {
-  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
+.post-content img:hover,
+.post-content .blog-content-img:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  border-color: var(--color-link);
+}
+
+/* Dark mode image styling */
+.dark .post-content img,
+.dark .post-content .blog-content-img {
+  background: var(--color-surface);
+  border-color: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.dark .post-content img:hover,
+.dark .post-content .blog-content-img:hover {
+  border-color: var(--color-link);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
 }
 
 /* Paragraphs */
@@ -444,4 +468,536 @@ html {
   margin-right: auto;
 }
 
+/* ===== Featured Image Enhancements ===== */
+/* Animated gradient border effect */
+@keyframes gradient-rotate {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
 
+/* Featured badge pulse animation */
+@keyframes badge-pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.9;
+  }
+}
+
+/* Apply animation to featured badge */
+.featured-image-wrapper {
+  position: relative;
+  animation: fadeIn 0.6s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Ad container enhancements */
+.ad-container {
+  position: relative;
+  transition: all 0.3s ease-in-out;
+}
+
+.ad-container:hover {
+  transform: translateY(-2px);
+}
+
+/* ===== Enhanced Accessibility & Spacing Styles ===== */
+
+/* Focus visible states for better keyboard navigation */
+*:focus-visible {
+  outline: 3px solid var(--color-link);
+  outline-offset: 2px;
+  transition: outline 0.2s ease-in-out;
+}
+
+/* Skip to main content link for screen readers */
+.skip-to-main {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: var(--color-link);
+  color: white;
+  padding: 8px;
+  text-decoration: none;
+  z-index: 100;
+}
+
+.skip-to-main:focus {
+  top: 0;
+}
+
+/* Improved touch targets for mobile (minimum 44x44px) */
+button, 
+a[role="button"],
+input[type="button"],
+input[type="submit"] {
+  min-width: 44px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Enhanced spacing for blog post sections */
+article section {
+  margin-bottom: 3rem;
+}
+
+article section:last-child {
+  margin-bottom: 0;
+}
+
+/* Improved readability with better line spacing */
+.post-content {
+  line-height: 1.8;
+  letter-spacing: 0.01em;
+}
+
+.post-content > * + * {
+  margin-top: 1.5rem;
+}
+
+/* Better visual separation for headings */
+.post-content h1,
+.post-content h2,
+.post-content h3 {
+  scroll-margin-top: 100px; /* Offset for fixed header */
+}
+
+/* Smooth transitions for interactive elements */
+button,
+a,
+.card {
+  transition: all 0.2s ease-in-out;
+}
+
+/* Enhanced hover states */
+button:hover:not(:disabled),
+a:hover {
+  transform: translateY(-1px);
+}
+
+/* Ad container styling for better visibility */
+.adsense-container {
+  width: 100%;
+  margin: 2rem auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100px;
+  background: var(--color-bg-light);
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+/* In-content ad spacing */
+.in-content-ad {
+  margin: 3rem 0;
+  width: 100%;
+}
+
+/* Improved floating action bar */
+nav[aria-label="Post actions"] {
+  backdrop-filter: blur(10px);
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 20px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+/* Better sidebar spacing */
+aside[aria-label="Sidebar content"] > * + * {
+  margin-top: 1.5rem;
+}
+
+/* Improved card hover effects */
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px rgba(16,24,40,0.12);
+}
+
+/* Screen reader only text */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .card {
+    border: 2px solid currentColor;
+  }
+  
+  button {
+    border: 2px solid currentColor;
+  }
+}
+
+/* Reduced motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Better text selection */
+::selection {
+  background-color: var(--color-highlight);
+  color: var(--color-text);
+}
+
+/* Improved loading spinner */
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+/* Enhanced typography scale for better readability */
+@media (min-width: 640px) {
+  .post-content p {
+    font-size: 1.125rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .post-content p {
+    font-size: 1.25rem;
+  }
+}
+
+/* Improved spacing for mobile */
+@media (max-width: 768px) {
+  article {
+    padding: 1rem !important;
+  }
+  
+  .post-content h1 {
+    font-size: 2rem;
+  }
+  
+  .post-content h2 {
+    font-size: 1.5rem;
+  }
+  
+  nav[aria-label="Post actions"] {
+    bottom: 1rem;
+    padding: 0.5rem;
+    gap: 0.5rem;
+  }
+}
+
+/* Dark mode specific improvements */
+.dark .adsense-container {
+  background: var(--color-surface);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.dark .card:hover {
+  box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+}
+
+/* Better focus states for dark mode */
+.dark *:focus-visible {
+  outline-color: var(--color-accent);
+}
+
+/* Ensure proper contrast */
+.dark .text-gray-600 {
+  color: #9ca3af;
+}
+
+/* Improved category pills */
+.category {
+  transition: all 0.2s ease-in-out;
+}
+
+.category:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.dark .category:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+/* Enhanced table of contents */
+.toc a:focus {
+  outline: 2px solid white;
+  outline-offset: 2px;
+}
+
+/* Image figure wrapper for captions */
+.post-content figure,
+.post-content .blog-image-figure {
+  margin: 2.5rem 0;
+  text-align: center;
+  background: var(--color-bg-light);
+  padding: 1rem;
+  border-radius: 12px;
+  border: 1px solid var(--color-highlight);
+  transition: all 0.3s ease-in-out;
+}
+
+.post-content figure:hover,
+.post-content .blog-image-figure:hover {
+  border-color: var(--color-link);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+.dark .post-content figure,
+.dark .post-content .blog-image-figure {
+  background: var(--color-surface);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.dark .post-content figure:hover,
+.dark .post-content .blog-image-figure:hover {
+  border-color: var(--color-link);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+.post-content figure img,
+.post-content .blog-image-figure img {
+  margin: 0 auto;
+  width: 100%;
+  height: 400px; /* Fixed height for all blog images */
+  object-fit: cover; /* Crop to fill the space */
+  object-position: center;
+  border-radius: 8px;
+}
+
+.post-content figcaption {
+  margin-top: 1rem;
+  padding-top: 0.75rem;
+  font-size: 0.9rem;
+  font-style: italic;
+  color: var(--color-muted);
+  text-align: center;
+  border-top: 1px solid var(--color-highlight);
+  line-height: 1.5;
+}
+
+.dark .post-content figcaption {
+  color: var(--color-muted);
+  border-top-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Responsive image handling */
+@media (max-width: 768px) {
+  .post-content img,
+  .post-content .blog-content-img {
+    height: 300px; /* Smaller height on mobile */
+    margin: 1.5rem auto;
+  }
+  
+  .post-content figure img,
+  .post-content .blog-image-figure img {
+    height: 300px;
+  }
+}
+
+/* Image loading state */
+.post-content img[loading="lazy"] {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.dark .post-content img[loading="lazy"] {
+  background: linear-gradient(90deg, #2a2a2a 25%, #1a1a1a 50%, #2a2a2a 75%);
+  background-size: 200% 100%;
+}
+
+/* Image alignment classes (if needed in editor) */
+.post-content img.align-left {
+  float: left;
+  margin-right: 2rem;
+  margin-left: 0;
+  width: 50%;
+  height: 350px;
+}
+
+.post-content img.align-right {
+  float: right;
+  margin-left: 2rem;
+  margin-right: 0;
+  width: 50%;
+  height: 350px;
+}
+
+.post-content img.align-center {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+  height: 400px;
+}
+
+/* Full width images */
+.post-content img.full-width {
+  width: 100%;
+  height: 450px; /* Slightly taller for full-width */
+  margin: 3rem 0;
+}
+
+/* Small images (thumbnails) */
+.post-content img.small {
+  width: 100%;
+  max-width: 400px;
+  height: 250px; /* Smaller fixed height */
+  margin: 1.5rem auto;
+}
+
+/* Medium images */
+.post-content img.medium {
+  width: 100%;
+  max-width: 700px;
+  height: 350px; /* Medium fixed height */
+  margin: 2rem auto;
+}
+
+/* Multiple images in a row (gallery effect) */
+.post-content .image-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin: 2.5rem 0;
+}
+
+.post-content .image-gallery img {
+  margin: 0;
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+/* Images are clickable - cursor indicates interactivity */
+.post-content img {
+  cursor: pointer;
+}
+
+/* Responsive adjustments for images */
+@media (max-width: 640px) {
+  .post-content img,
+  .post-content .blog-content-img {
+    height: 250px; /* Even smaller on very small screens */
+  }
+  
+  .post-content img.align-left,
+  .post-content img.align-right {
+    float: none;
+    margin: 1.5rem auto;
+    width: 100%;
+    height: 250px;
+  }
+  
+  .post-content img.full-width {
+    height: 300px;
+  }
+  
+  .post-content img.small {
+    height: 200px;
+  }
+  
+  .post-content img.medium {
+    height: 250px;
+  }
+  
+  .post-content .image-gallery {
+    grid-template-columns: 1fr;
+  }
+  
+  .post-content .image-gallery img {
+    height: 250px;
+  }
+  
+  .post-content figure img,
+  .post-content .blog-image-figure img {
+    height: 250px;
+  }
+}
+
+/* Clear floats after images */
+.post-content::after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+/* Image error state styling */
+.post-content img[alt*="failed"] {
+  min-height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-bg-light);
+  border: 2px dashed var(--color-muted);
+}
+
+/* Improved blockquote styling in dark mode */
+.dark .post-content blockquote {
+  border-left-color: var(--color-link);
+  background-color: rgba(37, 99, 235, 0.1);
+}
+
+/* Loading skeleton improvements */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}

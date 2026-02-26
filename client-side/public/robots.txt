@@ -6,5 +6,18 @@ Disallow: /create-post
 Disallow: /updatepost/*
 Disallow: /signin
 Disallow: /signup
+Disallow: /api/
 
+# Allow Google Image Bot
+User-agent: Googlebot-Image
+Allow: /
+
+# Allow Bingbot
+User-agent: Bingbot
+Allow: /
+
+# Crawl-delay for all bots
+Crawl-delay: 10
+
+# Sitemap location
 Sitemap: https://sudipsharma.com.np/sitemap.xml

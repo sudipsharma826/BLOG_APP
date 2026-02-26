@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Search as SearchIcon, SlidersHorizontal, Clock, ChevronDown, Loader2 } from 'lucide-react';
 import axios from 'axios';
+import SEOHead from '../components/SEOHead';
 
 export default function Search() {
   const [sidebarData, setSidebarData] = useState({
@@ -91,6 +92,15 @@ export default function Search() {
   console.log(posts);
 
   return (
+    <>
+      <SEOHead
+        title={sidebarData.searchTerm ? `Search: ${sidebarData.searchTerm} | TechKnows` : "Search Articles | TechKnows"}
+        description={sidebarData.searchTerm ? `Search results for "${sidebarData.searchTerm}" on TechKnows. Found ${posts.length} articles.` : "Search through our technology and programming articles. Find tutorials, guides, and insights."}
+        keywords={`search, find articles, ${sidebarData.searchTerm || 'tech search'}, programming search`}
+        url={`/search${location.search}`}
+        type="website"
+        noindex={!sidebarData.searchTerm}
+      />
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex flex-col lg:flex-row gap-8">
@@ -256,5 +266,6 @@ export default function Search() {
         </div>
       </div>
     </div>
+    </>
   );
 }

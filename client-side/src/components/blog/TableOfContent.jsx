@@ -1,4 +1,4 @@
-import { ChevronDown, ChevronUp } from 'lucide-react';
+import { ChevronDown, ChevronUp, List } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
 export default function TableOfContents({ content }) {
@@ -30,47 +30,63 @@ export default function TableOfContents({ content }) {
     }
   }, [content]);
 
-  return (
-    <div className="toc flex flex-col gap-8 mb-10">
-      {/* TOC Section: full width */}
-      <div className="w-full">
-        <div className="bg-gradient-to-r from-gray-800 via-gray-700 to-gray-600 text-white p-6 rounded-lg shadow-lg">
-          {/* Always visible title and toggle button */}
-          <div
-            className="flex items-center justify-between cursor-pointer mb-4"
-            onClick={() => setIsExpanded(!isExpanded)}
-          >
-            <h2 className="text-xl font-semibold hover:text-yellow-400 transition-colors">
-              Table of Contents
-            </h2>
-            {isExpanded ? (
-              <ChevronUp className="w-5 h-5" />
-            ) : (
-              <ChevronDown className="w-5 h-5" />
-            )}
-          </div>
+  if (tocItems.length === 0) return null;
 
-          {/* Conditionally show the TOC content */}
-          <div className={`transition-all duration-300 ${isExpanded ? 'block' : 'hidden'}`}>
-            <ul className="space-y-3">
-              {tocItems.map((item) => (
-                <li
-                  key={item.id}
-                  className={`${
-                    item.level === 2
-                      ? 'ml-5 before:content-["•"] before:mr-2 before:text-yellow-400'
-                      : 'before:content-["-"] before:mr-2 before:text-yellow-400'
-                  }`}
+  return (
+    <nav 
+      aria-labelledby="table-of-contents-heading"
+      className="toc mb-12"
+    >
+      <div className="bg-gradient-to-br from-indigo-600 via-purple-600 to-blue-600 text-white p-6 sm:p-8 rounded-xl shadow-2xl">
+        {/* Always visible title and toggle button */}
+        <button
+          onClick={() => setIsExpanded(!isExpanded)}
+          aria-expanded={isExpanded}
+          aria-controls="toc-content"
+          className="flex items-center justify-between w-full cursor-pointer mb-5 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-indigo-600 rounded-lg p-2 -m-2 hover:bg-white/10 transition-colors"
+        >
+          <h2 id="table-of-contents-heading" className="text-xl sm:text-2xl font-bold flex items-center gap-3">
+            <List className="w-6 h-6" aria-hidden="true" />
+            Table of Contents
+          </h2>
+          {isExpanded ? (
+            <ChevronUp className="w-6 h-6 flex-shrink-0" aria-hidden="true" />
+          ) : (
+            <ChevronDown className="w-6 h-6 flex-shrink-0" aria-hidden="true" />
+          )}
+        </button>
+
+        {/* Conditionally show the TOC content */}
+        <div 
+          id="toc-content"
+          className={`transition-all duration-300 overflow-hidden ${isExpanded ? 'max-h-screen opacity-100' : 'max-h-0 opacity-0'}`}
+        >
+          <ul className="space-y-3 mt-4" role="list">
+            {tocItems.map((item, index) => (
+              <li
+                key={item.id}
+                className={`${
+                  item.level === 2
+                    ? 'ml-6 before:content-["•"] before:mr-3 before:text-yellow-300'
+                    : 'before:content-["→"] before:mr-3 before:text-yellow-300'
+                } flex items-start`}
+              >
+                <a 
+                  href={`#${item.id}`} 
+                  className="text-gray-100 hover:text-white hover:underline transition-all duration-200 ease-in-out 
+                    focus:outline-none focus:underline focus:text-yellow-200 text-base sm:text-lg"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    document.getElementById(item.id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                  }}
                 >
-                  <a href={`#${item.id}`} className="text-gray-300 hover:text-white transition-colors duration-200 ease-in-out">
-                    {item.title}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
+                  {item.title}
+                </a>
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
-    </div>
+    </nav>
   );
 }

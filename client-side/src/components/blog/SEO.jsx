@@ -12,29 +12,41 @@ export function SEO({
   publishedTime,
   modifiedTime,
   section,
-  tags
+  tags,
+  authorImage,
+  authorUrl
 }) {
   const siteUrl = 'https://sudipsharma.com.np';
+  const siteName = 'TechKnows';
   const fullUrl = url ? (url.startsWith('http') ? url : `${siteUrl}${url}`) : siteUrl;
   const fullImage = image ? (image.startsWith('http') ? image : `${siteUrl}${image}`) : `${siteUrl}/images/logo.png`;
   
-  // Create structured data for articles
+  // Create comprehensive structured data
   const structuredData = type === 'article' ? {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
     "headline": title,
     "description": description,
-    "image": fullImage,
+    "image": {
+      "@type": "ImageObject",
+      "url": fullImage,
+      "width": 1200,
+      "height": 630
+    },
     "author": {
       "@type": "Person",
-      "name": author
+      "name": author,
+      "url": authorUrl || siteUrl,
+      "image": authorImage || `${siteUrl}/images/author.png`
     },
     "publisher": {
       "@type": "Organization",
-      "name": "TechKnows",
+      "name": siteName,
       "logo": {
         "@type": "ImageObject",
-        "url": `${siteUrl}/images/logo.png`
+        "url": `${siteUrl}/images/logo.png`,
+        "width": 200,
+        "height": 60
       }
     },
     "datePublished": publishedTime,
@@ -42,8 +54,25 @@ export function SEO({
     "mainEntityOfPage": {
       "@type": "WebPage",
       "@id": fullUrl
+    },
+    "keywords": Array.isArray(keywords) ? keywords.join(', ') : keywords,
+    "articleSection": section || 'Technology',
+    "inLanguage": "en-US"
+  } : {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": siteName,
+    "url": siteUrl,
+    "description": description,
+    "publisher": {
+      "@type": "Organization",
+      "name": siteName,
+      "logo": {
+        "@type": "ImageObject",
+        "url": `${siteUrl}/images/logo.png`
+      }
     }
-  } : null;
+  };
 
   return (
     <Helmet>
@@ -58,6 +87,12 @@ export function SEO({
         />
       )}
       <meta name="author" content={author} />
+      <meta name="theme-color" content="#3B82F6" />
+      <meta httpEquiv="content-language" content="en" />
+      <meta name="language" content="English" />
+      <meta name="revisit-after" content="7 days" />
+      <meta name="distribution" content="global" />
+      <meta name="rating" content="general" />
       
       {/* Canonical URL */}
       <link rel="canonical" href={fullUrl} />
@@ -68,7 +103,12 @@ export function SEO({
       <meta property="og:title" content={title} />
       <meta property="og:description" content={description} />
       <meta property="og:image" content={fullImage} />
-      <meta property="og:site_name" content="TechKnows" />
+      <meta property="og:image:secure_url" content={fullImage} />
+      <meta property="og:image:width" content="1200" />
+      <meta property="og:image:height" content="630" />
+      <meta property="og:image:alt" content={title} />
+      <meta property="og:site_name" content={siteName} />
+      <meta property="og:locale" content="en_US" />
       {publishedTime && <meta property="article:published_time" content={publishedTime} />}
       {modifiedTime && <meta property="article:modified_time" content={modifiedTime} />}
       {section && <meta property="article:section" content={section} />}
@@ -77,13 +117,19 @@ export function SEO({
         <meta key={index} property="article:tag" content={tag} />
       ))}
       
-      {/* Twitter */}
+      {/* Twitter Card */}
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:url" content={fullUrl} />
       <meta name="twitter:title" content={title} />
       <meta name="twitter:description" content={description} />
       <meta name="twitter:image" content={fullImage} />
+      <meta name="twitter:image:alt" content={title} />
       <meta name="twitter:creator" content="@sudipsharma" />
+      <meta name="twitter:site" content="@techknows" />
+      <meta name="twitter:label1" content="Written by" />
+      <meta name="twitter:data1" content={author} />
+      {publishedTime && <meta name="twitter:label2" content="Published on" />}
+      {publishedTime && <meta name="twitter:data2" content={new Date(publishedTime).toLocaleDateString()} />}
       
       {/* Structured Data */}
       {structuredData && (

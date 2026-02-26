@@ -82,9 +82,34 @@ const Home = () => {
         <SEOHead
           title="TechKnows | Technology & Programming Blog | Sudip Sharma"
           description="Explore in-depth tech articles, programming guides, tutorials, and creative ideas at TechKnows. Your platform for learning and sharing technology."
-          keywords="TechKnows, technology blog, programming, coding, tutorials, software development, tech articles, guides, JavaScript, Python, web development, Sudip Sharma"
+          keywords="TechKnows, technology blog, programming, coding, tutorials, software development, tech articles, guides, JavaScript, Python, web development, Sudip Sharma, React, Node.js"
           url="/"
           type="website"
+          structuredData={{
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "name": "TechKnows",
+            "url": "https://sudipsharma.com.np",
+            "description": "TechKnows - Your platform for technology articles, programming tutorials, and creative tech ideas.",
+            "publisher": {
+              "@type": "Organization",
+              "name": "TechKnows",
+              "logo": {
+                "@type": "ImageObject",
+                "url": "https://sudipsharma.com.np/images/logo.png"
+              }
+            },
+            "potentialAction": {
+              "@type": "SearchAction",
+              "target": "https://sudipsharma.com.np/search?q={search_term_string}",
+              "query-input": "required name=search_term_string"
+            },
+            "mainEntity": {
+              "@type": "Blog",
+              "name": "TechKnows Blog",
+              "description": "Technology and Programming Blog"
+            }
+          }}
         />
         <div className="bg-gradient-to-br from-purple-100 via-yellow-50 to-blue-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 min-h-screen w-full">
         <HeroSection />

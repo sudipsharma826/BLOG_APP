@@ -20,11 +20,13 @@ const PostGrid = ({ posts }) => {
               key={post.id}
               className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow"
             >
-              <img
-                src={post.coverImage}
-                alt={post.title}
-                className="w-full h-48 object-cover"
-              />
+              <div className="aspect-video relative overflow-hidden">
+                <img
+                  src={post.coverImage}
+                  alt={post.title}
+                  className="w-full h-full object-cover"
+                />
+              </div>
               <div className="p-6">
                 <span className="text-purple-600 text-sm font-semibold">
                   {post.category}

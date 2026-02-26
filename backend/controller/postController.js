@@ -511,24 +511,39 @@ const findPost = async (req, res) => {
 // Helper function to add or remove interactions
 const toggleInteraction = async (action, post, user, postList, userList, res) => {
     try {
-        const isAlreadyInteracted = post[postList].includes(user._id);
+        const userIdString = user._id.toString();
+        const postIdString = post._id.toString();
+        const isAlreadyInteracted = post[postList].some(id => id.toString() === userIdString);
+        let modified = false;
         
         if (action === 'add' && !isAlreadyInteracted) {
-            post[postList].push(user._id);
-            user[userList].push(post._id);
+            // Add interaction if not already present (store as string for consistency)
+            post[postList].push(userIdString);
+            user[userList].push(postIdString);
+            modified = true;
         } else if (action === 'remove' && isAlreadyInteracted) {
-            post[postList] = post[postList].filter((id) => id.toString() !== user._id.toString());
-            user[userList] = user[userList].filter((id) => id.toString() !== post._id.toString());
-        } else {
-            // Avoid sending multiple responses: Return early if already interacted or not
-            return res.status(400).json({ error: `Post already ${action === 'add' ? 'interacted' : 'not interacted'}` });
+            // Remove interaction if present
+            post[postList] = post[postList].filter((id) => id.toString() !== userIdString);
+            user[userList] = user[userList].filter((id) => id.toString() !== postIdString);
+            modified = true;
+        }
+        // If already in desired state (idempotent), just return success without error
+
+        // Save only if modified
+        if (modified) {
+            await post.save();
+            await user.save();
+            
+            // Invalidate cache for this post so users see updated reactions immediately
+            await deleteCachePattern(`cache:/post/getPost/${post.slug}*`);
+            await deleteCachePattern(`cache:/post/getPosts*`);
         }
 
-        // Only one response is sent now
-        await post.save();
-        await user.save();
-
-        return res.status(200).json({ message: `Post ${action === 'add' ? '' : 'un'}${postList.slice(5)}d successfully` });
+        return res.status(200).json({ 
+            message: `Post ${action === 'add' ? '' : 'un'}${postList.slice(5)}d successfully`,
+            modified: modified,
+            isInteracted: action === 'add' ? true : false
+        });
     } catch (error) {
         // Ensure there's only one response
         if (!res.headersSent) {
@@ -614,9 +629,9 @@ export const unSavePost = async (req, res) => {
 //Get Featured Posts
 export const getFeaturedPosts = async (req, res) => {
         try {
-            // Fetch only featured posts
+            // Fetch only featured posts sorted by creation date (newest first)
             const featuredPosts = await Post.find({ isFeatured: true })
-                .sort({ updatedAt: -1, createdAt: -1 });
+                .sort({ createdAt: -1 });
 
             // Collect all unique author emails from the posts
             const authorEmails = [...new Set(featuredPosts.map((post) => post.authorEmail))];

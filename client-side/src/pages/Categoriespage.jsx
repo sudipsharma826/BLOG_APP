@@ -49,11 +49,31 @@ const CategoryList = () => {
   return (
     <>
       <SEOHead
-        title="Categories | TechKnows"
-        description="Browse all technology and programming categories at TechKnows. Find articles on your favorite topics including JavaScript, Python, Web Development, and more."
-        keywords="tech categories, programming topics, technology articles, web development, coding categories"
+        title="Categories | TechKnows - Browse All Technology Topics"
+        description="Browse all technology and programming categories at TechKnows. Find articles on your favorite topics including JavaScript, Python, Web Development, React, Node.js, AI, Machine Learning, and more."
+        keywords="tech categories, programming topics, technology articles, web development, coding categories, JavaScript tutorials, Python guides, React tutorials, Node.js articles"
         url="/categories"
         type="website"
+        structuredData={{
+          "@context": "https://schema.org",
+          "@type": "CollectionPage",
+          "name": "Technology Categories",
+          "description": "Browse technology and programming categories",
+          "url": "https://sudipsharma.com.np/categories",
+          "mainEntity": {
+            "@type": "ItemList",
+            "numberOfItems": categories.length,
+            "itemListElement": categories.slice(0, 10).map((cat, index) => ({
+              "@type": "ListItem",
+              "position": index + 1,
+              "item": {
+                "@type": "Thing",
+                "name": cat.name,
+                "url": `https://sudipsharma.com.np/category/${cat.name}`
+              }
+            }))
+          }
+        }}
       />
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-20">
       {/* Hero Section */}

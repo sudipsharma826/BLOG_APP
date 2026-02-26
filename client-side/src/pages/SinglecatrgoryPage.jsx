@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import SkeletonPostCard from '../components/homepage/SkeletonPostCard';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
+import { SEO } from '../components/blog/SEO';
+import NotFound from './NotFound';
 
 const SingleCategoryPage = () => {
   const { category: categorySlug } = useParams();
@@ -9,6 +11,7 @@ const SingleCategoryPage = () => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [notFound, setNotFound] = useState(false);
 
   useEffect(() => {
     const fetchCategoryData = async () => {
@@ -28,7 +31,12 @@ const SingleCategoryPage = () => {
         );
         setPosts(postsResponse.data.posts);
       } catch (err) {
-        setError('Error fetching data');
+        // Check if 404 error
+        if (err.response && err.response.status === 404) {
+          setNotFound(true);
+        } else {
+          setError(err.response?.data?.message || 'Error fetching category data');
+        }
       } finally {
         setLoading(false);
       }
@@ -49,24 +57,43 @@ const SingleCategoryPage = () => {
     );
   }
 
-  if (error) {
+  // Show NotFound component for 404 errors
+  if (notFound || (!category && !loading && !error)) {
     return (
-      <div className="min-h-screen bg-gray-800 flex items-center justify-center">
-        <p className="text-xl text-red-500">{error}</p>
+      <div className="pt-20">
+        <NotFound 
+          resourceType="Category"
+          resourceName={categorySlug}
+          errorCode="404"
+        />
       </div>
     );
   }
 
-  if (!category) {
+  if (error) {
     return (
-      <div className="min-h-screen bg-gray-800 flex items-center justify-center">
-        <p className="text-xl text-gray-300">Category not found</p>
+      <div className="min-h-screen bg-gray-800 dark:bg-gray-900 flex items-center justify-center pt-20">
+        <div className="max-w-lg text-center">
+          <h2 className="text-3xl font-bold text-red-500 mb-4">Error Loading Category</h2>
+          <p className="text-xl text-gray-300 dark:text-gray-400 mb-8">{error}</p>
+          <Link to="/categories" className="text-blue-500 hover:underline">Browse All Categories</Link>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white pt-20">
+    <>
+      <SEO
+        title={`${category?.name || 'Category'} Articles | TechKnows`}
+        description={`Explore our collection of ${posts.length} articles about ${category?.name}. In-depth guides, tutorials, and insights on ${category?.name}.`}
+        keywords={`${category?.name}, ${category?.name} tutorials, ${category?.name} guides, programming, technology, TechKnows`}
+        image={category?.catrgoryImage}
+        url={`/category/${categorySlug}`}
+        type="website"
+        section={category?.name}
+      />
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white pt-20">
       {/* Category Hero with background image and improved overlay */}
       <div
         className="text-center text-white bg-cover bg-center relative shadow-lg rounded-b-3xl overflow-hidden"
@@ -90,47 +117,60 @@ const SingleCategoryPage = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
           {posts.map((post) => (
-            <article
+            <Link
               key={post._id}
-              className="bg-white dark:bg-gray-900 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-800 overflow-hidden hover:shadow-2xl transition-all group cursor-pointer"
+              to={`/post/${post.slug}`}
+              className="block"
             >
-              <div className="relative w-full h-64 overflow-hidden">
-                <img
-                  src={post.image}
-                  alt={post.title}
-                  className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                />
-                <span className="absolute top-3 left-3 bg-purple-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow">{category.name}</span>
-              </div>
-              <div className="p-6">
-                <h3 className="mt-2 text-xl font-bold text-gray-900 dark:text-gray-100 group-hover:text-purple-700 dark:group-hover:text-purple-400 transition-all">{post.title}</h3>
-                <h3 className="text-sm font-semibold mb-2 text-gray-500 dark:text-gray-400">{post.subtitle}</h3>
-                <p className="mt-2 text-gray-700 dark:text-gray-300 line-clamp-2">{typeof post.content === 'string' ? post.content.replace(/<[^>]*>/g, '') : 'No content available'}</p>
-                <div className="mt-4 flex items-center">
+              <article
+                className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-2xl hover:scale-105 transition-all duration-300 group cursor-pointer h-full"
+              >
+                <div className="relative w-full h-64 overflow-hidden">
                   <img
-                    src={post.author.avatar}
-                    alt={post.author.username}
-                    className="w-10 h-10 rounded-full border-2 border-purple-500 shadow"
+                    src={post.image}
+                    alt={post.title}
+                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                    loading="lazy"
                   />
-                  <div className="ml-3">
-                    <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{post.author.username}</p>
-                    <p className="text-sm text-gray-500">{new Date(post.createdAt).toLocaleDateString()}</p>
+                  <span className="absolute top-3 left-3 bg-purple-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow">{category.name}</span>
+                </div>
+                <div className="p-6">
+                  <h3 className="mt-2 text-xl font-bold text-gray-900 dark:text-gray-100 group-hover:text-purple-700 dark:group-hover:text-purple-400 transition-all line-clamp-2">{post.title}</h3>
+                  <p className="text-sm font-semibold mb-2 text-gray-600 dark:text-gray-400 line-clamp-1">{post.subtitle}</p>
+                  <p className="mt-2 text-gray-700 dark:text-gray-300 line-clamp-3">{typeof post.content === 'string' ? post.content.replace(/<[^>]*>/g, '').substring(0, 150) + '...' : 'No content available'}</p>
+                  <div className="mt-4 flex items-center">
+                    {post.author?.avatar && (
+                      <img
+                        src={post.author.avatar}
+                        alt={post.author.username}
+                        className="w-10 h-10 rounded-full border-2 border-purple-500 shadow"
+                        loading="lazy"
+                      />
+                    )}
+                    <div className="ml-3">
+                      <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{post.author?.username || 'Anonymous'}</p>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">{new Date(post.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}</p>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </article>
+              </article>
+            </Link>
           ))}
         </div>
 
         {posts.length === 0 && (
-          <div className="text-center py-12">
-            <p className="text-xl text-gray-300">No posts found in this category</p>
+          <div className="col-span-full text-center py-12">
+            <p className="text-xl text-gray-500 dark:text-gray-400">No posts found in this category yet.</p>
+            <Link to="/" className="mt-4 inline-block text-blue-600 dark:text-blue-400 hover:underline">
+              Browse all posts
+            </Link>
           </div>
         )}
       </div>
 
   {/* Ad spaces removed per user request */}
     </div>
+    </>
   );
 };
 
