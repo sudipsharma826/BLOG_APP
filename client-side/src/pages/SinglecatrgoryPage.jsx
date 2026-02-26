@@ -89,7 +89,7 @@ const SingleCategoryPage = () => {
         description={`Explore our collection of ${posts.length} articles about ${category?.name}. In-depth guides, tutorials, and insights on ${category?.name}.`}
         keywords={`${category?.name}, ${category?.name} tutorials, ${category?.name} guides, programming, technology, TechKnows`}
         image={category?.catrgoryImage}
-        url={`/category/${categorySlug}`}
+        url={`https://sudipsharma.com.np/category/${categorySlug}`}
         type="website"
         section={category?.name}
       />

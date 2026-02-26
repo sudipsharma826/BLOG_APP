@@ -338,7 +338,7 @@ function SinglePostPage() {
         title={`${postData?.title} | TechKnows`}
         description={postData?.description || postData?.subtitle}
         image={postData?.image}
-        url={`/post/${postData?.slug}`}
+        url={`https://sudipsharma.com.np/post/${postData?.slug}`}
         type="article"
         keywords={postData?.tags || postData?.category}
         author={authorData?.username || 'Sudip Sharma'}
