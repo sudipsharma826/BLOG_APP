@@ -2,18 +2,8 @@
   command = "npm run build"
   publish = "dist"
 
-[[plugins]]
-  package = "@netlify/plugin-sitemap"
-
 [build.environment]
   NODE_VERSION = "18"
-
-# Enable pre-rendering for better SEO
-[[plugins]]
-  package = "netlify-plugin-prerender"
-
-  [plugins.inputs]
-    publicPath = "/dist"
 
 [[redirects]]
   from = "/*"
