@@ -510,9 +510,7 @@ function SinglePostPage() {
             </div>
             
             <div className="px-4 sm:px-6 lg:px-10 space-y-8">
-              <section aria-labelledby="table-of-contents">
-                <TableOfContents content={postData.content} />
-              </section>
+              <TableOfContents content={postData.content} />
               
               <section aria-labelledby="post-content" className="mt-6">
                 <PostContent content={postData?.content} />

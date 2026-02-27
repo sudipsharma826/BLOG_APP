@@ -33,10 +33,11 @@ export default function TableOfContents({ content }) {
   if (tocItems.length === 0) return null;
 
   return (
-    <nav 
-      aria-labelledby="table-of-contents-heading"
-      className="toc mb-8 lg:mb-12"
-    >
+    <section aria-labelledby="table-of-contents">
+      <nav 
+        aria-labelledby="table-of-contents-heading"
+        className="toc mb-8 lg:mb-12"
+      >
       <div className="bg-gradient-to-br from-indigo-600 via-purple-600 to-blue-600 text-white p-4 sm:p-6 lg:p-8 rounded-xl shadow-2xl">
         {/* Always visible title and toggle button */}
         <button
@@ -88,5 +89,6 @@ export default function TableOfContents({ content }) {
         </div>
       </div>
     </nav>
+    </section>
   );
 }
