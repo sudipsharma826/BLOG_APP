@@ -61,30 +61,10 @@ export function PostContent({ content = "" }) {
     return tempDiv.innerHTML;
   };
 
-  // Function to insert ads after specific paragraphs
+  // Function to insert ads after specific paragraphs - DISABLED to avoid content disruption
   const insertAds = (html) => {
-    const tempDiv = document.createElement("div");
-    tempDiv.innerHTML = html;
-    
-    const paragraphs = tempDiv.querySelectorAll("p");
-    const totalParagraphs = paragraphs.length;
-    
-    // Insert ad after 30% and 70% of content
-    if (totalParagraphs > 5) {
-      const firstAdPosition = Math.floor(totalParagraphs * 0.3);
-      const secondAdPosition = Math.floor(totalParagraphs * 0.7);
-      
-      [firstAdPosition, secondAdPosition].forEach((position, index) => {
-        if (paragraphs[position]) {
-          const adDiv = document.createElement("div");
-          adDiv.classList.add("in-content-ad");
-          adDiv.setAttribute("data-ad-position", index.toString());
-          paragraphs[position].after(adDiv);
-        }
-      });
-    }
-    
-    return tempDiv.innerHTML;
+    // Ads disabled in main content to improve readability
+    return html;
   };
 
   // Function to enhance images with proper attributes and styling
@@ -107,11 +87,17 @@ export function PostContent({ content = "" }) {
         img.setAttribute("title", img.getAttribute("alt"));
       }
       
-      // Add class for fixed sizing (will be handled by CSS)
+      // Add class for responsive sizing (will be handled by CSS)
       img.classList.add("blog-content-img");
       
+      // Add inline styles for better responsive behavior - NO CROPPING
+      img.style.width = "100%";
+      img.style.height = "auto";
+      img.style.objectFit = "contain";
+      img.style.backgroundColor = "#ffffff";
+      
       // Add error handling
-      img.setAttribute("onerror", "this.style.display='none'; this.parentElement.innerHTML='<div style=\"padding:2rem;text-align:center;color:#999;border:2px dashed #ddd;border-radius:8px;\">Image failed to load</div>';");
+      img.setAttribute("onerror", "this.style.display='block'; this.style.minHeight='200px'; this.style.background='#f0f0f0'; this.alt='Image failed to load';");
       
       // Wrap single images in figure if not already wrapped
       if (img.parentElement.tagName !== "FIGURE") {
@@ -127,6 +113,10 @@ export function PostContent({ content = "" }) {
         if (captionText && captionText !== `Blog content image ${index + 1}`) {
           const figcaption = document.createElement("figcaption");
           figcaption.textContent = captionText;
+          figcaption.style.textAlign = "center";
+          figcaption.style.fontSize = "0.875rem";
+          figcaption.style.color = "#666";
+          figcaption.style.marginTop = "0.5rem";
           figure.appendChild(figcaption);
         }
       }
@@ -144,16 +134,9 @@ export function PostContent({ content = "" }) {
     setProcessedContent(contentWithAds);
   }, [content]);
 
-  // Render ads in placeholders after DOM is ready
+  // Ads disabled in content for better user experience
   useEffect(() => {
-    const adPlaceholders = document.querySelectorAll(".in-content-ad");
-    adPlaceholders.forEach((placeholder) => {
-      if (placeholder && !placeholder.hasChildNodes()) {
-        const adContainer = document.createElement("div");
-        adContainer.className = "my-8 bg-gray-50 dark:bg-gray-800 p-4 rounded-lg shadow-sm";
-        placeholder.appendChild(adContainer);
-      }
-    });
+    // No in-content ads to avoid disrupting reading flow
   }, [processedContent]);
 
   return (

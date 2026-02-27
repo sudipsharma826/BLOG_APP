@@ -207,7 +207,7 @@ function SinglePostPage() {
         withCredentials: true,
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${currentUser.token}`,
+          Authorization: `Bearer ${currentUser.currentToken}`,
         },
       });
       
@@ -294,7 +294,7 @@ function SinglePostPage() {
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] w-full max-w-7xl mx-auto px-4 pt-20 md:pt-0">
+      <div className="flex flex-col items-center justify-center min-h-[60vh] w-full max-w-7xl mx-auto px-4 pt-2 md:pt-0">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 w-full">
           {Array.from({ length: 3 }).map((_, i) => (
             <SkeletonPostCard key={i} />
@@ -307,7 +307,7 @@ function SinglePostPage() {
   // Show NotFound component for 404 errors
   if (notFoundType) {
     return (
-      <div className="pt-20">
+      <div className="pt-2">
         <NotFound 
           resourceType="Post"
           resourceName={slug}
@@ -333,24 +333,24 @@ function SinglePostPage() {
 
 
   return (
-    <div className="pt-20" role="main">
+    <div className="pt-1" role="main">
       <SEO
-        title={`${postData?.title} | TechKnows`}
-        description={postData?.description || postData?.subtitle}
+        title={postData?.title}
+        description={postData?.description || postData?.subtitle || postData?.content?.replace(/<[^>]+>/g, '').substring(0, 160)}
         image={postData?.image}
-        url={`https://sudipsharma.com.np/post/${postData?.slug}`}
+        url={`/post/${postData?.slug}`}
         type="article"
         keywords={postData?.tags || postData?.category}
         author={authorData?.username || 'Sudip Sharma'}
         authorImage={authorData?.photoURL}
-        authorUrl={authorData?.email ? `https://sudipsharma.com.np/author/${authorData.email}` : undefined}
+        authorUrl={authorData?.email ? `/author/${authorData.email}` : undefined}
         publishedTime={postData?.createdAt}
         modifiedTime={postData?.updatedAt}
         section={Array.isArray(postData?.category) ? postData.category[0] : postData?.category}
         tags={postData?.tags || postData?.category}
       />
-      <div className="min-h-screen page-section py-6 sm:py-8 lg:py-12 px-3 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10">
+      <div className="min-h-screen page-section py-4 sm:py-6 lg:py-12 px-2 sm:px-4 lg:px-8">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-10">
           {/* Main Content */}
           <article className="col-span-1 lg:col-span-8 bg-white dark:bg-gray-900 shadow-xl rounded-2xl overflow-hidden border border-gray-200 dark:border-gray-800" aria-label="Blog post content">
             
@@ -370,7 +370,7 @@ function SinglePostPage() {
                     </div>
                   </div>
                   <button
-                    onClick={() => navigate('/sign-in')}
+                    onClick={() => navigate('/signin')}
                     className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors duration-200 shadow-sm hover:shadow-md"
                   >
                     Sign In
@@ -463,7 +463,7 @@ function SinglePostPage() {
               </div>
             </div>
             
-            <div className="p-6 sm:p-10 lg:p-14 space-y-8">
+            <div className="p-4 sm:p-6 lg:p-10 space-y-6">
               <PostHeader
                 category={postData?.category}
                 title={postData?.title}
@@ -475,7 +475,7 @@ function SinglePostPage() {
               />
               
               {authorData && (
-                <div className="mt-6">
+                <div className="mt-4">
                   <AuthorInfo
                     name={authorData?.username}
                     email={authorData?.email}
@@ -486,13 +486,20 @@ function SinglePostPage() {
             </div>
             
             {/* Featured Image Section */}
-            <div className="w-full px-6 sm:px-10 lg:px-14 mb-12">
-              <figure className="relative w-full overflow-hidden rounded-xl shadow-lg">
+            <div className="w-full px-4 sm:px-6 lg:px-10 mb-8">
+              <figure className="relative w-full overflow-hidden rounded-xl shadow-lg bg-white dark:bg-gray-900">
                 <img
                   src={postData?.image}
                   alt={postData?.title || "Post featured image"}
-                  className="w-full h-auto object-cover max-h-[500px]"
+                  className="featured-post-image w-full h-auto"
                   loading="eager"
+                  style={{ 
+                    maxHeight: '600px', 
+                    objectFit: 'contain', 
+                    width: '100%',
+                    backgroundColor: 'white',
+                    display: 'block'
+                  }}
                 />
                 {/* Featured badge - bottom right white box */}
                 <div className="absolute bottom-4 right-4 bg-white dark:bg-gray-800 text-gray-800 dark:text-white px-4 py-2 rounded-lg shadow-lg text-sm font-semibold border border-gray-200 dark:border-gray-700">
@@ -502,50 +509,24 @@ function SinglePostPage() {
               </figure>
             </div>
             
-            <div className="px-6 sm:px-10 lg:px-14 space-y-10">
+            <div className="px-4 sm:px-6 lg:px-10 space-y-8">
               <section aria-labelledby="table-of-contents">
                 <TableOfContents content={postData.content} />
               </section>
               
-              {/* Ad Space - After TOC (Better Position) */}
-              <div className="my-10">
-                <div className="relative bg-gradient-to-r from-blue-50 via-purple-50 to-pink-50 dark:from-gray-800 dark:via-gray-800 dark:to-gray-800 p-6 rounded-2xl shadow-md border border-gray-200 dark:border-gray-700">
-                  <div className="absolute top-2 left-2 text-xs text-gray-400 dark:text-gray-600 font-medium uppercase tracking-wider">Advertisement</div>
-                  <AdSense
-                    adClient={import.meta.env.VITE_ADSENSE_CLIENT}
-                    adSlot={import.meta.env.VITE_ADSENSE_SLOT}
-                    adFormat="horizontal"
-                    style={{ width: '100%', minHeight: 100, display: 'block', marginTop: '20px' }}
-                  />
-                </div>
-              </div>
-              
-              <section aria-labelledby="post-content" className="mt-8">
+              <section aria-labelledby="post-content" className="mt-6">
                 <PostContent content={postData?.content} />
               </section>
               
-              {/* Ad Space - After Content */}
-              <div className="my-12">
-                <div className="relative bg-gradient-to-r from-indigo-50 via-blue-50 to-cyan-50 dark:from-gray-800 dark:via-gray-800 dark:to-gray-800 p-6 rounded-2xl shadow-md border border-gray-200 dark:border-gray-700">
-                  <div className="absolute top-2 left-2 text-xs text-gray-400 dark:text-gray-600 font-medium uppercase tracking-wider">Advertisement</div>
-                  <AdSense
-                    adClient={import.meta.env.VITE_ADSENSE_CLIENT}
-                    adSlot={import.meta.env.VITE_ADSENSE_SLOT}
-                    adFormat="horizontal"
-                    style={{ width: '100%', minHeight: 100, display: 'block', marginTop: '20px' }}
-                  />
-                </div>
-              </div>
-              
-              <section aria-labelledby="comments-section" className="mt-12">
-                <h2 id="comments-section" className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">Comments</h2>
+              <section aria-labelledby="comments-section" className="mt-8 sm:mt-12">
+                <h2 id="comments-section" className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 text-gray-900 dark:text-white">Comments</h2>
                 <CommentSection postId={postData._id} />
               </section>
             </div>
           </article>
           
           {/* Right Sidebar */}
-          <aside className="col-span-1 lg:col-span-4 space-y-6" aria-label="Sidebar content">
+          <aside className="col-span-1 lg:col-span-4 space-y-4 lg:space-y-6" aria-label="Sidebar content">
             {/* Ad Space - Top of Sidebar */}
             <div className="bg-white dark:bg-gray-900 rounded-lg p-4 shadow-md border border-gray-200 dark:border-gray-800">
               <p className="text-xs text-gray-500 dark:text-gray-400 mb-2 text-center">Advertisement</p>
@@ -558,18 +539,18 @@ function SinglePostPage() {
             </div>
             
             {/* Latest Posts */}
-            <div className="bg-white dark:bg-gray-900 rounded-lg p-6 shadow-md border border-gray-200 dark:border-gray-800">
-              <h3 className="text-xl font-bold mb-6 flex items-center text-gray-900 dark:text-white">
-                <Clock className="w-5 h-5 mr-3 text-blue-500" aria-hidden="true" />
+            <div className="bg-white dark:bg-gray-900 rounded-lg p-4 sm:p-6 shadow-md border border-gray-200 dark:border-gray-800">
+              <h3 className="text-lg sm:text-xl font-bold mb-4 sm:mb-6 flex items-center text-gray-900 dark:text-white">
+                <Clock className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3 text-blue-500" aria-hidden="true" />
                 Latest Posts
               </h3>
               <LatestPosts excludePostId={postData._id} />
             </div>
             
             {/* Categories */}
-            <div className="bg-white dark:bg-gray-900 rounded-lg p-6 shadow-md border border-gray-200 dark:border-gray-800">
-              <h3 className="text-xl font-bold mb-6 flex items-center text-gray-900 dark:text-white">
-                <Hash className="w-5 h-5 mr-3 text-green-500" aria-hidden="true" />
+            <div className="bg-white dark:bg-gray-900 rounded-lg p-4 sm:p-6 shadow-md border border-gray-200 dark:border-gray-800">
+              <h3 className="text-lg sm:text-xl font-bold mb-4 sm:mb-6 flex items-center text-gray-900 dark:text-white">
+                <Hash className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3 text-green-500" aria-hidden="true" />
                 Categories
               </h3>
               <SidebarCategories />
@@ -589,8 +570,8 @@ function SinglePostPage() {
         
         {/* Related Posts Section */}
         {postData && (
-          <section aria-labelledby="related-posts" className="mt-10">
-            <h2 id="related-posts" className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">Related Articles</h2>
+          <section aria-labelledby="related-posts" className="mt-6 lg:mt-10">
+            {/* <h2 id="related-posts" className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">Related Articles</h2> */}
             <RelatedPosts categories={postData.category} currentPostId={postData._id} />
           </section>
         )}
@@ -599,7 +580,7 @@ function SinglePostPage() {
         {showFloatingIcons && (
           <nav 
             aria-label="Post actions"
-            className="fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-white dark:bg-gray-800 px-4 py-3 rounded-full shadow-2xl flex items-center gap-3 z-50 border-2 border-gray-200 dark:border-gray-700"
+            className="fixed bottom-4 sm:bottom-6 left-1/2 transform -translate-x-1/2 bg-white dark:bg-gray-800 px-3 sm:px-4 py-2 sm:py-3 rounded-full shadow-2xl flex items-center gap-2 sm:gap-3 z-50 border-2 border-gray-200 dark:border-gray-700"
           >
             <button
               onClick={() => handleAction('like')}
@@ -607,20 +588,20 @@ function SinglePostPage() {
               aria-label={!currentUser ? 'Sign in to like this post' : (isLiked ? 'Unlike this post' : 'Like this post')}
               aria-pressed={isLiked}
               title={!currentUser ? 'Sign in to like' : ''}
-              className={`p-3 rounded-full transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 relative ${
+              className={`p-2 sm:p-3 rounded-full transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 relative ${
                 !currentUser 
                   ? 'bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500 cursor-not-allowed opacity-60' 
                   : isLiked 
                     ? 'bg-blue-500 text-white hover:bg-blue-600' 
                     : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
               } ${reactionLoading.like ? 'opacity-50 cursor-not-allowed' : ''}`}
-              style={{ minWidth: '44px', minHeight: '44px' }}
+              style={{ minWidth: '40px', minHeight: '40px' }}
             >
               {reactionLoading.like ? (
-                <span className="inline-block w-5 h-5 border-2 border-current border-t-transparent rounded-full animate-spin" aria-hidden="true" />
+                <span className="inline-block w-4 h-4 sm:w-5 sm:h-5 border-2 border-current border-t-transparent rounded-full animate-spin" aria-hidden="true" />
               ) : (
                 <>
-                  <ThumbsUp className="w-5 h-5" aria-hidden="true" />
+                  <ThumbsUp className="w-4 h-4 sm:w-5 sm:h-5" aria-hidden="true" />
                   {!currentUser && (
                     <span className="absolute -top-1 -right-1 flex h-4 w-4">
                       <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
@@ -638,20 +619,20 @@ function SinglePostPage() {
               aria-label={!currentUser ? 'Sign in to love this post' : (isLoved ? 'Remove love from this post' : 'Love this post')}
               aria-pressed={isLoved}
               title={!currentUser ? 'Sign in to love' : ''}
-              className={`p-3 rounded-full transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 relative ${
+              className={`p-2 sm:p-3 rounded-full transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 relative ${
                 !currentUser 
                   ? 'bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500 cursor-not-allowed opacity-60' 
                   : isLoved 
                     ? 'bg-red-500 text-white hover:bg-red-600' 
                     : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
               } ${reactionLoading.love ? 'opacity-50 cursor-not-allowed' : ''}`}
-              style={{ minWidth: '44px', minHeight: '44px' }}
+              style={{ minWidth: '40px', minHeight: '40px' }}
             >
               {reactionLoading.love ? (
-                <span className="inline-block w-5 h-5 border-2 border-current border-t-transparent rounded-full animate-spin" aria-hidden="true" />
+                <span className="inline-block w-4 h-4 sm:w-5 sm:h-5 border-2 border-current border-t-transparent rounded-full animate-spin" aria-hidden="true" />
               ) : (
                 <>
-                  <Heart className="w-5 h-5" aria-hidden="true" />
+                  <Heart className="w-4 h-4 sm:w-5 sm:h-5" aria-hidden="true" />
                   {!currentUser && (
                     <span className="absolute -top-1 -right-1 flex h-4 w-4">
                       <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
@@ -669,20 +650,20 @@ function SinglePostPage() {
               aria-label={!currentUser ? 'Sign in to save this post' : (isSaved ? 'Remove bookmark' : 'Bookmark this post')}
               aria-pressed={isSaved}
               title={!currentUser ? 'Sign in to save' : ''}
-              className={`p-3 rounded-full transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 relative ${
+              className={`p-2 sm:p-3 rounded-full transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 relative ${
                 !currentUser 
                   ? 'bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500 cursor-not-allowed opacity-60' 
                   : isSaved 
                     ? 'bg-green-500 text-white hover:bg-green-600' 
                     : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
               } ${reactionLoading.save ? 'opacity-50 cursor-not-allowed' : ''}`}
-              style={{ minWidth: '44px', minHeight: '44px' }}
+              style={{ minWidth: '40px', minHeight: '40px' }}
             >
               {reactionLoading.save ? (
-                <span className="inline-block w-5 h-5 border-2 border-current border-t-transparent rounded-full animate-spin" aria-hidden="true" />
+                <span className="inline-block w-4 h-4 sm:w-5 sm:h-5 border-2 border-current border-t-transparent rounded-full animate-spin" aria-hidden="true" />
               ) : (
                 <>
-                  <Bookmark className="w-5 h-5" fill={isSaved ? 'currentColor' : 'none'} aria-hidden="true" />
+                  <Bookmark className="w-4 h-4 sm:w-5 sm:h-5" fill={isSaved ? 'currentColor' : 'none'} aria-hidden="true" />
                   {!currentUser && (
                     <span className="absolute -top-1 -right-1 flex h-4 w-4">
                       <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
@@ -697,10 +678,10 @@ function SinglePostPage() {
             <button
               onClick={() => setShowShareModal(true)}
               aria-label="Share this post"
-              className="p-3 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 cursor-pointer"
-              style={{ minWidth: '44px', minHeight: '44px' }}
+              className="p-2 sm:p-3 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 cursor-pointer"
+              style={{ minWidth: '40px', minHeight: '40px' }}
             >
-              <Share2 className="w-5 h-5" aria-hidden="true" />
+              <Share2 className="w-4 h-4 sm:w-5 sm:h-5" aria-hidden="true" />
             </button>
           </nav>
         )}

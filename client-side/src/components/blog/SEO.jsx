@@ -16,10 +16,10 @@ export function SEO({
   authorImage,
   authorUrl
 }) {
-  const siteUrl = 'https://sudipsharma.com.np';
+  const siteUrl = 'https://sudipsharma.info.np';
   const siteName = 'TechKnows';
   const fullUrl = url ? (url.startsWith('http') ? url : `${siteUrl}${url}`) : siteUrl;
-  const fullImage = image ? (image.startsWith('http') ? image : `${siteUrl}${image}`) : `${siteUrl}/images/logo.png`;
+  const fullImage = image ? (image.startsWith('http') ? image : `${siteUrl}${image}`) : `${siteUrl}/images/og-default.png`;
   
   // Create comprehensive structured data
   const structuredData = type === 'article' ? {
@@ -93,17 +93,20 @@ export function SEO({
       <meta name="revisit-after" content="7 days" />
       <meta name="distribution" content="global" />
       <meta name="rating" content="general" />
+      <meta name="robots" content="index, follow" />
+      <meta name="googlebot" content="index, follow" />
       
       {/* Canonical URL */}
       <link rel="canonical" href={fullUrl} />
       
-      {/* Open Graph / Facebook */}
+      {/* Open Graph / Facebook - These will override index.html defaults */}
       <meta property="og:type" content={type} />
       <meta property="og:url" content={fullUrl} />
       <meta property="og:title" content={title} />
       <meta property="og:description" content={description} />
       <meta property="og:image" content={fullImage} />
       <meta property="og:image:secure_url" content={fullImage} />
+      <meta property="og:image:type" content="image/jpeg" />
       <meta property="og:image:width" content="1200" />
       <meta property="og:image:height" content="630" />
       <meta property="og:image:alt" content={title} />
@@ -114,10 +117,10 @@ export function SEO({
       {section && <meta property="article:section" content={section} />}
       {author && <meta property="article:author" content={author} />}
       {tags && Array.isArray(tags) && tags.map((tag, index) => (
-        <meta key={index} property="article:tag" content={tag} />
+        <meta key={`og-tag-${index}`} property="article:tag" content={tag} />
       ))}
       
-      {/* Twitter Card */}
+      {/* Twitter Card - These will override index.html defaults */}
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:url" content={fullUrl} />
       <meta name="twitter:title" content={title} />
@@ -128,8 +131,16 @@ export function SEO({
       <meta name="twitter:site" content="@techknows" />
       <meta name="twitter:label1" content="Written by" />
       <meta name="twitter:data1" content={author} />
-      {publishedTime && <meta name="twitter:label2" content="Published on" />}
-      {publishedTime && <meta name="twitter:data2" content={new Date(publishedTime).toLocaleDateString()} />}
+      {publishedTime && <meta name="twitter:label2" content="Published" />}
+      {publishedTime && <meta name="twitter:data2" content={new Date(publishedTime).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} />}
+      
+      {/* Additional social sharing meta tags */}
+      <meta property="fb:app_id" content="your_facebook_app_id" />
+      <meta name="pinterest:description" content={description} />
+      <meta property="pinterest:media" content={fullImage} />
+      
+      {/* LinkedIn specific */}
+      <meta property="og:see_also" content={fullUrl} />
       
       {/* Structured Data */}
       {structuredData && (

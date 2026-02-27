@@ -111,7 +111,9 @@ export default function Header() {
               <img src="/images/logo.png" alt="TechKnows Logo" className="h-12 w-12 sm:h-14 sm:w-14 my-auto rounded-xl shadow-lg border-2 border-white dark:border-gray-800 group-hover:scale-105 transition-transform flex-shrink-0" />
               {/* Mobile logo text */}
               <span className="inline md:hidden text-xs font-semibold bg-gradient-to-r from-purple-600 to-blue-500 text-transparent bg-clip-text tracking-tight flex items-center h-12 max-w-[70px] whitespace-nowrap overflow-hidden text-ellipsis ml-1">TechKnows</span>
-              {/* Desktop logo text - improved for single line and better fit */}
+              {/* Des
+              
+              ktop logo text - improved for single line and better fit */}
               <span className="hidden md:inline text-xl sm:text-xl font-extrabold bg-gradient-to-r from-purple-600 to-blue-500 text-transparent bg-clip-text tracking-tight drop-shadow-lg flex items-center h-18 max-w-[220px] sm:max-w-[260px] md:max-w-[320px] whitespace-nowrap overflow-hidden leading-tight">TechKnows</span>
             </Link>
 
@@ -273,17 +275,17 @@ Categories              </Link>
 
           {/* Mobile Search Bar */}
           {isSearchVisible && (
-            <div className="md:hidden px-4 py-2 border-t border-gray-200 dark:border-gray-700">
+            <div className="md:hidden px-4 py-3 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
               <form onSubmit={handleSubmit}>
-                <div className="relative">
+                <div className="relative w-full">
                   <input
                     type="text"
                     placeholder="Search..."
-                    className="w-full h-9 px-4 pr-12 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 focus:ring-2 focus:ring-purple-500"
+                    className="w-full h-10 px-4 pr-10 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 focus:ring-2 focus:ring-purple-500 text-sm"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                   />
-                  <button type="submit" className="absolute right-4 top-2">
+                  <button type="submit" className="absolute right-3 top-2.5">
                     <Search className="h-5 w-5 text-gray-400" />
                   </button>
                 </div>
@@ -293,8 +295,8 @@ Categories              </Link>
 
           {/* Mobile Menu */}
           {isMobileMenuOpen && (
-            <div className="md:hidden px-4 py-2 border-t border-gray-200 dark:border-gray-700">
-              <div className="flex flex-col space-y-3">
+            <div className="md:hidden px-4 py-4 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
+              <div className="flex flex-col space-y-4">
                 <Link
                   to="/"
                   className={`${path === '/' ? 'text-purple-600' : 'text-gray-600 dark:text-gray-300'}`}
