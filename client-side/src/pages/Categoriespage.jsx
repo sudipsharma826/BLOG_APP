@@ -59,7 +59,7 @@ const CategoryList = () => {
           "@type": "CollectionPage",
           "name": "Technology Categories",
           "description": "Browse technology and programming categories",
-          "url": "https://sudipsharma.info.np/categories",
+          "url": "https://sudipsharma.com.np/categories",
           "mainEntity": {
             "@type": "ItemList",
             "numberOfItems": categories.length,
@@ -69,7 +69,7 @@ const CategoryList = () => {
               "item": {
                 "@type": "Thing",
                 "name": cat.name,
-                "url": `https://sudipsharma.info.np/category/${cat.name}`
+                "url": `https://sudipsharma.com.np/category/${cat.name}`
               }
             }))
           }

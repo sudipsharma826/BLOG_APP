@@ -16,7 +16,7 @@ export function SEO({
   authorImage,
   authorUrl
 }) {
-  const siteUrl = 'https://sudipsharma.info.np';
+  const siteUrl = 'https://sudipsharma.com.np';
   const siteName = 'TechKnows';
   const fullUrl = url ? (url.startsWith('http') ? url : `${siteUrl}${url}`) : siteUrl;
   const fullImage = image ? (image.startsWith('http') ? image : `${siteUrl}${image}`) : `${siteUrl}/images/og-default.png`;

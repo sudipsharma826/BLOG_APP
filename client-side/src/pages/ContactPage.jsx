@@ -63,7 +63,7 @@ const ContactPage = () => {
   const contactInfo = [
     { icon: Mail, title: 'Email', content: 'sudeepsharma826@gmail.com', link: 'mailto:sudeepsharma826@gmail.com' },
     { icon: MapPin, title: 'Location', content: 'Pokhara, Nepal', link: null },
-    { icon: Globe, title: 'Website', content: 'sudipsharma.info.np', link: 'https://sudipsharma.info.np' },
+    { icon: Globe, title: 'Website', content: 'sudipsharma.com.np', link: 'https://sudipsharma.com.np' },
   ];
 
   const socialLinks = [
