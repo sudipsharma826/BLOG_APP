@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { Search } from 'lucide-react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
+import { Search, Loader2 } from 'lucide-react';
 import PostCard from '../components/homepage/PostCard';
 import SkeletonPostCard from '../components/homepage/SkeletonPostCard';
 import SearchBar from '../components/homepage/SearchBar';
@@ -11,30 +11,82 @@ const PostsPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+  const [startIndex, setStartIndex] = useState(0);
+  const observerTarget = useRef(null);
 
-  const fetchPosts = async () => {
+  const fetchPosts = async (reset = false) => {
     try {
-      setLoading(true);
+      if (reset) {
+        setLoading(true);
+        setStartIndex(0);
+      }
+      
       const response = await axios.get(
         `${import.meta.env.VITE_BACKEND_APP_BASE_URL}/post/getPosts`,
         {
           params: {
             searchTerm: searchQuery,
             setDirection: -1,
+            excludeContent: true, // Exclude full content for performance
+            startIndex: reset ? 0 : startIndex,
+            limit: 12,
           },
         }
       );
-      setPosts(response.data.posts);
+      
+      const newPosts = response.data.posts || [];
+      
+      if (reset) {
+        setPosts(newPosts);
+      } else {
+        setPosts(prev => [...prev, ...newPosts]);
+      }
+      
+      setHasMore(newPosts.length === 12);
+      setStartIndex(prev => reset ? 12 : prev + 12);
     } catch (error) {
       console.error('Error fetching posts:', error);
     } finally {
       setLoading(false);
+      setLoadingMore(false);
     }
   };
 
+  const loadMore = useCallback(() => {
+    if (!loadingMore && hasMore) {
+      setLoadingMore(true);
+      fetchPosts(false);
+    }
+  }, [loadingMore, hasMore, startIndex, searchQuery]);
+
+  // Intersection Observer for infinite scroll
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      entries => {
+        if (entries[0].isIntersecting && hasMore && !loadingMore && !loading) {
+          loadMore();
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    const currentTarget = observerTarget.current;
+    if (currentTarget) {
+      observer.observe(currentTarget);
+    }
+
+    return () => {
+      if (currentTarget) {
+        observer.unobserve(currentTarget);
+      }
+    };
+  }, [loadMore, hasMore, loadingMore, loading]);
+
   useEffect(() => {
     const debounceTimer = setTimeout(() => {
-      fetchPosts();
+      fetchPosts(true); // Reset posts when search changes
     }, 300);
 
     return () => clearTimeout(debounceTimer);
@@ -98,16 +150,33 @@ const PostsPage = () => {
               <span className="text-2xl text-gray-500 dark:text-gray-400 font-semibold">No posts found.</span>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10">
-              {posts.map((post) => (
-                <div
-                  key={post._id}
-                  className="transition-all duration-200 bg-white dark:bg-gray-900 rounded-2xl shadow-md hover:shadow-2xl border border-gray-100 dark:border-gray-800 hover:-translate-y-1 cursor-pointer group"
-                >
-                  <PostCard post={post} />
-                </div>
-              ))}
-            </div>
+            <>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10">
+                {posts.map((post) => (
+                  <div
+                    key={post._id}
+                    className="transition-all duration-200 bg-white dark:bg-gray-900 rounded-2xl shadow-md hover:shadow-2xl border border-gray-100 dark:border-gray-800 hover:-translate-y-1 cursor-pointer group"
+                  >
+                    <PostCard post={post} />
+                  </div>
+                ))}
+              </div>
+              
+              {/* Infinite Scroll Trigger */}
+              <div ref={observerTarget} className="flex justify-center py-8">
+                {loadingMore && (
+                  <div className="flex items-center gap-2 text-purple-600 dark:text-purple-400">
+                    <Loader2 className="w-6 h-6 animate-spin" />
+                    <span className="font-medium">Loading more posts...</span>
+                  </div>
+                )}
+                {!hasMore && posts.length > 0 && (
+                  <p className="text-gray-500 dark:text-gray-400 font-medium">
+                    No more posts to load
+                  </p>
+                )}
+              </div>
+            </>
           )}
         </div>
       </div>

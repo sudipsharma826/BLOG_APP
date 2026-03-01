@@ -57,7 +57,10 @@ const SavedPost = () => {
           axios.get(
             `${import.meta.env.VITE_BACKEND_APP_BASE_URL}/post/getPosts`,
             {
-              params: { postId: postId },
+              params: { 
+                postId: postId,
+                excludeContent: true // Exclude full content for performance
+              },
               withCredentials: true,
               headers: {
                 Authorization: `Bearer ${currentUser.currentToken}`,

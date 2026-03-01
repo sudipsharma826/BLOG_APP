@@ -18,7 +18,10 @@ const CategoryList = () => {
       try {
         const [postsResponse, categoriesResponse] = await Promise.all([
           axios.get(`${import.meta.env.VITE_BACKEND_APP_BASE_URL}/post/getPosts`, {
-            params: { setDirection: -1 },
+            params: { 
+              setDirection: -1,
+              excludeContent: true // Exclude full content for performance
+            },
           }),
           axios.get(`${import.meta.env.VITE_BACKEND_APP_BASE_URL}/post/getCategories`),
         ]);

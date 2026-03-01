@@ -59,6 +59,7 @@ const Home = () => {
           params: {
             limit: 15,
             setDirection: -1,
+            excludeContent: true, // Exclude full content for performance
           },
           withCredentials: true,
         });

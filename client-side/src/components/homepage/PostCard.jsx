@@ -64,10 +64,10 @@ const PostCard = ({ post }) => {
 
         {/* Post content */}
         <p className="mt-2 text-gray-700 dark:text-gray-200 line-clamp-2">
-          {/* Remove HTML tags from post.content */}
-          {typeof post.content === 'string'
-            ? post.content.replace(/<[^>]*>/g, '')
-            : 'No content available'}
+          {/* Use contentPreview if available (from API with excludeContent=true), otherwise strip HTML from content */}
+          {post.contentPreview || (typeof post.content === 'string'
+            ? post.content.replace(/<[^>]*>/g, '').substring(0, 150) + '...'
+            : 'No content available')}
         </p>
 
         {/* Post categories */}

@@ -26,7 +26,10 @@ const SingleCategoryPage = () => {
         const postsResponse = await axios.get(
           `${import.meta.env.VITE_BACKEND_APP_BASE_URL}/post/getPosts`,
           {
-            params: { category: categorySlug },
+            params: { 
+              category: categorySlug,
+              excludeContent: true // Exclude full content for performance
+            },
           }
         );
         setPosts(postsResponse.data.posts);

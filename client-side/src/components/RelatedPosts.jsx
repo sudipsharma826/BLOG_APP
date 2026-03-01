@@ -16,7 +16,10 @@ const RelatedPosts = ({ categories, currentPostId }) => {
         const response = await axios.get(
           `${import.meta.env.VITE_BACKEND_APP_BASE_URL}/post/getPosts`,
           {
-            params: { categories: currentCategory || categories[0] },
+            params: { 
+              categories: currentCategory || categories[0],
+              excludeContent: true // Exclude full content for performance
+            },
             withCredentials: true,
           }
         );

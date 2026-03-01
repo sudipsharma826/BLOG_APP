@@ -48,7 +48,7 @@ export default function Search() {
       setLoading(true);
       try {
         const res = await axios.get(
-          `${import.meta.env.VITE_BACKEND_APP_BASE_URL}/post/getposts?${urlParams.toString()}`
+          `${import.meta.env.VITE_BACKEND_APP_BASE_URL}/post/getposts?${urlParams.toString()}&excludeContent=true`
         );
         setPosts(res.data.posts || []);
         setShowMore(res.data.posts.length === 9);
@@ -81,7 +81,7 @@ export default function Search() {
 
     try {
       const res = await axios.get(
-        `${import.meta.env.VITE_BACKEND_APP_BASE_URL}/post/getposts?${urlParams.toString()}`
+        `${import.meta.env.VITE_BACKEND_APP_BASE_URL}/post/getposts?${urlParams.toString()}&excludeContent=true`
       );
       setPosts((prevPosts) => [...prevPosts, ...res.data.posts]);
       setShowMore(res.data.posts.length === 9);

@@ -383,6 +383,7 @@ export const getPosts = async (req, res, next) => {
       const startIndex = parseInt(req.query.startIndex) || 0;
       const limit = parseInt(req.query.limit) || 9;
       const sortDirection = req.query.sort === 'asc' ? 1 : -1;
+      const excludeContent = req.query.excludeContent === 'true'; // New parameter to exclude full content
   
       // Build the query object based on provided filters
       const query = {
@@ -417,11 +418,22 @@ export const getPosts = async (req, res, next) => {
         return acc;
       }, {});
   
-      // Enrich posts with author details
-      const enrichedPosts = posts.map((post) => ({
-        ...post._doc, // Include all existing post fields
-        author: authorMap[post.authorEmail] || {}, // Add author details
-      }));
+      // Enrich posts with author details and optionally limit content
+      const enrichedPosts = posts.map((post) => {
+        const postData = { ...post._doc };
+        
+        // If excludeContent is true, only return a preview of content (first 250 chars)
+        if (excludeContent && postData.content) {
+          const plainText = postData.content.replace(/<[^>]*>/g, ''); // Strip HTML tags
+          postData.contentPreview = plainText.substring(0, 250) + (plainText.length > 250 ? '...' : '');
+          delete postData.content; // Remove full content to save bandwidth
+        }
+        
+        return {
+          ...postData,
+          author: authorMap[post.authorEmail] || {}, // Add author details
+        };
+      });
   
       // Calculate additional metadata
       const totalPosts = await Post.countDocuments(query);

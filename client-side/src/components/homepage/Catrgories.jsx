@@ -14,7 +14,10 @@ const CategoryList = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get(`${import.meta.env.VITE_BACKEND_APP_BASE_URL}/post/getPosts`, {
-          params: { setDirection: -1 },
+          params: { 
+            setDirection: -1,
+            excludeContent: true // Exclude full content for performance
+          },
         });
 
   const data = Array.isArray(response.data.posts) ? response.data.posts : [];
