@@ -25,7 +25,7 @@ const CategoryList = () => {
         ).map((category) => ({
           name: category,
           count: data.filter((post) => post.category.includes(category)).length,
-        }));
+        })).sort((a, b) => b.count - a.count); // Sort by post count descending
 
         setPosts(data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))); // Sort posts by creation date
         setCategories(uniqueCategories);
@@ -44,35 +44,55 @@ const CategoryList = () => {
 
   return (
     <div className="mb-8">
-      {/* Category Buttons */}
-      <h2 className="ml-5 text-4xl font-bold mb-4 flex items-center">
-        <Tag className="mr-3 text-red-800 dark:text-yellow-200" />
-        Categories
-      </h2>
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 mt-10 px-2">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center gap-3">
+          <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
+            <Tag className="h-6 w-6 text-purple-600 dark:text-purple-400" />
+          </div>
+          <div>
+            <h2 className="text-3xl font-bold text-gray-900 dark:text-white">Categories</h2>
+            <p className="text-sm text-gray-600 dark:text-gray-400">Filter posts by topic</p>
+          </div>
+        </div>
+        <Link
+          to="/categories"
+          className="px-4 py-2 bg-purple-600 text-white rounded-lg font-medium hover:bg-purple-700 transition-colors text-sm"
+        >
+          View All
+        </Link>
+      </div>
+
+      {/* Category Pills */}
+      <div className="flex flex-wrap gap-2 mb-8">
         <button
           onClick={() => setSelectedCategory(null)}
-          className={`px-4 py-2 rounded-full shadow-md font-semibold transition-all duration-200 border ${selectedCategory === null ? 'ring-2 ring-blue-400' : ''} 
-            bg-gradient-to-r from-blue-100 to-purple-100 text-blue-700 hover:from-blue-200 hover:to-purple-200
-            dark:from-[#232736] dark:to-[#2d3250] dark:text-blue-200 dark:border-blue-700 dark:hover:from-[#232736]/80 dark:hover:to-[#2d3250]/80`}
+          className={`px-4 py-2 rounded-full font-medium transition-all duration-200 ${
+            selectedCategory === null
+              ? 'bg-purple-600 text-white shadow-lg shadow-purple-500/30'
+              : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
+          }`}
         >
           All Posts
         </button>
-        {categories.map((category) => (
+        {categories.slice(0, 12).map((category) => (
           <button
             key={category.name}
             onClick={() => setSelectedCategory(category.name)}
-            className={`px-4 py-2 rounded-full shadow-md font-semibold transition-all duration-200 border ${selectedCategory === category.name ? 'ring-2 ring-purple-400' : ''}
-              bg-gradient-to-r from-purple-100 to-blue-100 text-purple-700 hover:from-purple-200 hover:to-blue-200
-              dark:from-[#232736] dark:to-[#2d3250] dark:text-purple-200 dark:border-purple-700 dark:hover:from-[#232736]/80 dark:hover:to-[#2d3250]/80`}
+            className={`px-4 py-2 rounded-full font-medium transition-all duration-200 ${
+              selectedCategory === category.name
+                ? 'bg-purple-600 text-white shadow-lg shadow-purple-500/30'
+                : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
+            }`}
           >
-            {category.name} <span className="ml-1 text-xs text-gray-400 dark:text-gray-400">({category.count})</span>
+            {category.name}
+            <span className="ml-1.5 text-xs opacity-75">({category.count})</span>
           </button>
         ))}
       </div>
 
-      {/* Render Posts with PostCard */}
-      <div className="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {/* Posts Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredPosts.length > 0 ? (
           filteredPosts.slice(0, 6).map((post) => (
             <PostCard key={post._id} post={post} />

@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, Tag } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export default function Categories() {
   const [categories, setCategories] = useState([]);
-  const [showAll, setShowAll] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -15,7 +14,11 @@ export default function Categories() {
           `${import.meta.env.VITE_BACKEND_APP_BASE_URL}/post/getCategories`,
           { withCredentials: true }
         );
-        setCategories(response.data.categories);
+        // Sort categories by post count in descending order and limit to top 20
+        const sortedCategories = response.data.categories
+          .sort((a, b) => b.postCount - a.postCount)
+          .slice(0, 20);
+        setCategories(sortedCategories);
         setLoading(false);
       } catch (error) {
         console.error('Error fetching categories:', error);
@@ -26,47 +29,50 @@ export default function Categories() {
     fetchCategories();
   }, []);
 
-  const displayedCategories = showAll ? categories : categories.slice(0, 19);
-
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="space-y-2">
+        {[...Array(6)].map((_, i) => (
+          <div key={i} className="h-10 bg-gray-200 dark:bg-gray-700 rounded-full animate-pulse" />
+        ))}
+      </div>
+    );
+  }
+
+  if (categories.length === 0) {
+    return (
+      <div className="text-center py-6">
+        <Tag className="w-10 h-10 text-gray-400 mx-auto mb-2" />
+        <p className="text-sm text-gray-500 dark:text-gray-400">No categories available</p>
+      </div>
+    );
   }
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
-      
-      <div className="grid grid-cols-2 gap-3">
-        {displayedCategories.map((category) => (
+    <div>
+      <div className="flex flex-wrap gap-2">
+        {categories.map((category) => (
           <Link 
             key={category._id} 
             to={`/category/${category.name}`}
-            className="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors group"
+            className="group relative inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20 border border-purple-200/50 dark:border-purple-700/50 hover:from-purple-100 hover:to-blue-100 dark:hover:from-purple-900/30 dark:hover:to-blue-900/30 transition-all duration-200 hover:shadow-md hover:scale-105"
           >
-            <div className="relative">
-              <img 
-                src={category.catrgoryImage} 
-                alt={category.name}
-                className="w-8 h-8 rounded-full object-cover"
-              />
-              <span className="absolute -top-2 -right-2 bg-blue-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center border-2 border-white dark:border-gray-800">
-                {category.postCount}
-              </span>
-            </div>
-            <span className="text-sm font-medium group-hover:text-blue-600 dark:group-hover:text-yellow-400 transition-colors truncate">
+            <span className="text-sm font-medium text-purple-700 dark:text-purple-300 group-hover:text-purple-900 dark:group-hover:text-purple-200 transition-colors">
               {category.name}
+            </span>
+            <span className="inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 text-xs font-bold bg-purple-600 dark:bg-purple-500 text-white rounded-full">
+              {category.postCount}
             </span>
           </Link>
         ))}
       </div>
-      {categories.length > 19 && (
-        <Link
-          to="/categories"
-          className="mt-4 w-full flex items-center justify-center gap-2 text-sm text-blue-600 dark:text-yellow-400 hover:text-blue-700 dark:hover:text-yellow-300 py-2"
-        >
-          Show More
-          <ChevronDown size={16} />
-        </Link>
-      )}
+      <Link
+        to="/categories"
+        className="mt-4 w-full flex items-center justify-center gap-2 text-sm font-medium text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 py-2.5 px-4 rounded-full border-2 border-purple-200 dark:border-purple-700 hover:bg-purple-50 dark:hover:bg-purple-900/20 transition-all duration-200 hover:scale-105"
+      >
+        Browse All Categories
+        <ChevronDown size={16} className="rotate-90" />
+      </Link>
     </div>
   );
 }

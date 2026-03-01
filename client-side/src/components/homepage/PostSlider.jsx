@@ -78,14 +78,24 @@ const PostSlider = ({ posts }) => {
           </div>
         ))}
       </div>
-      <div className="flex justify-center mt-4 gap-2">
+      {/* Modern Progress Bar Indicator */}
+      <div className="flex justify-center mt-6 gap-1">
         {posts.map((_, idx) => (
           <button
             key={idx}
             onClick={() => setCurrentIndex(idx)}
-            className={`w-3 h-3 rounded-full transition-all duration-200 ${currentIndex === idx ? 'bg-blue-600 dark:bg-blue-400 scale-125' : 'bg-gray-300 dark:bg-gray-700'}`}
+            className="group relative"
             aria-label={`Go to slide ${idx + 1}`}
-          />
+          >
+            <div className={`h-1 transition-all duration-300 rounded-full ${
+              currentIndex === idx 
+                ? 'w-12 bg-gradient-to-r from-blue-500 to-purple-600' 
+                : 'w-8 bg-gray-300 dark:bg-gray-600 hover:bg-gray-400 dark:hover:bg-gray-500'
+            }`} />
+            {currentIndex === idx && (
+              <div className="absolute -inset-2 bg-blue-500/20 dark:bg-blue-400/20 rounded-full blur-md" />
+            )}
+          </button>
         ))}
       </div>
     </div>

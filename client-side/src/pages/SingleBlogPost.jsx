@@ -131,8 +131,7 @@ function SinglePostPage() {
   const handleAction = async (actionType) => {
     // Check if user is logged in
     if (!currentUser) {
-      alert('Please log in to interact with posts. You will be redirected to the sign-in page.');
-      navigate('/sign-in');
+      navigate('/signin');
       return;
     }
 
@@ -582,13 +581,13 @@ function SinglePostPage() {
           >
             <button
               onClick={() => handleAction('like')}
-              disabled={!currentUser || reactionLoading.like}
+              disabled={reactionLoading.like}
               aria-label={!currentUser ? 'Sign in to like this post' : (isLiked ? 'Unlike this post' : 'Like this post')}
               aria-pressed={isLiked}
               title={!currentUser ? 'Sign in to like' : ''}
               className={`p-2 sm:p-3 rounded-full transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 relative ${
                 !currentUser 
-                  ? 'bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500 cursor-not-allowed opacity-60' 
+                  ? 'bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500 cursor-pointer opacity-60' 
                   : isLiked 
                     ? 'bg-blue-500 text-white hover:bg-blue-600' 
                     : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
@@ -600,12 +599,6 @@ function SinglePostPage() {
               ) : (
                 <>
                   <ThumbsUp className="w-4 h-4 sm:w-5 sm:h-5" aria-hidden="true" />
-                  {!currentUser && (
-                    <span className="absolute -top-1 -right-1 flex h-4 w-4">
-                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                      <span className="relative inline-flex rounded-full h-4 w-4 bg-red-500 items-center justify-center text-white text-xs">🔒</span>
-                    </span>
-                  )}
                   <span className="sr-only">{likesCount} likes</span>
                 </>
               )}
@@ -613,13 +606,13 @@ function SinglePostPage() {
             
             <button
               onClick={() => handleAction('love')}
-              disabled={!currentUser || reactionLoading.love}
+              disabled={reactionLoading.love}
               aria-label={!currentUser ? 'Sign in to love this post' : (isLoved ? 'Remove love from this post' : 'Love this post')}
               aria-pressed={isLoved}
               title={!currentUser ? 'Sign in to love' : ''}
               className={`p-2 sm:p-3 rounded-full transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 relative ${
                 !currentUser 
-                  ? 'bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500 cursor-not-allowed opacity-60' 
+                  ? 'bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500 cursor-pointer opacity-60' 
                   : isLoved 
                     ? 'bg-red-500 text-white hover:bg-red-600' 
                     : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
@@ -631,12 +624,6 @@ function SinglePostPage() {
               ) : (
                 <>
                   <Heart className="w-4 h-4 sm:w-5 sm:h-5" aria-hidden="true" />
-                  {!currentUser && (
-                    <span className="absolute -top-1 -right-1 flex h-4 w-4">
-                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                      <span className="relative inline-flex rounded-full h-4 w-4 bg-red-500 items-center justify-center text-white text-xs">🔒</span>
-                    </span>
-                  )}
                   <span className="sr-only">{lovesCount} loves</span>
                 </>
               )}
@@ -644,13 +631,13 @@ function SinglePostPage() {
             
             <button
               onClick={() => handleAction('save')}
-              disabled={!currentUser || reactionLoading.save}
+              disabled={reactionLoading.save}
               aria-label={!currentUser ? 'Sign in to save this post' : (isSaved ? 'Remove bookmark' : 'Bookmark this post')}
               aria-pressed={isSaved}
               title={!currentUser ? 'Sign in to save' : ''}
               className={`p-2 sm:p-3 rounded-full transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 relative ${
                 !currentUser 
-                  ? 'bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500 cursor-not-allowed opacity-60' 
+                  ? 'bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500 cursor-pointer opacity-60' 
                   : isSaved 
                     ? 'bg-green-500 text-white hover:bg-green-600' 
                     : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
@@ -662,12 +649,6 @@ function SinglePostPage() {
               ) : (
                 <>
                   <Bookmark className="w-4 h-4 sm:w-5 sm:h-5" fill={isSaved ? 'currentColor' : 'none'} aria-hidden="true" />
-                  {!currentUser && (
-                    <span className="absolute -top-1 -right-1 flex h-4 w-4">
-                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                      <span className="relative inline-flex rounded-full h-4 w-4 bg-red-500 items-center justify-center text-white text-xs">🔒</span>
-                    </span>
-                  )}
                   <span className="sr-only">{savesCount} saves</span>
                 </>
               )}
