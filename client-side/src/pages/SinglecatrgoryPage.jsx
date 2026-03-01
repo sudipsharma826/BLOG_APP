@@ -63,7 +63,7 @@ const SingleCategoryPage = () => {
   // Show NotFound component for 404 errors
   if (notFound || (!category && !loading && !error)) {
     return (
-      <div className="pt-20">
+      <div className="pt-10">
         <NotFound 
           resourceType="Category"
           resourceName={categorySlug}
@@ -75,7 +75,7 @@ const SingleCategoryPage = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-800 dark:bg-gray-900 flex items-center justify-center pt-20">
+      <div className="min-h-screen bg-gray-800 dark:bg-gray-900 flex items-center justify-center pt-10">
         <div className="max-w-lg text-center">
           <h2 className="text-3xl font-bold text-red-500 mb-4">Error Loading Category</h2>
           <p className="text-xl text-gray-300 dark:text-gray-400 mb-8">{error}</p>
@@ -96,7 +96,7 @@ const SingleCategoryPage = () => {
         type="website"
         section={category?.name}
       />
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white pt-20">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white pt-10">
       {/* Category Hero with background image and improved overlay */}
       <div
         className="text-center text-white bg-cover bg-center relative shadow-lg rounded-b-3xl overflow-hidden"

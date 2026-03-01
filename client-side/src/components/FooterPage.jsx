@@ -1,12 +1,82 @@
 // components/footer/Footer.jsx
-import React from 'react';
-import { Github, Linkedin, Mail, Heart, Code2, Palette, Database, Cloud, Smartphone, Terminal } from 'lucide-react';
+import React, { useState } from 'react';
+import { Github, Linkedin, Mail, Heart, Code2, Palette, Database, Cloud, Smartphone, Terminal, Bell } from 'lucide-react';
 import { Facebook } from 'react-feather';
 import { Link } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import axios from 'axios';
 
 const APP_VERSION = '1.2.1'; 
 
 const Footer = () => {
+  const { currentUser } = useSelector((state) => state.user);
+  const [email, setEmail] = useState('');
+  const [isSubscribed, setIsSubscribed] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState('');
+
+  const handleSubscribe = async (e) => {
+    e.preventDefault();
+    
+    if (currentUser) {
+      // If user is logged in, use their email
+      try {
+        setLoading(true);
+        const response = await axios.post(
+          `${import.meta.env.VITE_BACKEND_APP_BASE_URL}/user/getSubscribed`,
+          { email: currentUser.email, userId: currentUser._id },
+          {
+            headers: { Authorization: `Bearer ${currentUser.token}` },
+            withCredentials: true,
+          }
+        );
+        if (response.status === 200) {
+          setIsSubscribed(true);
+          setMessage('Successfully subscribed!');
+        }
+      } catch (error) {
+        if (error.response?.data?.message?.includes('already subscribed')) {
+          setIsSubscribed(true);
+          setMessage('You are already subscribed!');
+        } else {
+          setMessage('Failed to subscribe. Please try again.');
+        }
+      } finally {
+        setLoading(false);
+      }
+    } else {
+      // If not logged in, use the email from input
+      if (!email || !/\S+@\S+\.\S+/.test(email)) {
+        setMessage('Please enter a valid email address.');
+        return;
+      }
+      
+      try {
+        setLoading(true);
+        const response = await axios.post(
+          `${import.meta.env.VITE_BACKEND_APP_BASE_URL}/user/nonusersubscribe`,
+          { email }
+        );
+        if (response.status === 200) {
+          setIsSubscribed(true);
+          setMessage('Successfully subscribed!');
+          setEmail('');
+        }
+      } catch (error) {
+        if (error.response?.data?.message?.includes('already subscribed')) {
+          setIsSubscribed(true);
+          setMessage('You are already subscribed!');
+        } else {
+          setMessage('Failed to subscribe. Please try again.');
+        }
+      } finally {
+        setLoading(false);
+      }
+    }
+    
+    setTimeout(() => setMessage(''), 5000);
+  };
+
   const techStack = [
     { name: 'Web Dev', icon: Code2, color: 'text-purple-500 dark:text-purple-400' },
     { name: 'UI/UX', icon: Palette, color: 'text-blue-500 dark:text-blue-400' },
@@ -45,7 +115,7 @@ const Footer = () => {
               <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
                 <span>Made with</span>
                 <Heart className="w-4 h-4 text-red-500 fill-red-500 animate-pulse" />
-                <span>by Sudip</span>
+                <span>by Sudip Sharma</span>
               </div>
             </div>
 
@@ -99,9 +169,11 @@ const Footer = () => {
               </ul>
             </div>
 
-            {/* Social Media Section */}
+            {/* Social Media & Newsletter Section */}
             <div>
-              <h4 className="text-lg font-bold mb-6 bg-gradient-to-r from-purple-600 to-blue-500 text-transparent bg-clip-text">Connect</h4>
+              <h4 className="text-lg font-bold mb-6 bg-gradient-to-r from-purple-600 to-blue-500 text-transparent bg-clip-text">Stay Connected</h4>
+              
+              {/* Social Links */}
               <div className="flex flex-wrap gap-3 mb-6">
                 <a 
                   href="https://www.facebook.com/sudipsharma.np/" 
@@ -131,9 +203,42 @@ const Footer = () => {
                   <Linkedin className="h-5 w-5" />
                 </a>
               </div>
-              <p className="text-xs text-gray-600 dark:text-gray-400 leading-relaxed">
-                Follow for updates on tech, tutorials, and industry insights.
-              </p>
+
+              {/* Newsletter Subscription */}
+              <div className="space-y-3">
+                <p className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center gap-2">
+                  <Bell className="w-4 h-4 text-purple-500" />
+                  Subscribe to Newsletter
+                </p>
+                <form onSubmit={handleSubscribe} className="space-y-2">
+                  {!currentUser && (
+                    <input
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="Enter your email"
+                      className="w-full px-3 py-2 text-sm bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
+                      disabled={isSubscribed}
+                    />
+                  )}
+                  <button
+                    type="submit"
+                    disabled={isSubscribed || loading}
+                    className={`w-full px-4 py-2 text-sm font-medium rounded-lg transition-all duration-300 ${
+                      isSubscribed
+                        ? 'bg-green-500 text-white cursor-not-allowed'
+                        : 'bg-gradient-to-r from-purple-600 to-blue-500 text-white hover:from-purple-700 hover:to-blue-600 hover:shadow-lg'
+                    }`}
+                  >
+                    {loading ? 'Subscribing...' : isSubscribed ? '✓ Subscribed' : 'Subscribe'}
+                  </button>
+                  {message && (
+                    <p className={`text-xs ${message.includes('Success') || message.includes('already') ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+                      {message}
+                    </p>
+                  )}
+                </form>
+              </div>
             </div>
           </div>
 
@@ -146,7 +251,7 @@ const Footer = () => {
               <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
                 <span>Crafted by</span>
                 <a 
-                  href="https://sudipsharma.com.np" 
+                  href="https://sudipsharma.info.np" 
                   target="_blank" 
                   rel="noopener noreferrer" 
                   className="font-semibold bg-gradient-to-r from-purple-600 to-blue-500 text-transparent bg-clip-text hover:from-purple-700 hover:to-blue-600 transition-all"

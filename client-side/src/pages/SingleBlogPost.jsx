@@ -318,7 +318,7 @@ function SinglePostPage() {
 
   if (error) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] pt-20 md:pt-0">
+      <div className="flex flex-col items-center justify-center min-h-[60vh] pt-10 md:pt-0">
         <div className="bg-red-100 border border-red-400 text-red-700 px-6 py-4 rounded-lg text-lg font-semibold shadow">
           {error}
         </div>

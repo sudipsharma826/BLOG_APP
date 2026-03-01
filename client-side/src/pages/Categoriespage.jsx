@@ -84,7 +84,7 @@ const CategoryList = () => {
         }}
       />
       
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-20">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-10">
         
         {/* Hero Section */}
         <div className="bg-gradient-to-r from-purple-600 to-purple-700 dark:from-purple-900 dark:to-purple-950 py-20">

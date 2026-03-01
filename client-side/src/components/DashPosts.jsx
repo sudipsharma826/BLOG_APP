@@ -18,6 +18,9 @@ export default function DashPosts() {
         const res = await axios.get(
           `${import.meta.env.VITE_BACKEND_APP_BASE_URL}/post/getposts`,
           {
+            params: {
+              sort: 'desc', // Sort by updatedAt in descending order (most recent first)
+            },
             withCredentials: true,
             headers: {
               Authorization: `Bearer ${currentUser.currentToken}`,
@@ -25,7 +28,11 @@ export default function DashPosts() {
           }
         );
         if (res.status === 200) {
-          setUserPosts(res.data.posts);
+          // Sort posts by updatedAt in descending order to ensure most recent updates appear first
+          const sortedPosts = res.data.posts.sort((a, b) => 
+            new Date(b.updatedAt) - new Date(a.updatedAt)
+          );
+          setUserPosts(sortedPosts);
         }
       } catch (error) {
         console.error('Error fetching posts:', error.message);
