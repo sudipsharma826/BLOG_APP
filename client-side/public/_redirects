@@ -1,1 +1,5 @@
+# Redirect social media crawlers to Netlify Function for proper meta tags
+/post/*  /.netlify/functions/meta-preview  200  User-Agent: facebookexternalhit|facebookcatalog|Facebot|WhatsApp|Twitterbot|LinkedInBot|Slackbot|TelegramBot|Pinterest|Discordbot
+
+# Fallback for all routes (SPA)
 /*    /index.html   200

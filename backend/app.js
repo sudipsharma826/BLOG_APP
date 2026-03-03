@@ -36,6 +36,7 @@ import authRoutes from './routes/authRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import postRoutes from './routes/postRoutes.js';
 import commentRoutes from './routes/commentRoutes.js';
+import metaRoutes from './routes/metaRoutes.js';
 
 
 // Using Routes
@@ -43,6 +44,7 @@ app.use('/auth', authRoutes);
 app.use('/user', userRoutes);
 app.use('/post', postRoutes);
 app.use('/comment', commentRoutes);
+app.use('/meta', metaRoutes);
 
 
 // Global error-handling middleware

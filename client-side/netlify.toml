@@ -5,6 +5,15 @@
 [build.environment]
   NODE_VERSION = "18"
 
+# Redirect social media crawlers to backend for proper meta tags
+[[redirects]]
+  from = "/post/:slug"
+  to = "https://api.sudipsharma.com.np/meta/post/:slug"
+  status = 200
+  force = false
+  conditions = {User-Agent = ["facebookexternalhit", "facebookcatalog", "Facebot", "WhatsApp", "Twitterbot", "LinkedInBot", "Slackbot", "TelegramBot", "Pinterest", "Discordbot", "SkypeUriPreview", "google-structured-data-testing-tool", "Google.*Snippet"]}
+
+# Fallback for all other routes (SPA)
 [[redirects]]
   from = "/*"
   to = "/index.html"
