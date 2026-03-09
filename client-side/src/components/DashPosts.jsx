@@ -20,6 +20,7 @@ export default function DashPosts() {
           {
             params: {
               sort: 'desc', // Sort by updatedAt in descending order (most recent first)
+              limit: 1000, // Fetch all posts (high limit to get everything)
             },
             withCredentials: true,
             headers: {
@@ -33,6 +34,7 @@ export default function DashPosts() {
             new Date(b.updatedAt) - new Date(a.updatedAt)
           );
           setUserPosts(sortedPosts);
+          console.log(`✅ Loaded ${sortedPosts.length} posts in dashboard`);
         }
       } catch (error) {
         console.error('Error fetching posts:', error.message);
@@ -92,7 +94,8 @@ export default function DashPosts() {
             <Table.HeadCell>Post Image</Table.HeadCell>
             <Table.HeadCell>Post Title</Table.HeadCell>
             <Table.HeadCell>Category</Table.HeadCell>
-            <Table.HeadCell>Author Email</Table.HeadCell>
+            <Table.HeadCell>Status</Table.HeadCell>
+            <Table.HeadCell>Views 👁️</Table.HeadCell>
             <Table.HeadCell>👍</Table.HeadCell>
             <Table.HeadCell>❣️</Table.HeadCell>
             <Table.HeadCell>📑</Table.HeadCell>
@@ -127,10 +130,15 @@ export default function DashPosts() {
                 </Table.Cell>
                 <Table.Cell>{post.category.join(', ')}</Table.Cell>
                 <Table.Cell>
-                  {post.authorEmail.length > 3
-                    ? `${post.authorEmail.slice(0, 3)}...`
-                    : post.authorEmail}
+                  <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
+                    post.status === 'draft' 
+                      ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200' 
+                      : 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+                  }`}>
+                    {post.status === 'draft' ? '📝 Draft' : '✅ Published'}
+                  </span>
                 </Table.Cell>
+                <Table.Cell className="text-center font-semibold">{post.postViews || 0}</Table.Cell>
                 <Table.Cell>{post.usersLikeList.length}</Table.Cell>
                 <Table.Cell>{post.usersLoveList.length}</Table.Cell>
                 <Table.Cell>{post.usersSaveList.length}</Table.Cell>

@@ -12,7 +12,7 @@ export const createPost = async (req, res) => {
         return res.status(401).json({ error: 'Admin privileges required to create a post' });
     }
     
-    const { title, subtitle, content ,isFeatured} = req.body;
+    const { title, subtitle, content, isFeatured, status } = req.body;
     let categories = JSON.parse(req.body.category); // Parse categories from request
 
     // Ensure categories are mapped to names or IDs
@@ -58,14 +58,17 @@ export const createPost = async (req, res) => {
             authorEmail: req.user.email,
             image: imageUrl,
             isFeatured: isFeatured,
+            status: status || 'published', // Set status from request, default to published
         });
 
 
         await newPost.save();
 
-        // Get all subscribed users
-        const subscribedUsers = await Subscribe.find();
-        const allSubscribedEmails = subscribedUsers.map((user) => user.email);
+        // Only send email notifications if post is published
+        if (newPost.status === 'published') {
+            // Get all subscribed users
+            const subscribedUsers = await Subscribe.find();
+            const allSubscribedEmails = subscribedUsers.map((user) => user.email);
 
 
         //Get User Login user Deatils
@@ -123,23 +126,31 @@ export const createPost = async (req, res) => {
             `,
             bcc: allSubscribedEmails,
         });
+        }
 
-        // Update or create categories
-        for (let cat of categories) {
-            const existingCategory = await Category.findOne({ name: cat });
-            if (existingCategory) {
-                existingCategory.postCount += 1;
-                await existingCategory.save();
-            } else {
-                const newCategory = new Category({ name: cat, postCount: 1 });
-                await newCategory.save();
+        // Update or create categories only if the post is published
+        if (newPost.status === 'published') {
+            for (let cat of categories) {
+                const existingCategory = await Category.findOne({ name: cat });
+                if (existingCategory) {
+                    existingCategory.postCount += 1;
+                    await existingCategory.save();
+                } else {
+                    const newCategory = new Category({ name: cat, postCount: 1 });
+                    await newCategory.save();
+                }
             }
         }
 
         // Invalidate all post-related caches after creating a new post
         await deleteCachePattern('cache:*');
+        console.log('✅ Cache invalidated after creating new post');
 
-        res.status(201).json({ message: 'Post created successfully', post: newPost });
+        const successMessage = newPost.status === 'draft' 
+            ? 'Post saved as draft successfully' 
+            : 'Post created and published successfully';
+
+        res.status(201).json({ message: successMessage, post: newPost });
     } catch (error) {
         console.error('Error creating post:', error.message);
         res.status(500).json({ error: 'Failed to create post' });
@@ -168,11 +179,29 @@ export const getPostBySlug = async (req, res) => {
     }
 
     try {
-        const post = await Post.findOne({ slug });
+        // Get user info from optionalAuth middleware
+        const isAdmin = req.user?.isAdmin || false;
+        const userId = req.user?.id || null;
+        
+        console.log(`📄 getPostBySlug: slug=${slug}, User=${userId || 'guest'}, Admin=${isAdmin}`);
+
+        // Build query - only admins can view draft posts
+        const query = { slug };
+        if (!isAdmin) {
+            query.status = 'published';
+            console.log('🔒 Status filter: published only');
+        } else {
+            console.log('🔓 Status filter: all statuses (admin)');
+        }
+
+        const post = await Post.findOne(query);
 
         if (!post) {
+            console.log(`❌ Post not found: ${slug}`);
             return res.status(404).json({ error: 'Post not found' });
         }
+        
+        console.log(`✅ Post found: ${post.title} (status: ${post.status})`);
 
         // Increment post views by 1
         post.postViews += 1;
@@ -188,7 +217,7 @@ export const getPostBySlug = async (req, res) => {
 // Update a post by slug
 export const updatePost = async (req, res) => {
     const { slug } = req.params;
-    const { title, subtitle, content ,isFeatured} = req.body;
+    const { title, subtitle, content, isFeatured, status } = req.body;
     let categories = JSON.parse(req.body.category); // Parse categories
     const file = req.file;
 
@@ -224,6 +253,8 @@ export const updatePost = async (req, res) => {
         }
 
         const oldCategories = post.category;
+        const oldStatus = post.status;
+        
         post.title = title;
         post.subtitle = subtitle;
         post.category = categories; // Update categories
@@ -233,51 +264,66 @@ export const updatePost = async (req, res) => {
         post.userId = req.user.id;
         post.authorEmail = req.user.email;
         post.isFeatured = isFeatured;
+        if (status) post.status = status; // Update status if provided
 
         await post.save();
 
-        // Handle old categories
-        await Promise.all(
-            oldCategories.map(async oldCategory => {
-                const existingOldCategory = await Category.findOne({ name: oldCategory });
-                if (existingOldCategory) {
-                    existingOldCategory.postCount -= 1;
+        // Only update category counts if the post is or was published
+        const shouldUpdateCategories = oldStatus === 'published' || post.status === 'published';
 
-                    if (existingOldCategory.postCount <= 0) {
-                        // Remove category if no posts are left
-                        await existingOldCategory.deleteOne();
-                    } else {
-                        // Save updated category
-                        await existingOldCategory.save();
-                    }
-                }
-            })
-        );
+        if (shouldUpdateCategories) {
+            // Handle old categories - only if post was previously published
+            if (oldStatus === 'published') {
+                await Promise.all(
+                    oldCategories.map(async oldCategory => {
+                        const existingOldCategory = await Category.findOne({ name: oldCategory });
+                        if (existingOldCategory) {
+                            existingOldCategory.postCount -= 1;
 
-        // Handle new categories
-        await Promise.all(
-            categories.map(async category => {
-                // Find category case-insensitively
-                const existingCategory = await Category.findOne({ name: { $regex: `^${category}$`, $options: 'i' } });
-                if (existingCategory) {
-                    existingCategory.postCount += 1;
-                    // Optionally update name to match latest case
-                    if (existingCategory.name !== category) {
-                        existingCategory.name = category;
-                    }
-                    await existingCategory.save();
-                } else {
-                    // Create new category
-                    const newCategory = new Category({ name: category, postCount: 1 });
-                    await newCategory.save();
-                }
-            })
-        );
+                            if (existingOldCategory.postCount <= 0) {
+                                // Remove category if no posts are left
+                                await existingOldCategory.deleteOne();
+                            } else {
+                                // Save updated category
+                                await existingOldCategory.save();
+                            }
+                        }
+                    })
+                );
+            }
+
+            // Handle new categories - only if post is now published
+            if (post.status === 'published') {
+                await Promise.all(
+                    categories.map(async category => {
+                        // Find category case-insensitively
+                        const existingCategory = await Category.findOne({ name: { $regex: `^${category}$`, $options: 'i' } });
+                        if (existingCategory) {
+                            existingCategory.postCount += 1;
+                            // Optionally update name to match latest case
+                            if (existingCategory.name !== category) {
+                                existingCategory.name = category;
+                            }
+                            await existingCategory.save();
+                        } else {
+                            // Create new category
+                            const newCategory = new Category({ name: category, postCount: 1 });
+                            await newCategory.save();
+                        }
+                    })
+                );
+            }
+        }
 
         // Invalidate all post-related caches after updating
         await deleteCachePattern('cache:*');
+        console.log('✅ Cache invalidated after updating post');
 
-        res.status(200).json({ message: 'Post updated successfully', post });
+        const successMessage = post.status === 'draft' 
+            ? 'Post updated and saved as draft' 
+            : 'Post updated and published successfully';
+
+        res.status(200).json({ message: successMessage, post });
     } catch (error) {
         console.error('Error updating post:', error.message);
         res.status(500).json({ error: 'Failed to update post' });
@@ -367,6 +413,7 @@ export const deletePost = async (req, res) => {
 
         // Invalidate all post-related caches after deletion
         await deleteCachePattern('cache:*');
+        console.log('✅ Cache invalidated after deleting post');
 
         res.status(200).json({ message: "Post deleted successfully and removed from all related data." });
     } catch (error) {
@@ -385,6 +432,12 @@ export const getPosts = async (req, res, next) => {
       const sortDirection = req.query.sort === 'asc' ? 1 : -1;
       const excludeContent = req.query.excludeContent === 'true'; // New parameter to exclude full content
   
+      // Get user info from optionalAuth middleware
+      const isAdmin = req.user?.isAdmin || false;
+      const currentUserId = req.user?.id || null;
+      
+      console.log(`📊 getPosts: User=${currentUserId || 'guest'}, Admin=${isAdmin}, Query=${JSON.stringify(req.query)}`);
+  
       // Build the query object based on provided filters
       const query = {
         ...(req.query.userId && { userId: req.query.userId }),
@@ -399,12 +452,31 @@ export const getPosts = async (req, res, next) => {
           ],
         }),
       };
+
+      // Filter by status:
+      // - Non-admins ALWAYS see only published posts
+      // - Admins see all posts ONLY when viewing their own posts (userId matches or no userId filter)
+      // - Admins see only published when viewing other users' posts
+      if (!isAdmin) {
+        // Non-admin users can only see published posts
+        query.status = 'published';
+        console.log('🔒 Status filter: published (non-admin)');
+      } else if (req.query.userId && req.query.userId !== currentUserId) {
+        // Admin viewing someone else's posts - only show published
+        query.status = 'published';
+        console.log('🔒 Status filter: published (admin viewing others)');
+      } else {
+        // Admin viewing own posts or dashboard - show all statuses
+        console.log('🔓 Status filter: none (admin viewing own posts)');
+      }
   
       // Fetch filtered and sorted posts
       const posts = await Post.find(query)
         .sort({ updatedAt: sortDirection })
         .skip(startIndex)
         .limit(limit);
+      
+      console.log(`📦 Found ${posts.length} posts matching query`);
   
       // Extract unique author emails from posts
       const authorEmails = [...new Set(posts.map((post) => post.authorEmail))];
@@ -479,6 +551,7 @@ export const deleteCategory = async (req, res) => {
 
         // Invalidate all post-related caches after category deletion
         await deleteCachePattern('cache:*');
+        console.log('✅ Cache invalidated after deleting category');
 
         res.status(200).json({ message: 'Category and associated posts deleted successfully' });
     } catch (error) {
@@ -641,9 +714,13 @@ export const unSavePost = async (req, res) => {
 //Get Featured Posts
 export const getFeaturedPosts = async (req, res) => {
         try {
-            // Fetch only featured posts sorted by creation date (newest first)
-            const featuredPosts = await Post.find({ isFeatured: true })
+            console.log('⭐ getFeaturedPosts: Fetching featured posts');
+            
+            // Fetch only featured and published posts sorted by creation date (newest first)
+            const featuredPosts = await Post.find({ isFeatured: true, status: 'published' })
                 .sort({ createdAt: -1 });
+            
+            console.log(`⭐ Found ${featuredPosts.length} featured posts`);
 
             // Collect all unique author emails from the posts
             const authorEmails = [...new Set(featuredPosts.map((post) => post.authorEmail))];

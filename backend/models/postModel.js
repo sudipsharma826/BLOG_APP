@@ -15,6 +15,7 @@ const PostSchema = new mongoose.Schema({
   usersLoveList: [{ type: String }],
   usersSaveList: [{ type: String }],
   isFeatured: { type: Boolean, default: false },
+  status: { type: String, enum: ['draft', 'published'], default: 'published' }, // Draft or published status
   createdAt: { type: Date, default: Date.now },
 }, { timestamps: true });
 

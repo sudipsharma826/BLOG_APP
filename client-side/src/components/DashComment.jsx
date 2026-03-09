@@ -19,7 +19,7 @@ export default function DashComments() {
           {
             withCredentials: true,
             headers: {
-              Authorization: `Bearer ${currentUser?.token}`,
+              Authorization: `Bearer ${currentUser?.currentToken}`,
             },
           }
         );
@@ -51,7 +51,7 @@ export default function DashComments() {
           params: { startIndex },
           withCredentials: true,
           headers: {
-            Authorization: `Bearer ${currentUser?.token}`,
+            Authorization: `Bearer ${currentUser?.currentToken}`,
           },
         }
       );
@@ -74,7 +74,7 @@ export default function DashComments() {
         {
           withCredentials: true,
           headers: {
-            Authorization: `Bearer ${currentUser?.token}`,
+            Authorization: `Bearer ${currentUser?.currentToken}`,
           },
         }
       );

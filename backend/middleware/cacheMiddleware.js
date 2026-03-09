@@ -20,11 +20,11 @@ export const cacheMiddleware = (expiration = 3600) => {
             const cachedData = await getCache(cacheKey);
 
             if (cachedData) {
-                console.log(`Cache HIT: ${cacheKey}`);
+                console.log(`🎯 Cache HIT: ${cacheKey.substring(0, 100)}...`);
                 return res.status(200).json(cachedData);
             }
 
-            console.log(`Cache MISS: ${cacheKey}`);
+            console.log(`⚠️ Cache MISS: ${cacheKey.substring(0, 100)}...`);
 
             // Store the original res.json function
             const originalJson = res.json.bind(res);
@@ -59,9 +59,10 @@ const generateCacheKey = (req) => {
     const baseUrl = req.originalUrl || req.url;
     const params = JSON.stringify(req.query || {});
     const userId = req.user?.id || 'guest';
+    const isAdmin = req.user?.isAdmin ? 'admin' : 'user';
 
-    // Create a structured cache key
-    return `cache:${baseUrl}:${params}:${userId}`;
+    // Create a structured cache key that includes admin status
+    return `cache:${baseUrl}:${params}:${userId}:${isAdmin}`;
 };
 
 export default cacheMiddleware;

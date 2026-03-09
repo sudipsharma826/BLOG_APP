@@ -130,7 +130,7 @@ export const signin = async (req, res, next) => {
     await trackDevice(req, user._id);
 
     const token = jwt.sign(
-      { id: user._id, email: user.email, isAdmin: user.isAdmin, iNMaintenance: user.iNMaintenance },
+      { id: user._id, email: user.email, isAdmin: user.isAdmin, isMaintenance: user.isMaintenance },
       process.env.JWT_SECRET,
       { expiresIn: process.env.JWT_EXPIRES_IN }
     );
@@ -252,7 +252,7 @@ export const googleouth = async (req, res, next) => {
     await trackDevice(req, user._id);
 
     const token = jwt.sign(
-      { id: user._id, email: user.email, isAdmin: user.isAdmin, iNMaintenance: user.iNMaintenance },
+      { id: user._id, email: user.email, isAdmin: user.isAdmin, isMaintenance: user.isMaintenance },
       process.env.JWT_SECRET,
       { expiresIn: process.env.JWT_EXPIRES_IN }
     );
@@ -295,7 +295,7 @@ export const enableMaintenance = async (req, res, next) => {
 
     await Promise.all(
       nonAdminUsers.map((user) => {
-        user.iNMaintenance = true;
+        user.isMaintenance = true;
         return user.save();
       })
     );
@@ -318,7 +318,7 @@ export const disableMaintenance = async (req, res, next) => {
 
     await Promise.all(
       nonAdminUsers.map((user) => {
-        user.iNMaintenance = false;
+        user.isMaintenance = false;
         return user.save();
       })
     );
@@ -337,7 +337,7 @@ export const maintenanceStatus = async (req, res, next) => {
     const users = await User.find({ isAdmin: false });
 
     // Check if any user has maintenance mode enabled
-    const isMaintenance = users.some((user) => user.iNMaintenance);
+    const isMaintenance = users.some((user) => user.isMaintenance);
 
     // Return the maintenance status
     return res.status(200).json({ isMaintenance });

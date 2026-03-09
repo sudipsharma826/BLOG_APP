@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import cookieParser from 'cookie-parser';
 import './utils/redis.js'; // Initialize Redis connection
+import { isRedisHealthy, clearAllCache } from './utils/redis.js'; // Import health check and cache clear functions
 
 // Load environment variables
 dotenv.config();
@@ -56,8 +57,38 @@ app.use((err, req, res, next) => {
 
   res.status(statusCode).json(response);
 });
+
+// Health check endpoint
 app.get('/', (req, res) => {
   res.send('API is running...');
+});
+
+app.get('/health', (req, res) => {
+  const dbStatus = mongoose.connection.readyState === 1 ? 'connected' : 'disconnected';
+  const redisStatus = isRedisHealthy() ? 'connected' : 'disconnected';
+  
+  res.status(200).json({
+    status: 'ok',
+    timestamp: new Date().toISOString(),
+    services: {
+      database: dbStatus,
+      redis: redisStatus,
+    }
+  });
+});
+
+// Cache management endpoint (for development/debugging)
+app.post('/api/cache/clear', async (req, res) => {
+  try {
+    const result = await clearAllCache();
+    if (result) {
+      res.status(200).json({ message: 'Cache cleared successfully' });
+    } else {
+      res.status(500).json({ error: 'Failed to clear cache - Redis not connected' });
+    }
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to clear cache', details: error.message });
+  }
 });
 
 // Start Server
