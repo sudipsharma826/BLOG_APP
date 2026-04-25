@@ -66,16 +66,19 @@ function SinglePostPage() {
             { withCredentials: true }
           );
           if (isMounted && postRes.data && postRes.data.post) {
-            setPostData(postRes.data.post);
+            const fetchedPost = postRes.data.post;
+            setPostData(fetchedPost);
             // Calculate read time
-            setReadTime(calculateReadTime(postRes.data.post.content));
-            // Fetch author only if not already loaded or changed
-            if (!authorData || authorData.email !== postRes.data.post.authorEmail) {
-              const authorRes = await axios.get(
-                `${import.meta.env.VITE_BACKEND_APP_BASE_URL}/user/getuser/${postRes.data.post.authorEmail}`,
-                { withCredentials: true }
-              );
-              if (isMounted) setAuthorData(authorRes.data);
+            setReadTime(calculateReadTime(fetchedPost.content));
+
+            if (fetchedPost.author) {
+              setAuthorData({
+                username: fetchedPost.author.name,
+                email: fetchedPost.author.email,
+                photoURL: fetchedPost.author.photoUrl,
+              });
+            } else {
+              setAuthorData(null);
             }
           }
         }
@@ -340,9 +343,9 @@ function SinglePostPage() {
         url={`/post/${postData?.slug}`}
         type="article"
         keywords={postData?.tags || postData?.category}
-        author={authorData?.username || 'Sudip Sharma'}
-        authorImage={authorData?.photoURL}
-        authorUrl={authorData?.email ? `/author/${authorData.email}` : undefined}
+        author={authorData?.username || postData?.author?.name || 'Sudip Sharma'}
+        authorImage={authorData?.photoURL || postData?.author?.photoUrl}
+        authorUrl={(authorData?.email || postData?.author?.email) ? `/author/${authorData?.email || postData?.author?.email}` : undefined}
         publishedTime={postData?.createdAt}
         modifiedTime={postData?.updatedAt}
         section={Array.isArray(postData?.category) ? postData.category[0] : postData?.category}
@@ -473,12 +476,12 @@ function SinglePostPage() {
                 updatedAt={new Date(postData?.updatedAt).toLocaleDateString()}
               />
               
-              {authorData && (
+              {(authorData || postData?.author) && (
                 <div className="mt-4">
                   <AuthorInfo
-                    name={authorData?.username}
-                    email={authorData?.email}
-                    image={authorData?.photoURL}
+                    name={authorData?.username || postData?.author?.name}
+                    email={authorData?.email || postData?.author?.email}
+                    image={authorData?.photoURL || postData?.author?.photoUrl}
                   />
                 </div>
               )}

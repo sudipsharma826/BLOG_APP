@@ -207,7 +207,19 @@ export const getPostBySlug = async (req, res) => {
         post.postViews += 1;
         await post.save();
 
-        res.status(200).json({ post });
+        const author = await User.findOne({ email: post.authorEmail })
+            .select('username email photoURL')
+            .lean();
+
+        const postResponse = post.toObject();
+        delete postResponse.userId;
+        postResponse.author = {
+            name: author?.username || 'Unknown Author',
+            email: author?.email || post.authorEmail || null,
+            photoUrl: author?.photoURL || '/images/user.png',
+        };
+
+        res.status(200).json({ post: postResponse });
     } catch (error) {
         console.error('Error fetching post:', error.message);
         res.status(500).json({ error: 'Failed to fetch post' });
