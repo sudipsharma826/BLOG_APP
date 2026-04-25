@@ -15,7 +15,7 @@ const app = express();
 
 // Middleware
   // Allow CORS for the frontend origin (important: browsers enforce this; Postman does not)
-  const clientOrigin = [process.env.CLIENT_URL, "https://sudipsharma.com.np", "http://www.localhost:3000"].filter(Boolean); // Allow multiple origins if needed
+  const clientOrigin = [process.env.CLIENT_URL1, process.env.CLIENT_URL2];
   app.use(cors({ origin: clientOrigin, credentials: true }));
 
   // Middleware
