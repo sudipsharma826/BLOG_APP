@@ -5,13 +5,41 @@ import User from '../models/userModel.js';
 import sendMail from '../utils/resend.js';
 import Subscribe from '../models/subscribeModel.js';
 
+const buildSlug = (value) =>
+    value
+        .toLowerCase()
+        .trim()
+        .replace(/[\s_]+/g, '-')
+        .replace(/[^a-zA-Z0-9-]/g, '')
+        .replace(/-+/g, '-')
+        .replace(/^-+|-+$/g, '');
+
+const makeUniqueSlug = async (baseSlug, currentPostId = null) => {
+    let candidateSlug = baseSlug;
+    let suffix = 1;
+
+    while (true) {
+        const conflict = await Post.findOne({
+            slug: candidateSlug,
+            ...(currentPostId && { _id: { $ne: currentPostId } }),
+        });
+
+        if (!conflict) {
+            return candidateSlug;
+        }
+
+        candidateSlug = `${baseSlug}-${suffix}`;
+        suffix += 1;
+    }
+};
+
 // Create a new post
 export const createPost = async (req, res) => {
     if(!req.user.isAdmin){
         return res.status(401).json({ error: 'Admin privileges required to create a post' });
     }
     
-    const { title, subtitle, content, isFeatured, status } = req.body;
+    const { title, subtitle, content, isFeatured, status, slug: requestedSlug } = req.body;
     let categories = JSON.parse(req.body.category); // Parse categories from request
 
     // Ensure categories are mapped to names or IDs
@@ -26,12 +54,11 @@ export const createPost = async (req, res) => {
         return res.status(400).json({ error: 'All fields are required' });
     }
 
-    // Generate slug from the title
-    const slug = title
-        .toLowerCase()
-        .split(' ')
-        .join('-')
-        .replace(/[^a-zA-Z0-9-]/g, '');
+    if (typeof requestedSlug !== 'string' || !requestedSlug.trim()) {
+        return res.status(400).json({ error: 'Slug is required' });
+    }
+
+    const slug = buildSlug(requestedSlug);
 
     try {
         let imageUrl = null;
@@ -46,13 +73,15 @@ export const createPost = async (req, res) => {
             return res.status(404).json({ error: 'Author not found' });
         }
 
+        const uniqueSlug = await makeUniqueSlug(slug);
+
         // Save the new post
         const newPost = new Post({
             title,
             subtitle,
             category: categories, // Ensure categories are an array of strings
             content,
-            slug,
+            slug: uniqueSlug,
             userId: req.user.id,
             authorEmail: req.user.email,
             image: imageUrl,
@@ -88,17 +117,17 @@ export const createPost = async (req, res) => {
               <h2 style="color: #333;">Hello , ${currentUser.username}!</h2>
               <p style="font-size: 16px; line-height: 1.5;">A new post has been published on our community. Here’s what you need to know:</p>
               <div style="text-align: center; margin-bottom: 20px;">
-                <a href="https://sudipsharma.com.np/blog/${newPost.slug}" style="text-decoration: none;">
+                <a href="https://sudipsharma.com.np/post/${newPost.slug}" style="text-decoration: none;">
                   <img src="${imageUrl}" alt="${newPost.title}" style="width: 100%; max-width: 500px; border-radius: 10px; margin-bottom: 10px;">
                 </a>
               </div>
               <h3 style="color: #007BFF; font-size: 20px; text-align: center;">
-                <a href="https://sudipsharma.com.np/blog/${newPost.slug}" style="text-decoration: none; color: #007BFF;">${newPost.title}</a>
+                <a href="https://sudipsharma.com.np/post/${newPost.slug}" style="text-decoration: none; color: #007BFF;">${newPost.title}</a>
               </h3>
               <p style="font-size: 14px; color: #555; text-align: center;">By <strong>${author.username}</strong> | Published on ${new Date().toLocaleDateString()}</p>
               <p style="font-size: 16px; line-height: 1.5; margin-top: 20px;">${content.split(' ').slice(0, 20).join(' ')}...</p>
               <div style="text-align: center; margin-top: 20px;">
-                <a href="https://sudipsharma.com.np/blog/${newPost.slug}" style="display: inline-block; padding: 10px 20px; background-color: #007BFF; color: #fff; text-decoration: none; border-radius: 5px;">Read More</a>
+                <a href="https://sudipsharma.com.np/post/${newPost.slug}" style="display: inline-block; padding: 10px 20px; background-color: #007BFF; color: #fff; text-decoration: none; border-radius: 5px;">Read More</a>
               </div>
               <p style="font-size: 16px; line-height: 1.5; margin-top: 30px;">For assistance, feel free to reach out to us:</p>
               <ul style="font-size: 16px; line-height: 1.5; padding-left: 20px;">
@@ -198,9 +227,8 @@ export const getPostBySlug = async (req, res) => {
         
         console.log(`✅ Post found: ${post.title} (status: ${post.status})`);
 
-        // Increment post views by 1
-        post.postViews += 1;
-        await post.save();
+        // Increment post views without updating timestamps
+        await Post.findByIdAndUpdate(post._id, { $inc: { postViews: 1 } }, { new: false });
 
         const author = await User.findOne({ email: post.authorEmail })
             .select('username email photoURL')
@@ -224,7 +252,7 @@ export const getPostBySlug = async (req, res) => {
 // Update a post by slug
 export const updatePost = async (req, res) => {
     const { slug } = req.params;
-    const { title, subtitle, content, isFeatured, status } = req.body;
+    const { title, subtitle, content, isFeatured, status, slug: requestedSlug } = req.body;
     let categories = JSON.parse(req.body.category); // Parse categories
     const file = req.file;
 
@@ -247,20 +275,11 @@ export const updatePost = async (req, res) => {
             return res.status(404).json({ error: 'Post not found' });
         }
 
-        // Generate new slug from the updated title
-        const newSlug = title
-            .toLowerCase()
-            .split(' ')
-            .join('-')
-            .replace(/[^a-zA-Z0-9-]/g, '');
-
-        // Check if new slug is different and if it already exists (for a different post)
-        if (newSlug !== slug) {
-            const existingPost = await Post.findOne({ slug: newSlug });
-            if (existingPost) {
-                return res.status(400).json({ error: 'A post with this title already exists' });
-            }
-        }
+        // Use the user-provided slug when present; otherwise derive it from the title.
+        const rawSlug = typeof requestedSlug === 'string' && requestedSlug.trim()
+            ? requestedSlug
+            : title;
+        const finalSlug = await makeUniqueSlug(buildSlug(rawSlug), post._id);
 
         let image = post.image;
         if (file) {
@@ -279,11 +298,10 @@ export const updatePost = async (req, res) => {
         
         post.title = title;
         post.subtitle = subtitle;
-        post.slug = newSlug; // Update slug
+        post.slug = finalSlug; // Update slug (unique)
         post.category = categories; // Update categories
         post.content = content;
         post.image = image;
-        post.updatedAt = new Date();
         post.userId = req.user.id;
         post.authorEmail = req.user.email;
         post.isFeatured = isFeatured;
@@ -342,7 +360,12 @@ export const updatePost = async (req, res) => {
             ? 'Post updated and saved as draft' 
             : 'Post updated and published successfully';
 
-        res.status(200).json({ message: successMessage, post });
+        res.status(200).json({
+            message: successMessage,
+            previousSlug: slug,
+            slug: post.slug,
+            post,
+        });
     } catch (error) {
         console.error('Error updating post:', error.message);
         res.status(500).json({ error: 'Failed to update post' });

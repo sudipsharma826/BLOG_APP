@@ -9,6 +9,15 @@ import axios from 'axios';
 import { useSelector } from 'react-redux';
 import 'tailwindcss/tailwind.css'; // Ensure Tailwind is imported
 
+const buildSlug = (value) =>
+  value
+    .toLowerCase()
+    .trim()
+    .replace(/[\s_]+/g, '-')
+    .replace(/[^a-zA-Z0-9-]/g, '')
+    .replace(/-+/g, '-')
+    .replace(/^-+|-+$/g, '');
+
 export default function UpdatePost() {
   const [showPreview, setShowPreview] = useState(true); // Preview toggle
   const currentUser = useSelector((state) => state.user);
@@ -22,6 +31,7 @@ export default function UpdatePost() {
     content: '',
   });
   const [slug, setSlug] = useState(''); // Display slug - auto-generated from title
+  const [isSlugManual, setIsSlugManual] = useState(false);
   const [isFeatured, setIsFeatured] = useState(false);
   const [status, setStatus] = useState('published'); // Draft or published status
   const [isSubmitting, setIsSubmitting] = useState(false); // Prevent double submission
@@ -64,6 +74,7 @@ export default function UpdatePost() {
           isFeatured: post.isFeatured,
         });
         setSlug(post.slug);
+        setIsSlugManual(true);
         setPreviewImage(post.image);
         setIsFeatured(post.isFeatured);
         setStatus(post.status || 'published'); // Set current status
@@ -97,15 +108,10 @@ export default function UpdatePost() {
 
   // Auto-generate slug from title whenever title changes
   useEffect(() => {
-    if (formData.title) {
-      const generatedSlug = formData.title
-        .toLowerCase()
-        .split(' ')
-        .join('-')
-        .replace(/[^a-zA-Z0-9-]/g, '');
-      setSlug(generatedSlug);
+    if (formData.title && !isSlugManual) {
+      setSlug(buildSlug(formData.title));
     }
-  }, [formData.title]);
+  }, [formData.title, isSlugManual]);
 
   // Handler for ReactQuill
   const handleQuillChange = (value) => {
@@ -159,10 +165,13 @@ export default function UpdatePost() {
     setIsSubmitting(true);
 
     try {
+      const normalizedSlug = buildSlug(slug || formData.title || '');
+
       const data = new FormData();
       data.append('title', formData.title);
       data.append('subtitle', formData.subtitle);
       data.append('content', formData.content);
+      data.append('slug', normalizedSlug);
       data.append('category', JSON.stringify(selectedCategories));
       data.append('isFeatured', isFeatured);
       data.append('status', saveStatus); // Send draft or published status
@@ -186,6 +195,11 @@ export default function UpdatePost() {
       showMessage(successMessage, 'success');
       
       setTimeout(() => {
+        const updatedSlug = res.data?.slug || res.data?.post?.slug || originalSlug;
+        if (saveStatus === 'published') {
+          navigate(`/post/${updatedSlug}`);
+          return;
+        }
         navigate(`/dashboard?tab=posts`);
       }, 1000);
     } catch (error) {
@@ -234,18 +248,21 @@ export default function UpdatePost() {
 
         <div className="space-y-2">
           <label htmlFor="slug" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-            URL Slug <span className="text-gray-500 text-xs">(auto-generated from title)</span>
+            URL Slug <span className="text-gray-500 text-xs">(editable)</span>
           </label>
           <TextInput
             type="text"
             placeholder="post-slug"
             id="slug"
             value={slug || ''}
-            disabled
-            className="bg-gray-100 dark:bg-gray-700 cursor-not-allowed"
+            onChange={(e) => {
+              setSlug(e.target.value);
+              setIsSlugManual(true);
+            }}
+            className="bg-white dark:bg-gray-800"
           />
           <p className="text-xs text-gray-500 dark:text-gray-400">
-            This will be automatically updated when you change the title
+            You can edit this directly. If you change it manually, title changes will no longer overwrite it.
           </p>
         </div>
 

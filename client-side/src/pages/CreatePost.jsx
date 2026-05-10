@@ -8,6 +8,15 @@ import axios from "axios";
 import { useSelector } from "react-redux";
 import { Multiselect } from "multiselect-react-dropdown";
 
+const buildSlug = (value) =>
+  value
+    .toLowerCase()
+    .trim()
+    .replace(/[\s_]+/g, "-")
+    .replace(/[^a-zA-Z0-9-]/g, "")
+    .replace(/-+/g, "-")
+    .replace(/^-+|-+$/g, "");
+
 export default function CreatePost() {
   const [file, setFile] = useState(null);
   const quillRef = useRef(null);
@@ -17,6 +26,7 @@ export default function CreatePost() {
   const [categories, setCategories] = useState([]);
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [manualCategory, setManualCategory] = useState("");
+  const [slug, setSlug] = useState("");
   const [isFeatured, setIsFeatured] = useState(false); // New state for feature post
   const [status, setStatus] = useState("published"); // Draft or published status
   const [isSubmitting, setIsSubmitting] = useState(false); // Prevent double submission
@@ -102,10 +112,19 @@ export default function CreatePost() {
     setIsSubmitting(true);
 
     try {
+      const normalizedSlug = buildSlug(slug || "");
+
+      if (!normalizedSlug) {
+        showMessage("Please enter a custom slug for this post.", "failure");
+        setIsSubmitting(false);
+        return;
+      }
+
       const data = new FormData();
       data.append("title", formData.title);
       data.append("subtitle", formData.subtitle);
       data.append("content", formData.content);
+      data.append("slug", normalizedSlug);
       data.append("category", JSON.stringify(selectedCategories));
       data.append("isFeatured", isFeatured);
       data.append("status", saveStatus); // Send draft or published status
@@ -177,6 +196,24 @@ export default function CreatePost() {
                 aria-required="true"
                 onChange={(e) => handleInput("subtitle", e.target.value)}
               />
+            </div>
+
+            <div className="space-y-2">
+              <label htmlFor="slug" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                URL Slug <span className="text-gray-500 text-xs">(editable)</span>
+              </label>
+              <TextInput
+                type="text"
+                placeholder="post-slug"
+                id="slug"
+                value={slug}
+                required
+                onChange={(e) => setSlug(e.target.value)}
+                className="bg-white dark:bg-gray-800"
+              />
+              <p className="text-xs text-gray-500 dark:text-gray-400">
+                Enter the URL slug you want to use for this post.
+              </p>
             </div>
             <div className="space-y-2">
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">

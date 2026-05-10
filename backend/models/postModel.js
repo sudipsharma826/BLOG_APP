@@ -17,7 +17,7 @@ const PostSchema = new mongoose.Schema({
   isFeatured: { type: Boolean, default: false },
   status: { type: String, enum: ['draft', 'published'], default: 'published' }, // Draft or published status
   createdAt: { type: Date, default: Date.now },
-}, { timestamps: true });
+});
 
 const Post = mongoose.model('Post', PostSchema);
 
