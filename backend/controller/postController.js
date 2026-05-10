@@ -247,6 +247,21 @@ export const updatePost = async (req, res) => {
             return res.status(404).json({ error: 'Post not found' });
         }
 
+        // Generate new slug from the updated title
+        const newSlug = title
+            .toLowerCase()
+            .split(' ')
+            .join('-')
+            .replace(/[^a-zA-Z0-9-]/g, '');
+
+        // Check if new slug is different and if it already exists (for a different post)
+        if (newSlug !== slug) {
+            const existingPost = await Post.findOne({ slug: newSlug });
+            if (existingPost) {
+                return res.status(400).json({ error: 'A post with this title already exists' });
+            }
+        }
+
         let image = post.image;
         if (file) {
             try {
@@ -264,6 +279,7 @@ export const updatePost = async (req, res) => {
         
         post.title = title;
         post.subtitle = subtitle;
+        post.slug = newSlug; // Update slug
         post.category = categories; // Update categories
         post.content = content;
         post.image = image;
@@ -470,8 +486,9 @@ export const getPosts = async (req, res, next) => {
       }
   
       // Fetch filtered and sorted posts
+      // Sort: Featured posts first, then by creation date (newest first)
       const posts = await Post.find(query)
-        .sort({ createdAt: sortDirection })
+        .sort({ isFeatured: -1, createdAt: sortDirection })
         .skip(startIndex)
         .limit(limit);
       

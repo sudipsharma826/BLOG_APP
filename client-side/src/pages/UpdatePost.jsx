@@ -21,6 +21,7 @@ export default function UpdatePost() {
     subtitle: '',
     content: '',
   });
+  const [slug, setSlug] = useState(''); // Display slug - auto-generated from title
   const [isFeatured, setIsFeatured] = useState(false);
   const [status, setStatus] = useState('published'); // Draft or published status
   const [isSubmitting, setIsSubmitting] = useState(false); // Prevent double submission
@@ -29,7 +30,7 @@ export default function UpdatePost() {
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [alertMessage, setAlertMessage] = useState({ message: '', type: '' });
   const navigate = useNavigate();
-  const { slug } = useParams();
+  const { slug: originalSlug } = useParams(); // Original slug from URL params
 
   // Fetch categories and post details
   useEffect(() => {
@@ -48,7 +49,7 @@ export default function UpdatePost() {
     const fetchPost = async () => {
       try {
         const res = await axios.get(
-          `${import.meta.env.VITE_BACKEND_APP_BASE_URL}/post/getPost/${slug}`,
+          `${import.meta.env.VITE_BACKEND_APP_BASE_URL}/post/getPost/${originalSlug}`,
           {
             withCredentials: true,
             headers: { Authorization: `Bearer ${currentUser.currentToken}` },
@@ -62,6 +63,7 @@ export default function UpdatePost() {
           content: post.content,
           isFeatured: post.isFeatured,
         });
+        setSlug(post.slug);
         setPreviewImage(post.image);
         setIsFeatured(post.isFeatured);
         setStatus(post.status || 'published'); // Set current status
@@ -80,7 +82,7 @@ export default function UpdatePost() {
 
     fetchCategories();
     fetchPost();
-  }, [slug, currentUser]);
+  }, [originalSlug, currentUser]);
 
   // Show alert messages
   const showMessage = (message, type) => {
@@ -92,6 +94,18 @@ export default function UpdatePost() {
   const handleInput = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
+
+  // Auto-generate slug from title whenever title changes
+  useEffect(() => {
+    if (formData.title) {
+      const generatedSlug = formData.title
+        .toLowerCase()
+        .split(' ')
+        .join('-')
+        .replace(/[^a-zA-Z0-9-]/g, '');
+      setSlug(generatedSlug);
+    }
+  }, [formData.title]);
 
   // Handler for ReactQuill
   const handleQuillChange = (value) => {
@@ -155,7 +169,7 @@ export default function UpdatePost() {
       if (file) data.append('image', file);
 
       const res = await axios.put(
-        `${import.meta.env.VITE_BACKEND_APP_BASE_URL}/post/updatepost/${slug}`,
+        `${import.meta.env.VITE_BACKEND_APP_BASE_URL}/post/updatepost/${originalSlug}`,
         data,
         {
           headers: {
@@ -216,6 +230,23 @@ export default function UpdatePost() {
             aria-required="true"
             onChange={(e) => handleInput('subtitle', e.target.value)}
           />
+        </div>
+
+        <div className="space-y-2">
+          <label htmlFor="slug" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+            URL Slug <span className="text-gray-500 text-xs">(auto-generated from title)</span>
+          </label>
+          <TextInput
+            type="text"
+            placeholder="post-slug"
+            id="slug"
+            value={slug || ''}
+            disabled
+            className="bg-gray-100 dark:bg-gray-700 cursor-not-allowed"
+          />
+          <p className="text-xs text-gray-500 dark:text-gray-400">
+            This will be automatically updated when you change the title
+          </p>
         </div>
 
         <div className="space-y-2">
