@@ -4,7 +4,6 @@ import { deleteFromCloudinary, uploadToCloudinary } from '../utils/cloudinary.js
 import User from '../models/userModel.js';
 import sendMail from '../utils/resend.js';
 import Subscribe from '../models/subscribeModel.js';
-import { deleteCachePattern } from '../utils/redis.js';
 
 // Create a new post
 export const createPost = async (req, res) => {
@@ -141,10 +140,6 @@ export const createPost = async (req, res) => {
                 }
             }
         }
-
-        // Invalidate all post-related caches after creating a new post
-        await deleteCachePattern('cache:*');
-        console.log('✅ Cache invalidated after creating new post');
 
         const successMessage = newPost.status === 'draft' 
             ? 'Post saved as draft successfully' 
@@ -327,10 +322,6 @@ export const updatePost = async (req, res) => {
             }
         }
 
-        // Invalidate all post-related caches after updating
-        await deleteCachePattern('cache:*');
-        console.log('✅ Cache invalidated after updating post');
-
         const successMessage = post.status === 'draft' 
             ? 'Post updated and saved as draft' 
             : 'Post updated and published successfully';
@@ -422,10 +413,6 @@ export const deletePost = async (req, res) => {
         ];
 
         await Promise.all(userUpdatePromises);
-
-        // Invalidate all post-related caches after deletion
-        await deleteCachePattern('cache:*');
-        console.log('✅ Cache invalidated after deleting post');
 
         res.status(200).json({ message: "Post deleted successfully and removed from all related data." });
     } catch (error) {
@@ -561,10 +548,6 @@ export const deleteCategory = async (req, res) => {
 
         await category.deleteOne();
 
-        // Invalidate all post-related caches after category deletion
-        await deleteCachePattern('cache:*');
-        console.log('✅ Cache invalidated after deleting category');
-
         res.status(200).json({ message: 'Category and associated posts deleted successfully' });
     } catch (error) {
         console.error('Error deleting category:', error.message);
@@ -630,10 +613,6 @@ const toggleInteraction = async (action, post, user, postList, userList, res) =>
         if (modified) {
             await post.save();
             await user.save();
-            
-            // Invalidate cache for this post so users see updated reactions immediately
-            await deleteCachePattern(`cache:/post/getPost/${post.slug}*`);
-            await deleteCachePattern(`cache:/post/getPosts*`);
         }
 
         return res.status(200).json({ 
@@ -789,9 +768,6 @@ export const addCategory = async (req, res) => {
          });
         await newCategory.save();
 
-        // Invalidate category caches after adding new category
-        await deleteCachePattern('cache:*');
-
         res.status(200).json({ message: 'Category added successfully', category: newCategory });
     } catch (error) {
         console.error('Error adding category:', error.message);
@@ -841,9 +817,6 @@ export const updateCategory = async (req, res) => {
         category.catrgoryImage = image;  // Set to new image if updated, else retain old one
         category.updatedAt = new Date();
         await category.save();
-
-        // Invalidate category caches after update
-        await deleteCachePattern('cache:*');
 
         res.status(200).json({ message: 'Category updated successfully', category });
     } catch (error) {
