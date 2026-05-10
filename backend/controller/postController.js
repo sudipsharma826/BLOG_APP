@@ -484,7 +484,7 @@ export const getPosts = async (req, res, next) => {
   
       // Fetch filtered and sorted posts
       const posts = await Post.find(query)
-        .sort({ updatedAt: sortDirection })
+        .sort({ createdAt: sortDirection })
         .skip(startIndex)
         .limit(limit);
       
