@@ -45,7 +45,7 @@ function getRelativeTime(date) {
 
 // Single Post Card Component - Redesigned
 function PostCard({ post, index }) {
-  const hasEngagement = (post.usersLikeList?.length + post.usersLoveList?.length + post.usersSaveList?.length) > 10;
+  const hasEngagement = (post.likedByUsers?.length + post.lovedByUsers?.length + post.savedByUsers?.length) > 10;
   const isTopPost = index < 3;
   
   return (
@@ -89,7 +89,7 @@ function PostCard({ post, index }) {
         <div className="flex-1 min-w-0 space-y-2">
           {/* Category & Date */}
           <div className="flex items-center gap-2 flex-wrap">
-            {post.category?.slice(0, 1).map((cat) => (
+            {post.categories?.slice(0, 1).map((cat) => (
               <CategoryTag key={cat} category={cat} />
             ))}
             <div className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400 font-medium">

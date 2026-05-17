@@ -51,7 +51,7 @@ const CategoryList = () => {
 
   // Filtering posts based on selected category
   const filteredPosts = selectedCategory
-    ? posts.filter((post) => post.category.includes(selectedCategory))
+    ? posts.filter((post) => post.categories && Array.isArray(post.categories) && post.categories.includes(selectedCategory))
     : posts;
 
   return (

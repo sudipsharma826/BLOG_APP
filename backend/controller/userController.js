@@ -132,8 +132,8 @@ export const signout = async (req, res, next) => {
     const user = await User.findById(req.user.id);
     if (!user) return next(errorHandler(404, 'User not found'));
 
-    //Track isSignIn or not 
-    user.isSignIn = false;
+    //Track isSignedIn or not 
+    user.isSignedIn = false;
 
     // Remove the current device from the devices array
     const userAgent = req.headers['user-agent'];
@@ -389,17 +389,17 @@ export const removeSavedPost = async (req, res) => {
       return res.status(404).json({ error: "Post not found" });
     }
 
-    if (!Array.isArray(post.usersSaveList)) {
+    if (!Array.isArray(post.savedByUsers)) {
       return res
         .status(400)
         .json({ error: "Post's usersSavedList is not valid" });
     }
 
     // Remove the userId from post's usersSavedList using filter for consistency
-    const initialPostLength = post.usersSaveList.length;
-    post.usersSaveList = post.usersSaveList.filter(id => id.toString() !== userIdString);
+    const initialPostLength = post.savedByUsers.length;
+    post.savedByUsers = post.savedByUsers.filter(id => id.toString() !== userIdString);
     
-    if (post.usersSaveList.length === initialPostLength) {
+    if (post.savedByUsers.length === initialPostLength) {
       return res
         .status(404)
         .json({ error: "User not found in post's usersSavedList" });

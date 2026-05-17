@@ -128,7 +128,7 @@ export default function DashPosts() {
                       : post.title}
                   </Link>
                 </Table.Cell>
-                <Table.Cell>{post.category.join(', ')}</Table.Cell>
+                <Table.Cell>{post.categories && Array.isArray(post.categories) ? post.categories.join(', ') : 'N/A'}</Table.Cell>
                 <Table.Cell>
                   <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
                     post.status === 'draft' 
@@ -138,10 +138,10 @@ export default function DashPosts() {
                     {post.status === 'draft' ? '📝 Draft' : '✅ Published'}
                   </span>
                 </Table.Cell>
-                <Table.Cell className="text-center font-semibold">{post.postViews || 0}</Table.Cell>
-                <Table.Cell>{post.usersLikeList.length}</Table.Cell>
-                <Table.Cell>{post.usersLoveList.length}</Table.Cell>
-                <Table.Cell>{post.usersSaveList.length}</Table.Cell>
+                <Table.Cell className="text-center font-semibold">{post.views || 0}</Table.Cell>
+                <Table.Cell>{post.likedByUsers.length}</Table.Cell>
+                <Table.Cell>{post.lovedByUsers.length}</Table.Cell>
+                <Table.Cell>{post.savedByUsers.length}</Table.Cell>
                 <Table.Cell className="text-center">
                   <span
                     onClick={() => {

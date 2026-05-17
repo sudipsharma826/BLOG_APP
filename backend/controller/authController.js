@@ -258,7 +258,7 @@ export const googleouth = async (req, res, next) => {
     );
 
     user.lastLogin = new Date();
-    user.isSignIn = true;
+    user.isSignedIn = true;
     user.currentToken = token;
     await user.save();
 

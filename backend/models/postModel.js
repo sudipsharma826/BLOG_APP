@@ -6,14 +6,14 @@ const PostSchema = new mongoose.Schema({
   title: { type: String, required: true, unique: true },  // Title must be unique
   subtitle: { type: String, required: true },
   content: {type: String, required: true },
-  category: [{ type: String, required: true }],  // No uniqueness constraint for category
+  categories: [{ type: String, required: true }],  // No uniqueness constraint for category
   slug: { type: String, required: true },
   image: { type: String },
-  postViews: { type: Number, default: 0 },
-  usersLikeList: [{ type: String }],//[] means it will be an array wthat stores strings
-   usersCommentList: [{ type: String }],
-  usersLoveList: [{ type: String }],
-  usersSaveList: [{ type: String }],
+  views: { type: Number, default: 0 },
+  likedByUsers: [{ type: String }],//[] means it will be an array wthat stores strings
+   commentedByUsers: [{ type: String }],
+  lovedByUsers: [{ type: String }],
+  savedByUsers: [{ type: String }],
   isFeatured: { type: Boolean, default: false },
   status: { type: String, enum: ['draft', 'published'], default: 'published' }, // Draft or published status
   createdAt: { type: Date, default: Date.now },

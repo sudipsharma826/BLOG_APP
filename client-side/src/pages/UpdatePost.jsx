@@ -79,7 +79,7 @@ export default function UpdatePost() {
         setIsFeatured(post.isFeatured);
         setStatus(post.status || 'published'); // Set current status
 
-        const fetchedCategories = post.category || [];
+        const fetchedCategories = post.categories || [];
         const formattedCategories =
           typeof fetchedCategories[0] === 'string'
             ? fetchedCategories.map((cat) => ({ name: cat }))

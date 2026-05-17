@@ -22,7 +22,7 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
-  isSignIn: {
+  isSignedIn: {
     type: Boolean,
     default: false
   },
@@ -34,7 +34,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: null
   },
-  iNMaintenance: {
+  isMaintenance: {
     type: Boolean,
     default: false
   },

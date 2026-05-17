@@ -209,7 +209,7 @@ export default function DashUsers() {
                         }}
                       />
                       <div
-                        className={`absolute bottom-0 right-0 w-3 h-3 rounded-full ${user.isSignIn ? 'bg-green-500' : 'bg-red-500'}`}
+                        className={`absolute bottom-0 right-0 w-3 h-3 rounded-full ${user.isSignedIn ? 'bg-green-500' : 'bg-red-500'}`}
                       />
                     </div>
                   </Table.Cell>

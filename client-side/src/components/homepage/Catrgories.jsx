@@ -24,10 +24,10 @@ const CategoryList = () => {
 
         // Extract categories and their counts
         const uniqueCategories = Array.from(
-          new Set(data.flatMap((post) => post.category))
+          new Set(data.flatMap((post) => post.categories || []))
         ).map((category) => ({
           name: category,
-          count: data.filter((post) => post.category.includes(category)).length,
+          count: data.filter((post) => post.categories && Array.isArray(post.categories) && post.categories.includes(category)).length,
         })).sort((a, b) => b.count - a.count); // Sort by post count descending
 
         setPosts(data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))); // Sort posts by creation date
@@ -42,7 +42,7 @@ const CategoryList = () => {
 
   // Filter posts based on the selected category
   const filteredPosts = selectedCategory
-    ? posts.filter((post) => post.category.includes(selectedCategory))
+    ? posts.filter((post) => post.categories && Array.isArray(post.categories) && post.categories.includes(selectedCategory))
     : posts;
 
   return (

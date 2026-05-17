@@ -107,9 +107,9 @@ function SinglePostPage() {
   useEffect(() => {
     if (!postData) return;
     
-    const likeList = Array.isArray(postData.usersLikeList) ? postData.usersLikeList.map(String) : [];
-    const loveList = Array.isArray(postData.usersLoveList) ? postData.usersLoveList.map(String) : [];
-    const saveList = Array.isArray(postData.usersSaveList) ? postData.usersSaveList.map(String) : [];
+    const likeList = Array.isArray(postData.likedByUsers) ? postData.likedByUsers.map(String) : [];
+    const loveList = Array.isArray(postData.lovedByUsers) ? postData.lovedByUsers.map(String) : [];
+    const saveList = Array.isArray(postData.savedByUsers) ? postData.savedByUsers.map(String) : [];
     
     // Always update counts
     setLikesCount(likeList.length);
@@ -408,7 +408,7 @@ function SinglePostPage() {
                 
                 <div className="flex items-center gap-6">
                   {/* Views - Only show if > 10 */}
-                  {(postData?.postViews || 0) > 10 && (
+                  {(postData?.views || 0) > 10 && (
                     <div className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
                       <div className="flex items-center justify-center w-8 h-8 bg-blue-100 dark:bg-blue-900/40 rounded-full">
                         <svg className="w-4 h-4 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -418,7 +418,7 @@ function SinglePostPage() {
                       </div>
                       <div className="flex flex-col">
                         <span className="text-xs text-gray-500 dark:text-gray-400">Views</span>
-                        <span className="text-sm font-semibold">{postData?.postViews || 0}</span>
+                        <span className="text-sm font-semibold">{postData?.views || 0}</span>
                       </div>
                     </div>
                   )}
@@ -467,11 +467,12 @@ function SinglePostPage() {
             
             <div className="p-4 sm:p-6 lg:p-10 space-y-6">
               <PostHeader
+                categories={postData?.categories}
                 category={postData?.category}
                 title={postData?.title}
                 subtitle={postData?.subtitle}
                 readTime={readTime + ' min'}
-                postViews={postData?.postViews}
+                postViews={postData?.views}
                 postLikes={likesCount}
                 updatedAt={new Date(postData?.updatedAt).toLocaleDateString()}
               />
@@ -572,7 +573,7 @@ function SinglePostPage() {
         {postData && (
           <section aria-labelledby="related-posts" className="mt-6 lg:mt-10">
             {/* <h2 id="related-posts" className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">Related Articles</h2> */}
-            <RelatedPosts categories={postData.category} currentPostId={postData._id} />
+              <RelatedPosts categories={postData.categories || postData.category} currentPostId={postData._id} />
           </section>
         )}
         

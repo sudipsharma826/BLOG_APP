@@ -29,7 +29,7 @@ const PostGrid = ({ posts }) => {
               </div>
               <div className="p-6">
                 <span className="text-purple-600 text-sm font-semibold">
-                  {post.category}
+                  {post.categories && (Array.isArray(post.categories) ? post.categories[0] : post.categories)}
                 </span>
                 <h3 className="mt-2 text-xl font-semibold text-gray-900">
                   {post.title}

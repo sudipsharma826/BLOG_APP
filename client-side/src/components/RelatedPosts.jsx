@@ -8,6 +8,7 @@ const RelatedPosts = ({ categories, currentPostId }) => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [showMore, setShowMore] = useState(false);
+  const safeCategories = Array.isArray(categories) ? categories : categories ? [categories] : [];
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -17,7 +18,7 @@ const RelatedPosts = ({ categories, currentPostId }) => {
           `${import.meta.env.VITE_BACKEND_APP_BASE_URL}/post/getPosts`,
           {
             params: { 
-              categories: currentCategory || categories[0],
+              categories: currentCategory || safeCategories[0],
               excludeContent: true // Exclude full content for performance
             },
             withCredentials: true,
@@ -34,7 +35,7 @@ const RelatedPosts = ({ categories, currentPostId }) => {
     };
 
     fetchPosts();
-  }, [currentCategory, categories]);
+  }, [currentCategory, safeCategories]);
 
   // Filter out the current post from related posts
   const filteredPosts = posts.filter(post => post._id !== currentPostId);
@@ -47,7 +48,7 @@ const RelatedPosts = ({ categories, currentPostId }) => {
           Related Posts
         </h2>
         <div className="flex flex-wrap gap-2">
-          {categories.map((category) => (
+          {safeCategories.map((category) => (
             <button
               key={category}
               onClick={() => {
@@ -96,9 +97,9 @@ const RelatedPosts = ({ categories, currentPostId }) => {
                   </h3>
                 </Link>
 
-                {post.category.length > 0 && (
+                {post.categories && Array.isArray(post.categories) && post.categories.length > 0 && (
                   <div className="flex flex-wrap gap-1.5 mb-2">
-                    {post.category.map((cat) => (
+                    {post.categories.map((cat) => (
                       <span
                         key={cat}
                         className="text-xs bg-gray-50 dark:bg-blue-900 text-gray-600 dark:text-blue-200 px-2 py-0.5 rounded-full border border-blue-200 dark:border-blue-700"
@@ -121,19 +122,19 @@ const RelatedPosts = ({ categories, currentPostId }) => {
                   <div className="flex items-center gap-3">
                     <span className="flex items-center text-xs text-gray-500">
                       <ThumbsUpIcon className="w-3.5 h-3.5 mr-1 text-blue-500" />
-                      {post.usersLikeList.length}
+                      {post.likedByUsers.length}
                     </span>
                     <span className="flex items-center text-xs text-gray-500">
                       <Heart className="w-3.5 h-3.5 mr-1 text-red-500" />
-                      {post.usersLoveList.length}
+                      {post.lovedByUsers.length}
                     </span>
                     <span className="flex items-center text-xs text-gray-500">
                       <MessageSquare className="w-3.5 h-3.5 mr-1 text-gray-500" />
-                      {post.usersCommentList.length}
+                      {post.commentedByUsers.length}
                     </span>
                     <span className="flex items-center text-xs text-gray-500">
                       <Bookmark className="w-3.5 h-3.5 mr-1 text-gray-500" />
-                      {post.usersSaveList.length}
+                      {post.savedByUsers.length}
                     </span>
                   </div>
                 </div>

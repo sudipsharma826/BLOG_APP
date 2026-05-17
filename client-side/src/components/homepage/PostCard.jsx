@@ -72,8 +72,8 @@ const PostCard = ({ post }) => {
 
         {/* Post categories */}
         <div className="flex flex-wrap mt-2 gap-2">
-          {Array.isArray(post.category) && post.category.length > 0 ? (
-            post.category.map((category, index) => (
+          {Array.isArray(post.categories) && post.categories.length > 0 ? (
+            post.categories.map((category, index) => (
               <Link key={index} to={`/category/${category}`}>
                 <span className="inline-block bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300 rounded-full px-3 py-1 text-xs font-semibold shadow-sm hover:bg-blue-200 dark:hover:bg-blue-800 transition-colors">
                   {category}

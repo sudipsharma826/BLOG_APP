@@ -219,7 +219,7 @@ export default function Search() {
                           />
                           <div className="p-4">
                             <div className="text-xs text-blue-600 dark:text-blue-400 font-medium mb-1">
-                              {post.category}
+                              {post.categories && Array.isArray(post.categories) ? post.categories[0] : post.categories}
                             </div>
                             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2 line-clamp-2">
                               {post.title}

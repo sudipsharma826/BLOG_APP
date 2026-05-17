@@ -101,7 +101,7 @@ export const deleteComment = async (req, res, next) => {
     // Delete the comment from the database
     await Comment.deleteOne({ _id: req.params.commentId });
 
-    // Remove the user from the post's usersCommentList
+    // Remove the user from the post's commentedByUsers
     await Post.findByIdAndUpdate(comment.postId, {
       $pull: { usersCommentList: comment.userId },
     });

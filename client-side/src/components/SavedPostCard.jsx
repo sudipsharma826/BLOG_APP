@@ -81,7 +81,7 @@ export function SavedPostCard({ post, author, handleRemovePost }) {
             
             {/* Categories */}
             <div className="flex gap-2 flex-wrap">
-              {post.category.map((cat, index) => (
+              {post.categories && Array.isArray(post.categories) && post.categories.map((cat, index) => (
                 <Badge 
                   key={index} 
                   color="indigo" 
@@ -110,15 +110,15 @@ export function SavedPostCard({ post, author, handleRemovePost }) {
             <div className="flex space-x-6 dark: text-white">
               <button className="flex items-center space-x-2 text-gray-500 hover:text-blue-600 transition-colors">
                 <ThumbsUp className="h-5 w-5" />
-                <span>{post.usersLikeList?.length || 0}</span>
+                <span>{post.likedByUsers?.length || 0}</span>
               </button>
               <button className="flex items-center space-x-2 text-gray-500 hover:text-pink-600 transition-colors">
                 <Heart className="h-5 w-5" />
-                <span>{post.usersLoveList?.length || 0}</span>
+                <span>{post.lovedByUsers?.length || 0}</span>
               </button>
               <button className="flex items-center space-x-2 text-gray-500 hover:text-green-600 transition-colors">
                 <MessageCircle className="h-5 w-5" />
-                <span>{post.usersCommentList?.length || 0}</span>
+                <span>{post.commentedByUsers?.length || 0}</span>
               </button>
               <button className="flex items-center space-x-2 text-gray-500 hover:text-purple-600 transition-colors">
                 <Share2 className="h-5 w-5" />

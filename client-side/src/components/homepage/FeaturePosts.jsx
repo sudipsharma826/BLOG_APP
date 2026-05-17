@@ -37,7 +37,7 @@ export default function FeaturedPosts({ posts, loading }) {
                   </div>
                   <div className="p-6">
                     <span className=" text-purple-600  font-semibold text-lg dark:text-yellow-400">
-                      {post.category.map((cat, index) => (
+                      {post.categories && Array.isArray(post.categories) && post.categories.map((cat, index) => (
                         <Link to={`/category/${cat}`} key={`${cat}-${index}`}>
                           <span className='ml-4'>{cat}</span>
                         </Link>

@@ -62,7 +62,7 @@ const PostSlider = ({ posts }) => {
                   {post.subtitle}
                 </p>
                 <div className="flex flex-wrap justify-center gap-2 mb-3">
-                  {post.category && post.category.slice(0, 2).map((cat, i) => (
+                  {post.categories && post.categories.slice(0, 2).map((cat, i) => (
                     <span key={i} className="bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 text-xs px-3 py-1 rounded-full">
                       {cat}
                     </span>

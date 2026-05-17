@@ -79,7 +79,7 @@ export const createPost = async (req, res) => {
         const newPost = new Post({
             title,
             subtitle,
-            category: categories, // Ensure categories are an array of strings
+            categories: categories, // Ensure categories are an array of strings
             content,
             slug: uniqueSlug,
             userId: req.user.id,
@@ -228,7 +228,7 @@ export const getPostBySlug = async (req, res) => {
         console.log(`✅ Post found: ${post.title} (status: ${post.status})`);
 
         // Increment post views without updating timestamps
-        await Post.findByIdAndUpdate(post._id, { $inc: { postViews: 1 } }, { new: false });
+        await Post.findByIdAndUpdate(post._id, { $inc: { views: 1 } }, { new: false });
 
         const author = await User.findOne({ email: post.authorEmail })
             .select('username email photoURL')
@@ -293,13 +293,13 @@ export const updatePost = async (req, res) => {
             }
         }
 
-        const oldCategories = post.category;
+        const oldCategories = post.categories;
         const oldStatus = post.status;
         
         post.title = title;
         post.subtitle = subtitle;
         post.slug = finalSlug; // Update slug (unique)
-        post.category = categories; // Update categories
+        post.categories = categories; // Update categories
         post.content = content;
         post.image = image;
         post.userId = req.user.id;
@@ -394,7 +394,7 @@ export const deletePost = async (req, res) => {
             await deleteFromCloudinary(post.image);
         }
 
-        const categories = post.category; // Array of categories
+        const categories = post.categories; // Array of categories
 
         // Delete the post
         await Post.deleteOne({ slug });
@@ -435,18 +435,18 @@ export const deletePost = async (req, res) => {
             }
         );
 
-        // Remove the user references in the post growth fields (usersLikeList, usersLoveList, usersCommentList)
+        // Remove the user references in the post growth fields (likedByUsers, lovedByUsers, commentedByUsers)
         const userUpdatePromises = [
             User.updateMany(
-                { _id: { $in: post.usersLikeList } },
+                { _id: { $in: post.likedByUsers } },
                 { $pull: { likedPosts: post._id } }
             ),
             User.updateMany(
-                { _id: { $in: post.usersLoveList } },
+                { _id: { $in: post.lovedByUsers } },
                 { $pull: { lovedPosts: post._id } }
             ),
             User.updateMany(
-                { _id: { $in: post.usersCommentList } },
+                { _id: { $in: post.commentedByUsers } },
                 { $pull: { savedPosts: post._id } } // Optional if comments relate to saved posts
             )
         ];
@@ -466,7 +466,7 @@ export const deletePost = async (req, res) => {
 export const getPosts = async (req, res, next) => {
     try {
       const startIndex = parseInt(req.query.startIndex) || 0;
-      const limit = parseInt(req.query.limit) || 9;
+      const limit = parseInt(req.query.limit) || 100;
       const sortDirection = req.query.sort === 'asc' ? 1 : -1;
       const excludeContent = req.query.excludeContent === 'true'; // New parameter to exclude full content
   
@@ -675,7 +675,7 @@ export const likePost = async (req, res) => {
         const post = await findPost(req, res);  // Pass res here
         const { userId } = req.body;
         const user = await User.findById(userId);
-        return toggleInteraction('add', post, user, 'usersLikeList', 'likedPosts', res);
+        return toggleInteraction('add', post, user, 'likedByUsers', 'likedPosts', res);
     } catch (error) {
         return res.status(500).json({ error: error.message || 'Server error' });
     }
@@ -687,7 +687,7 @@ export const unlikePost = async (req, res) => {
         const post = await findPost(req, res);  // Pass res here
         const { userId } = req.body;
         const user = await User.findById(userId);
-        return toggleInteraction('remove', post, user, 'usersLikeList', 'likedPosts', res);
+        return toggleInteraction('remove', post, user, 'likedByUsers', 'likedPosts', res);
     } catch (error) {
         return res.status(500).json({ error: error.message || 'Server error' });
     }
@@ -699,7 +699,7 @@ export const lovePost = async (req, res) => {
         const post = await findPost(req, res);  // Pass res here
         const { userId } = req.body;
         const user = await User.findById(userId);
-        return toggleInteraction('add', post, user, 'usersLoveList', 'lovedPosts', res);
+        return toggleInteraction('add', post, user, 'lovedByUsers', 'lovedPosts', res);
     } catch (error) {
         return res.status(500).json({ error: error.message || 'Server error' });
     }
@@ -711,7 +711,7 @@ export const unlovePost = async (req, res) => {
         const post = await findPost(req, res);  // Pass res here
         const { userId } = req.body;
         const user = await User.findById(userId);
-        return toggleInteraction('remove', post, user, 'usersLoveList', 'lovedPosts', res);
+        return toggleInteraction('remove', post, user, 'lovedByUsers', 'lovedPosts', res);
     } catch (error) {
         return res.status(500).json({ error: error.message || 'Server error' });
     }
@@ -723,7 +723,7 @@ export const savePost = async (req, res) => {
         const post = await findPost(req, res);  // Pass res here
         const { userId } = req.body;
         const user = await User.findById(userId);
-        return toggleInteraction('add', post, user, 'usersSaveList', 'savedPosts', res);
+        return toggleInteraction('add', post, user, 'savedByUsers', 'savedPosts', res);
     } catch (error) {
         return res.status(500).json({ error: error.message || 'Server error' });
     }
@@ -735,7 +735,7 @@ export const unSavePost = async (req, res) => {
         const post = await findPost(req, res);  // Pass res here
         const { userId } = req.body;
         const user = await User.findById(userId);
-        return toggleInteraction('remove', post, user, 'usersSaveList', 'savedPosts', res);
+        return toggleInteraction('remove', post, user, 'savedByUsers', 'savedPosts', res);
     } catch (error) {
         return res.status(500).json({ error: error.message || 'Server error' });
     }

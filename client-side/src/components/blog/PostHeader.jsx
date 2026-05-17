@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 
 export function PostHeader({
   category,
+  categories,
   title,
   subtitle,
   readTime,
@@ -21,13 +22,20 @@ export function PostHeader({
       return (numbers / 1000000).toFixed(1) + "M";
     }
   }
+  const safeCategories = Array.isArray(categories)
+    ? categories
+    : Array.isArray(category)
+      ? category
+      : category
+        ? [category]
+        : [];
   
   return (
     <header className="mb-10">
       {/* Post Categories */}
       <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
         <nav aria-label="Post categories" className="flex flex-wrap gap-2">
-          {category.map((cat, index) => (
+          {safeCategories.map((cat, index) => (
             <Link
               key={index}
               to={`/category/${cat}`}
